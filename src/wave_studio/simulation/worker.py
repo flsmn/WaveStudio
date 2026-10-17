@@ -129,7 +129,7 @@ class SimulationWorker(QThread):
                 if running:
                     started = monotonic()
                     # Keep command boundaries short when quality selects millions of cells.
-                    block=max(1,min(self.BLOCK_STEPS,1048576//(sim.grid.nx*sim.grid.ny)))
+                    block=max(1,min(1 if sim.device.type=='mps' else self.BLOCK_STEPS,1048576//(sim.grid.nx*sim.grid.ny)))
                     sim.step(block)
                     now = monotonic()
                     if now-last_frame >= self.DISPLAY_INTERVAL:
@@ -138,7 +138,7 @@ class SimulationWorker(QThread):
                     # Separate compute and display limits. Commands wake the wait immediately.
                     with self._condition:
                         if not self._commands and not self._closing:
-                            self._condition.wait(max(0,self.BLOCK_INTERVAL-(monotonic()-started)) if mode=="Economical" else 0)
+                            self._condition.wait(max(0,self.BLOCK_INTERVAL*block/self.BLOCK_STEPS-(monotonic()-started)) if mode=="Economical" else 0)
             except Exception as error:
                 running, sim = False, None
                 self.latest.put(Failure(identity,str(error) or type(error).__name__))

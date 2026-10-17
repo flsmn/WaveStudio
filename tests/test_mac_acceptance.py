@@ -238,3 +238,23 @@ def test_published_physical_acceptance_uses_actual_selected_grids():
             if result['name'] not in PRESETS:continue
             selected=estimate(example(scene),result['name'])
             assert result['grid']==[selected.nx,selected.ny] and result['dx']==selected.dx
+
+
+def test_completed_profile_redraws_only_when_visible_data_changes(window,monkeypatch):
+    import torch
+    from wave_sim2d.measurements import Measurements
+    w=window;d=DetectorObject(samples=2,settling=0,window=1)
+    w.replace_project(Project(detectors=(d,)))
+    measurements=Measurements(w.scene.grid,'cpu');measurements.configure(w.detector_specs(),0)
+    field=torch.ones(w.scene.grid.shape)
+    for i in range(16):measurements.update(field,(i+1)*w.scene.grid.dt,w.scene.grid.dt)
+    profile=measurements.results()[d.id];w.profiles[d.id]=profile;w._plot_profiles()
+    clears=[];original=w.profile_plot.clear
+    def clear():clears.append(1);original()
+    monkeypatch.setattr(w.profile_plot,'clear',clear)
+    for _ in range(10):w._plot_profiles()
+    assert clears==[]
+    w.profiles[d.id]={**profile,'metadata':{'time':99}};w._plot_profiles();assert clears==[]
+    w.profiles[d.id]={**profile,'values':[.25,.5]};w._plot_profiles();assert len(clears)==1
+    w.norm.setCurrentText('Shared maximum = 1');assert len(clears)==2
+    w.theme.setCurrentText('Light');assert len(clears)==3

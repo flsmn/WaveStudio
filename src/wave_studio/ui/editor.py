@@ -450,9 +450,15 @@ class MainWindow(PrototypeWindow):
 
     def _plot_profiles(self,*args):
         if not hasattr(self,'profile_plot'):return
-        self.profile_plot.clear()
         current=self.profiles.get(self.detector_combo.currentData())
         index=self.ref_combo.currentData();reference=self.project.references[index] if isinstance(index,int) and 0<=index<len(self.project.references) else None
+        def visible_key(p):
+            if p is None:return None
+            return (p['detector_id'],p['measurement_revision'],p['status'],p['elapsed'],p['duration'],p['sample_count'],tuple(map(tuple,p['positions'])),tuple(p['values']))
+        key=(self.detector_combo.currentData(),index,self.norm.currentText(),self.project.display.theme,self.project.display.text_scale,visible_key(current),visible_key(reference),bool(self.project.detectors))
+        if getattr(self,'_profile_render_key',None)==key:return
+        self._profile_render_key=key
+        self.profile_plot.clear()
         series=[('Current',current,'#65d5bd' if self.project.display.theme=='Dark' else '#147964'),('Reference',reference,'#f2bd72' if self.project.display.theme=='Dark' else '#925700')]
         origin=current or reference
         axis=0

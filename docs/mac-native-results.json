@@ -55,7 +55,8 @@
       800
     ],
     "references": 2,
-    "engine": "0.1.0.dev3"
+    "engine": "0.1.0.dev3",
+    "tracked_csv_note": "Native CSV data preserved; CRLF normalized to LF for repository whitespace checks."
   },
   "final_outline_and_contrast_followup": {
     "native_light_150_labels": "passed; axes, units and scales visible",

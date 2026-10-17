@@ -122,7 +122,7 @@ class MainWindow(QMainWindow):
         self.message.setWordWrap(True)
         canvas_layout.addWidget(self.message)
         layout.addWidget(canvas,1)
-        footer = QHBoxLayout()
+        footer = FlowLayout()
         self.state_label = QLabel('Ready')
         self.time_label = QLabel('t = 0.000  ·  0 steps')
         footer.addWidget(self.state_label)

@@ -192,6 +192,10 @@ def test_large_text_minimum_window_with_two_views_and_long_counters(window):
         assert chart.getAxis('bottom').labelText=='x' and chart.getAxis('left').labelText=='y'
         assert chart.getAxis('bottom').labelUnits==chart.getAxis('left').labelUnits=='reference length'
     assert w.profile_plot.getPlotItem().legend.opts['labelTextColor']=='#42566b'
+    from wave_studio.simulation.lifecycle import State
+    w.state_label.setText(State.CHANGED.value);QApplication.processEvents()
+    for label in (w.state_label,w.time_label,w.rate_label):
+        assert w.centralWidget().rect().contains(label.mapTo(w.centralWidget(),label.rect().bottomRight()))
 
 
 def test_material_order_history_and_copy_delete_preserve_stopped_state(window):

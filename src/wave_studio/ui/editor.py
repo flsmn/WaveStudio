@@ -143,9 +143,9 @@ class MainWindow(PrototypeWindow):
                 chart.getPlotItem().layout.setContentsMargins(8*factor,12*factor,8*factor,8*factor)
                 for side in ('left','bottom','right'):
                     axis=chart.getAxis(side);axis.setStyle(tickFont=font)
-                    axis.setLabel(**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
+                    axis.setLabel(axis.labelText,units=axis.labelUnits,unitPrefix=axis.labelUnitPrefix,**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
             for scale in (self.scale,self.second_scale):
-                scale.axis.setStyle(tickFont=font);scale.axis.setLabel(**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
+                axis=scale.axis;axis.setStyle(tickFont=font);axis.setLabel(axis.labelText,units=axis.labelUnits,unitPrefix=axis.labelUnitPrefix,**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
             legend=self.profile_plot.getPlotItem().legend
             legend.setLabelTextColor(ink);legend.setLabelTextSize(f'{11*self.project.display.text_scale:g}px')
 

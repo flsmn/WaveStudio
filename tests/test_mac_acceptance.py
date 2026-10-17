@@ -188,6 +188,9 @@ def test_large_text_minimum_window_with_two_views_and_long_counters(window):
     assert w.size().width()==980 and w.size().height()==660
     for chart in (w.plot,w.second,w.profile_plot):
         assert chart.getAxis('bottom').labelStyle['color']=='#42566b'
+    for chart in (w.plot,w.second):
+        assert chart.getAxis('bottom').labelText=='x' and chart.getAxis('left').labelText=='y'
+        assert chart.getAxis('bottom').labelUnits==chart.getAxis('left').labelUnits=='reference length'
     assert w.profile_plot.getPlotItem().legend.opts['labelTextColor']=='#42566b'
 
 

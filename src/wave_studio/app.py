@@ -11,11 +11,14 @@ def main(argv=None):
     parser.add_argument('--performance-seconds',type=int,default=10,help='Performance check only: seconds per case (3–60)')
     parser.add_argument('--without-run-activity',action='store_true',help='Performance check only: disable macOS run activity and worker QoS for A/B comparison')
     parser.add_argument('--accessibility-for-check',action='store_true',help='Performance check only: enable Qt accessibility for comparison')
+    parser.add_argument('--performance-case',choices=('all','one_view_economical','two_views_economical','two_views_performance'),default='all')
+    parser.add_argument('--performance-warmup',type=int,default=2,help='Performance check only: warmup seconds (2–30)')
     args = parser.parse_args(argv)
     if args.check_performance:
         if not 3<=args.performance_seconds<=60:parser.error('Performance duration must be between 3 and 60 seconds.')
+        if not 2<=args.performance_warmup<=30:parser.error('Performance warmup must be between 2 and 30 seconds.')
         from .performance import run_performance
-        return run_performance(args.check_performance,args.event_loop,args.performance_seconds,args.without_run_activity,args.accessibility_for_check)
+        return run_performance(args.check_performance,args.event_loop,args.performance_seconds,args.without_run_activity,args.accessibility_for_check,args.performance_warmup,args.performance_case)
     if args.check_workflow:
         from .checks import run_workflow
         return run_workflow(args.check_workflow)

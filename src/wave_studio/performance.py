@@ -19,7 +19,7 @@ from wave_studio.ui.editor import MainWindow
 from wave_studio.simulation.activity import DarwinActivity
 
 
-def run_performance(output_directory,event_loop='native',seconds=10,without_activity=False,accessibility=False):
+def run_performance(output_directory,event_loop='native',seconds=10,without_activity=False,accessibility=False,warmup=2,case='all'):
     if not torch.backends.mps.is_available():raise RuntimeError('This check requires actual MPS hardware.')
     torch.set_num_threads(1)
     output=Path(output_directory);output.mkdir(parents=True,exist_ok=True)
@@ -69,6 +69,10 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
     e=estimate(p,'Balanced');p=replace(p,settings=replace(p.settings,quality='Balanced',dx=e.dx));w.replace_project(p)
     report={'version':__version__,'engine_version':wave_sim2d.__version__,'pid':os.getpid(),'frozen':bool(getattr(sys,'frozen',False)),'event_loop':event_loop,'platform':platform.platform(),'python':platform.python_version(),'torch':torch.__version__,'qt_binding':qt_binding_version,'pyqtgraph':pg.__version__,'engine_location':wave_sim2d.__file__,'application_location':__file__,'grid':[e.nx,e.ny],'seconds_per_case':seconds,'without_activity':without_activity,'measurements':{},'count_note':'Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.'}
     cases=[('one_view_economical',False,'Economical'),('two_views_economical',True,'Economical'),('two_views_performance',True,'Performance')]
+    if case!='all':
+        cases=[c for c in cases if c[0]==case]
+        _,two,mode=cases[0];w.secondary_action.setChecked(two);w.mode_combo.setCurrentText(mode)
+    report['case']=case;report['warmup_seconds']=warmup
     index=0;phase='starting';deadline=time.monotonic()+15;began=0;start_steps=0;cpu_start=0
     def stats(values):
         return {'count':len(values),'total':sum(values),'median':float(np.median(values)),'p95':float(np.percentile(values,95)),'max':max(values)} if values else {'count':0}
@@ -95,7 +99,7 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
                 if now>deadline:finish('First frame timed out: '+w.message.text())
                 return
             report['startup_seconds']=now-run_started
-            phase='warmup';deadline=now+2
+            phase='warmup';deadline=now+warmup
         if phase=='warmup' and now>=deadline:
             timings={};received=0;states={};gaps=[];last_beat=now;began=now;cpu_start=time.process_time();start_steps=w.frame.steps;enabled=True;phase='measuring';deadline=now+seconds
         if phase=='measuring':
@@ -108,7 +112,7 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
             print(cases[index][0]+': '+str(report['measurements'][cases[index][0]]['received_frames_per_second']),flush=True)
             index+=1
             if index==len(cases):finish();return
-            _,two,mode=cases[index];w.secondary_action.setChecked(two);w.mode_combo.setCurrentText(mode);phase='warmup';deadline=time.monotonic()+2
+            _,two,mode=cases[index];w.secondary_action.setChecked(two);w.mode_combo.setCurrentText(mode);phase='warmup';deadline=time.monotonic()+warmup
     advance=tick;run_started=time.monotonic();w.run_simulation()
     report['extra_python_timers']=False
     (output/'ready.json').write_text(json.dumps({'pid':os.getpid(),'version':__version__})+'\n')

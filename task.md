@@ -67,3 +67,9 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 - [x] Einschränkung festgehalten: Native HUD-Stichproben während der UI-Automatisierung zeigten 5–8 Frames/s, der separate Ressourcenlauf 18–20/s. Keine feste Bildrate für dieses große Raster zugesagt; High Quality bleibt auf dem Mac ungetestet.
 
 - Dev4-Implementierung committet: Studio `8b8e23e`, Engine `10f7ce9`. Der native dev4-Build ist geprüft; die Nachweise werden im anschließenden Abschluss-Commit gesichert.
+
+## Paket-/Messlauf-FPS untersuchen (18. Oktober 2026)
+
+- [ ] Quellen und Paket mit identischer Balanced-Szene, Fenstergröße und beiden Rechenmodi vergleichen; Solver-/Transfer-/Renderzeiten und App-Aktivität protokollieren.
+- [ ] Ursache der nativen 5–8-FPS-Beobachtung reproduzieren und beheben; ursprüngliche Messdaten erhalten.
+- [ ] Regressionen, finales natives Paket und Ressourcen/Bedienbarkeit nachprüfen; größere Änderungen und Abschlussnachweise committen.

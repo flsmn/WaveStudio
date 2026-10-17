@@ -68,3 +68,9 @@ Die grobe T04-Linse liegt mit 18,5 % / 11,5 % Fokusfehler und 7 % Rasterverschie
 - Finale 512²-Messung auf dem M1: ca. 24–26 Frames/s, Pause ca. 32 ms CPU / 47 ms MPS; maximal beobachteter Prozess-RSS ca. 512 MB. Pausiert null Schritte/Frames. Das vorläufige 30-fps-Ziel ist damit noch nicht als allgemeines Ziel bestätigt; siehe offene Budget-/Qualitätsabnahme.
 - Lokale Funktionsimplementierung M0–M4 verfügbar; die oben aufgeführten Plattform-, Qualitäts-, menschlichen Bedien- und Release-Abnahmen bleiben offen. Es wurde kein stabiles plattformübergreifendes Release behauptet.
 - Engine-Abschlussstand: `3813481`; Studio-Anwendungscode: `d5e9c7f`. Der folgende Dokumentations-/Build-Commit hält die vollständigen lokalen Nachweise fest.
+
+## Mac-Qualitäts- und Bedienungsabnahme (Folgeauftrag)
+
+- Begonnen: gezielte native Bedienprüfung und zusätzliche Qualitätsprüfung nach `docs/MAC_ACCEPTANCE_PLAN.md`. Windows/Linux bleiben zurückgestellt.
+- Bereits reproduziert: Nach einer über den nativen Eigenschaftendialog geänderten Wellenlänge zeigt der Dialog den neuen Wert, die ausgewählte Eigenschaftenzusammenfassung jedoch weiterhin den alten. Die Rateanzeige zeigt nach Pause/physikalischer Änderung alte positive Werte. Beides wird korrigiert.
+- Bestehende Qualitätsvorschläge berücksichtigen noch keine Ausbreitungsdistanz und dünnen Material-/Linsenkonturen; skalierte Schrift wird durch feste Pixelgrößen übergangen. Dazu werden vorab festgelegte Prüfungen und begrenzte Verbesserungen umgesetzt.

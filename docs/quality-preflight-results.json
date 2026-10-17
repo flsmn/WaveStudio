@@ -5,14 +5,14 @@
       "scene": "64-wavelength rotated-thin-structure",
       "preset": {
         "name": "Preview",
-        "dx": 0.07272727272727272,
-        "nx": 1870,
-        "ny": 220,
-        "estimated_bytes": 29620800,
-        "cells_per_wavelength": 18.333333333333336,
-        "cells_per_feature": 2.7500000000000147,
+        "dx": 0.07017543859649122,
+        "nx": 1938,
+        "ny": 228,
+        "estimated_bytes": 31814208,
+        "cells_per_wavelength": 19.0,
+        "cells_per_feature": 2.850000000000015,
         "path": 128.0,
-        "phase_radians": 3.0360902938469962,
+        "phase_radians": 2.8242663560748724,
         "supported": true,
         "reason": ""
       },
@@ -22,20 +22,20 @@
             16,
             2
           ],
-          "measured_frequency": 3.144850976218735,
-          "predicted_frequency": 3.1448511678008724,
-          "prediction_relative_error": 6.09193017142573e-08,
-          "speed_relative_error": 0.004435460066451236
+          "measured_frequency": 3.1529070112409117,
+          "predicted_frequency": 3.1529070722523103,
+          "prediction_relative_error": 1.9350839486342863e-08,
+          "speed_relative_error": 0.0041484624001566495
         },
         {
           "mode": [
             12,
             12
           ],
-          "measured_frequency": 3.306150283776184,
-          "predicted_frequency": 3.306150493044872,
-          "prediction_relative_error": 6.32967823710473e-08,
-          "speed_relative_error": 0.0055513329767766795
+          "measured_frequency": 3.3148584366181653,
+          "predicted_frequency": 3.3148585086172013,
+          "prediction_relative_error": 2.1720093279498087e-08,
+          "speed_relative_error": 0.005192954587209697
         }
       ],
       "status": "passed"

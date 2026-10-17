@@ -1,0 +1,93 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "device": "cpu",
+  "cases": [
+    {
+      "name": "Preview",
+      "dx": 0.2,
+      "grid": [
+        360,
+        320
+      ],
+      "first_minimum": 3.3125,
+      "reference": 3.752254,
+      "relative_error": 0.11719728994892142,
+      "asymmetry": 0.20223668217658997,
+      "wall_max": 0.0,
+      "passed": false,
+      "seconds": 1.5259141669957899
+    },
+    {
+      "name": "Balanced",
+      "dx": 0.125,
+      "grid": [
+        576,
+        512
+      ],
+      "first_minimum": 3.625,
+      "reference": 3.752254,
+      "relative_error": 0.03391401541580075,
+      "asymmetry": 6.818661972829432e-07,
+      "wall_max": 0.0,
+      "passed": true,
+      "seconds": 6.4322153750108555
+    },
+    {
+      "name": "High Quality",
+      "dx": 0.08333333333333333,
+      "grid": [
+        864,
+        768
+      ],
+      "first_minimum": 3.625,
+      "reference": 3.752254,
+      "relative_error": 0.03391401541580075,
+      "asymmetry": 7.617204573762137e-07,
+      "wall_max": 0.0,
+      "passed": true,
+      "seconds": 23.16053729201667
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preview",
+      "dx": 0.2,
+      "nx": 360,
+      "ny": 320,
+      "estimated_bytes": 8294400,
+      "cells_per_wavelength": 10.0,
+      "cells_per_feature": 2.5,
+      "path": 38.8329756778952,
+      "phase_radians": 1.8342754685037383,
+      "supported": true,
+      "reason": ""
+    },
+    {
+      "name": "Balanced",
+      "dx": 0.125,
+      "nx": 576,
+      "ny": 512,
+      "estimated_bytes": 21233664,
+      "cells_per_wavelength": 16.0,
+      "cells_per_feature": 4.0,
+      "path": 38.8329756778952,
+      "phase_radians": 0.6982615241830248,
+      "supported": true,
+      "reason": ""
+    },
+    {
+      "name": "High Quality",
+      "dx": 0.08333333333333333,
+      "nx": 864,
+      "ny": 768,
+      "estimated_bytes": 47775744,
+      "cells_per_wavelength": 24.0,
+      "cells_per_feature": 6.0,
+      "path": 38.8329756778952,
+      "phase_radians": 0.3075708770567125,
+      "supported": true,
+      "reason": ""
+    }
+  ],
+  "passed": false
+}

@@ -4,17 +4,17 @@
   "cases": [
     {
       "name": "Preview",
-      "dx": 0.028469750889679714,
+      "dx": 0.028119507908611598,
       "grid": [
-        2810,
-        1686
+        2845,
+        1707
       ],
-      "focus_x": 53.082311176206396,
+      "focus_x": 53.49414883804713,
       "back_focal_reference": 23.533580676613465,
-      "relative_error": 0.07750000000000012,
-      "gain": 10.777233123779297,
+      "relative_error": 0.060000000000000164,
+      "gain": 11.371500015258789,
       "passed": true,
-      "seconds": 261.8503448749543
+      "seconds": 403.4781044999836
     },
     {
       "name": "Custom convergence",
@@ -28,20 +28,20 @@
       "relative_error": 0.06250000000000011,
       "gain": 11.283102035522461,
       "passed": true,
-      "seconds": 429.00879695801996
+      "seconds": 518.800863832992
     }
   ],
   "presets": [
     {
       "name": "Preview",
-      "dx": 0.028469750889679714,
-      "nx": 2810,
-      "ny": 1686,
-      "estimated_bytes": 341111520,
-      "cells_per_wavelength": 18.733333333333334,
-      "cells_per_feature": 96.42395589264106,
+      "dx": 0.028119507908611598,
+      "nx": 2845,
+      "ny": 1707,
+      "estimated_bytes": 349661880,
+      "cells_per_wavelength": 18.96666666666667,
+      "cells_per_feature": 97.62496601941773,
       "path": 48.02082881417188,
-      "phase_radians": 2.7257832581056882,
+      "phase_radians": 2.6583293527229035,
       "supported": true,
       "reason": ""
     },
@@ -72,6 +72,6 @@
       "reason": "High Quality needs 5665 \u00d7 3399 cells and 1322.2 MiB of numerical buffers; limit: 4096 cells per axis and 512 MiB. Reduce the domain or choose a lower quality."
     }
   ],
-  "focus_shift": 0.015000000000000032,
+  "focus_shift": 0.002499999999999955,
   "passed": true
 }

@@ -139,11 +139,15 @@ class MainWindow(PrototypeWindow):
                 for side in ('left','right'):scale.getAxis(side).setTextPen(pg.mkPen(ink))
             font=QFont();font.setPixelSize(round(11*self.project.display.text_scale))
             for chart in (self.plot,self.second,self.profile_plot):
+                factor=self.project.display.text_scale
+                chart.getPlotItem().layout.setContentsMargins(8*factor,12*factor,8*factor,8*factor)
                 for side in ('left','bottom','right'):
                     axis=chart.getAxis(side);axis.setStyle(tickFont=font)
-                    axis.setLabel(**{'font-size':f'{11*self.project.display.text_scale:g}px'})
+                    axis.setLabel(**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
             for scale in (self.scale,self.second_scale):
-                scale.axis.setStyle(tickFont=font);scale.axis.setLabel(**{'font-size':f'{11*self.project.display.text_scale:g}px'})
+                scale.axis.setStyle(tickFont=font);scale.axis.setLabel(**{'color':ink,'font-size':f'{11*self.project.display.text_scale:g}px'})
+            legend=self.profile_plot.getPlotItem().legend
+            legend.setLabelTextColor(ink);legend.setLabelTextSize(f'{11*self.project.display.text_scale:g}px')
 
     def _refresh_controls(self):
         running=self.lifecycle.state==State.RUNNING
@@ -211,8 +215,9 @@ class MainWindow(PrototypeWindow):
 
     def _update_grid_label(self):
         super()._update_grid_label()
-        from wave_studio.domain.quality import estimate
+        from wave_studio.domain.quality import estimate,wall_cell_ties
         e=estimate(self.project,self.project.settings.quality,self.project.settings.dx)
+        if wall_cell_ties(self.project,self.project.settings.dx):self.warning.setText(self.warning.text()+'\nA wall face crosses cell centres; the half-open tie rule can break symmetry. Apply a preset or adjust grid spacing.')
         self.warning.setText(self.warning.text()+f'\n{e.name}: {e.cells_per_wavelength:.1f} cells / shortest wavelength; predicted phase drift {e.phase_radians:.3f} rad over {e.path:.2f} reference lengths. Homogeneous stencil estimate; interfaces and concave necks need convergence checks.')
 
     def _selected(self):
@@ -226,10 +231,22 @@ class MainWindow(PrototypeWindow):
     def find_selected(self):return next((o for o in self.project.objects+self.project.detectors if o.id==self.selected),None)
 
     def _rebuild_scene(self):
-        self._rebuilding=True;self.tree.blockSignals(True);self.tree.clear()
-        for obj in self.project.objects+self.project.detectors:
-            item=QTreeWidgetItem([obj.name]);item.setData(0,Qt.ItemDataRole.UserRole,obj.id);self.tree.addTopLevelItem(item)
-            if obj.id==self.selected:item.setSelected(True)
+        self._rebuilding=True;self.tree.blockSignals(True)
+        # Reconcile rows without resetting the model: macOS accessibility loses
+        # the outline after clear(), and keyboard focus should survive edits.
+        objects=self.project.objects+self.project.detectors
+        wanted={o.id for o in objects}
+        for i in range(self.tree.topLevelItemCount()-1,-1,-1):
+            if self.tree.topLevelItem(i).data(0,Qt.ItemDataRole.UserRole) not in wanted:self.tree.takeTopLevelItem(i)
+        existing={self.tree.topLevelItem(i).data(0,Qt.ItemDataRole.UserRole):self.tree.topLevelItem(i) for i in range(self.tree.topLevelItemCount())}
+        for i,obj in enumerate(objects):
+            item=existing.get(obj.id)
+            if item is None:item=QTreeWidgetItem();item.setData(0,Qt.ItemDataRole.UserRole,obj.id)
+            old=self.tree.indexOfTopLevelItem(item)
+            if old!=i:
+                if old>=0:self.tree.takeTopLevelItem(old)
+                self.tree.insertTopLevelItem(i,item)
+            item.setText(0,obj.name);item.setSelected(obj.id==self.selected)
         self.tree.blockSignals(False)
         current=self.detector_combo.currentData();self.detector_combo.blockSignals(True);self.detector_combo.clear()
         for d in self.project.detectors:self.detector_combo.addItem(d.name,d.id)

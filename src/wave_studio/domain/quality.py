@@ -10,6 +10,11 @@ PRESETS={'Preview':(10,2,math.pi),'Balanced':(12,4,math.pi/2),'High Quality':(20
 BUFFER_LIMIT=512*1024**2
 
 
+def wall_cell_ties(project,dx):
+    """Half-open wall faces on cell centres can break reflection symmetry."""
+    return any(abs((v/dx)%1-.5)<1e-8 for o in project.objects if isinstance(o,WallObject) for v in (o.x,o.y,o.x+o.width,o.y+o.height))
+
+
 @dataclass(frozen=True)
 class QualityEstimate:
     name: str
@@ -67,6 +72,9 @@ def estimate(project,name,dx=None):
             divisions=max(1,math.ceil(unit/target))
             dx=unit/divisions
             nx,ny=round(s.width/dx),round(s.height/dx)
+            if wall_cell_ties(project,dx):
+                target=unit/(divisions+1)
+                continue
             if phase_drift(wavelength,index,dx,s.courant,path)<=budget:break
             target=dx*.9
         else:raise ValueError('Could not select a bounded quality grid.')

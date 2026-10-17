@@ -4,18 +4,18 @@
   "cases": [
     {
       "name": "Preview",
-      "dx": 0.25,
+      "dx": 0.1951219512195122,
       "grid": [
-        288,
-        256
+        369,
+        328
       ],
-      "first_minimum": 3.5,
+      "first_minimum": 3.5625,
       "reference": 3.752254,
-      "relative_error": 0.06722732522904906,
-      "asymmetry": 6.724042123096297e-07,
+      "relative_error": 0.050570670322424904,
+      "asymmetry": 7.478622023882053e-07,
       "wall_max": 0.0,
       "passed": true,
-      "seconds": 0.5187869999790564
+      "seconds": 1.2086375000071712
     },
     {
       "name": "Balanced",
@@ -30,7 +30,7 @@
       "asymmetry": 6.818661972829432e-07,
       "wall_max": 0.0,
       "passed": true,
-      "seconds": 4.173689874995034
+      "seconds": 5.275042749999557
     },
     {
       "name": "High Quality",
@@ -45,20 +45,20 @@
       "asymmetry": 7.617204573762137e-07,
       "wall_max": 0.0,
       "passed": true,
-      "seconds": 23.791512749972753
+      "seconds": 48.90634724998381
     }
   ],
   "presets": [
     {
       "name": "Preview",
-      "dx": 0.25,
-      "nx": 288,
-      "ny": 256,
-      "estimated_bytes": 5308416,
-      "cells_per_wavelength": 8.0,
-      "cells_per_feature": 2.0,
+      "dx": 0.1951219512195122,
+      "nx": 369,
+      "ny": 328,
+      "estimated_bytes": 8714304,
+      "cells_per_wavelength": 10.25,
+      "cells_per_feature": 2.5625,
       "path": 38.8329756778952,
-      "phase_radians": 2.9378065586084827,
+      "phase_radians": 1.742268087958511,
       "supported": true,
       "reason": ""
     },

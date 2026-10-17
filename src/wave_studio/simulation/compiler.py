@@ -8,10 +8,10 @@ def compile_project(project):
     project.validate()
     s = project.settings
     if s.quality!='Custom':
-        from wave_studio.domain.quality import estimate,PRESETS
+        from wave_studio.domain.quality import estimate,PRESETS,wall_cell_ties
         e=estimate(project,s.quality,s.dx);wave_cells,feature_cells,budget=PRESETS[s.quality]
         if not e.supported:raise ValueError(e.reason)
-        if e.cells_per_wavelength<wave_cells-1e-7 or e.cells_per_feature is not None and e.cells_per_feature<feature_cells-1e-7 or e.phase_radians>budget+1e-7:
+        if wall_cell_ties(project,s.dx) or e.cells_per_wavelength<wave_cells-1e-7 or e.cells_per_feature is not None and e.cells_per_feature<feature_cells-1e-7 or e.phase_radians>budget+1e-7:
             raise ValueError('This grid no longer meets the selected quality. Reapply the preset or choose Custom.')
     grid = Grid(round(s.width/s.dx),round(s.height/s.dx),s.dx,s.dx*s.courant,s.border_width,s.border_rate)
     materials, walls, sources = [], [], []

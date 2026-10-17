@@ -167,3 +167,71 @@ def test_save_and_discard_supersede_only_own_recovery(window,tmp_path,monkeypatc
     other=Project(name='Other experiment');save(w.recovery,other)
     assert w.confirm_discard() and load(w.recovery)==other
     w.recovery.unlink()
+
+
+@pytest.mark.parametrize('focus',['plot','tree'])
+def test_history_shortcut_while_canvas_or_tree_focused(window,focus):
+    from PySide6.QtGui import QKeySequence
+    from PySide6.QtTest import QTest
+    w=window;source=w.project.objects[0]
+    w.commit(replace(w.project,objects=(replace(source,wavelength=1.5),)))
+    target=getattr(w,focus);w.activateWindow();target.setFocus();QApplication.processEvents()
+    QTest.keySequence(target,QKeySequence(QKeySequence.StandardKey.Undo));QApplication.processEvents()
+    assert w.project.objects[0].wavelength==2
+
+
+def test_large_text_minimum_window_with_two_views_and_long_counters(window):
+    w=window
+    w.commit(replace(w.project,display=replace(w.project.display,text_scale=1.5,secondary_visible=True,theme='Light')))
+    w.time_label.setText('t = 1284.250 · 20,548 steps');w.state_label.setText('Paused')
+    w.resize(980,660);QApplication.processEvents()
+    assert w.size().width()==980 and w.size().height()==660
+    for chart in (w.plot,w.second,w.profile_plot):
+        assert chart.getAxis('bottom').labelStyle['color']=='#42566b'
+    assert w.profile_plot.getPlotItem().legend.opts['labelTextColor']=='#42566b'
+
+
+def test_material_order_history_and_copy_delete_preserve_stopped_state(window):
+    from wave_studio.simulation.lifecycle import State
+    a,b=MaterialObject(name='First',refractive_index=1.2),MaterialObject(name='Second',refractive_index=2)
+    w=window;w.replace_project(Project(objects=(a,b)));w.select_object(a.id)
+    assert w.scene.refractive_index[128,160]==2
+    w.reorder(1);assert w.scene.refractive_index[128,160]==pytest.approx(1.2)
+    w.undo();assert w.scene.refractive_index[128,160]==2
+    w.redo();assert w.scene.refractive_index[128,160]==pytest.approx(1.2)
+    w.duplicate_selected();assert len(w.project.objects)==3
+    w.delete_selected();assert len(w.project.objects)==2
+    assert w.lifecycle.state==State.CHANGED and not w.lifecycle.can_step
+
+
+def test_scene_updates_preserve_outline_rows_and_keyboard_focus(window):
+    from PySide6.QtCore import Qt
+    w=window;source=w.project.objects[0];w.select_object(source.id);row=w.tree.topLevelItem(0)
+    w.tree.setFocus();QApplication.processEvents()
+    w.commit(replace(w.project,objects=(replace(source,name='Renamed',wavelength=1.5),)))
+    assert w.tree.topLevelItem(0) is row and row.text(0)=='Renamed'
+    assert w.tree.hasFocus()
+    extra=MaterialObject();w.commit(replace(w.project,objects=w.project.objects+(extra,)))
+    assert w.tree.topLevelItem(0) is row and w.tree.topLevelItemCount()==2
+    w.selected=extra.id;w._rebuild_scene();w.delete_selected()
+    assert w.tree.topLevelItem(0) is row and w.tree.topLevelItemCount()==1
+
+
+def test_presets_avoid_half_open_wall_ties_and_warn_for_custom(window):
+    from wave_studio.domain.quality import wall_cell_ties
+    p=example('Double slit');assert wall_cell_ties(p,.2)
+    for name in PRESETS:assert not wall_cell_ties(p,estimate(p,name).dx)
+    window.replace_project(replace(p,settings=replace(p.settings,dx=.2)))
+    assert 'half-open tie rule' in window.warning.text()
+
+
+def test_published_physical_acceptance_uses_actual_selected_grids():
+    import json
+    from pathlib import Path
+    root=Path(__file__).resolve().parents[1]
+    for filename,scene in [('quality-slit-results.json','Double slit'),('quality-lens-results.json','Biconvex lens')]:
+        report=json.loads((root/'docs'/filename).read_text());assert report['passed']
+        for result in report['cases']:
+            if result['name'] not in PRESETS:continue
+            selected=estimate(example(scene),result['name'])
+            assert result['grid']==[selected.nx,selected.ny] and result['dx']==selected.dx

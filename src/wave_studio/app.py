@@ -9,11 +9,13 @@ def main(argv=None):
     parser.add_argument('--check-performance',metavar='OUTPUT_DIR',help='Measure the Balanced MPS editor/worker with reproducible timings')
     parser.add_argument('--event-loop',choices=('native','pump'),default='native',help='Performance check only: Qt exec or historical processEvents pump')
     parser.add_argument('--performance-seconds',type=int,default=10,help='Performance check only: seconds per case (3–60)')
+    parser.add_argument('--without-run-activity',action='store_true',help='Performance check only: disable macOS run activity and worker QoS for A/B comparison')
+    parser.add_argument('--accessibility-for-check',action='store_true',help='Performance check only: enable Qt accessibility for comparison')
     args = parser.parse_args(argv)
     if args.check_performance:
         if not 3<=args.performance_seconds<=60:parser.error('Performance duration must be between 3 and 60 seconds.')
         from .performance import run_performance
-        return run_performance(args.check_performance,args.event_loop,args.performance_seconds)
+        return run_performance(args.check_performance,args.event_loop,args.performance_seconds,args.without_run_activity,args.accessibility_for_check)
     if args.check_workflow:
         from .checks import run_workflow
         return run_workflow(args.check_workflow)

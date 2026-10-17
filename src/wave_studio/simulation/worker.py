@@ -9,6 +9,7 @@ import torch
 import torch.nn.functional as functional
 from wave_sim2d.wave_simulation import WaveSimulator2D
 from .lifecycle import Identity
+from .activity import RunActivity
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,7 @@ class SimulationWorker(QThread):
         self._commands = deque()
         self._closing = False
         self._reset_identity = None
+        self.activity = RunActivity()
 
     def reset_completed(self,identity):
         with self._condition:return self._reset_identity==identity
@@ -89,6 +91,20 @@ class SimulationWorker(QThread):
             self._condition.notify()
 
     def run(self):
+        try:self._run()
+        finally:self._end_work()
+
+    def _begin_work(self):
+        if self.activity.supported and hasattr(QThread,'QualityOfService'):
+            self.setServiceLevel(QThread.QualityOfService.High)
+        self.activity.begin()
+
+    def _end_work(self):
+        self.activity.end()
+        if self.activity.supported and hasattr(QThread,'QualityOfService'):
+            self.setServiceLevel(QThread.QualityOfService.Auto)
+
+    def _run(self):
         sim, identity, running = None, None, False
         last_frame = 0.0
         views={'Field'}
@@ -112,6 +128,7 @@ class SimulationWorker(QThread):
                 if command:
                     action, identity, scene, device = command
                     if action == 'start':
+                        self._begin_work()
                         sim = None  # release old backend state before allocating a new one
                         prepared,specs=(scene if isinstance(scene,tuple) else (scene,()))
                         sim = WaveSimulator2D.from_scene(prepared,device=device)
@@ -121,12 +138,14 @@ class SimulationWorker(QThread):
                     elif action == 'resume':
                         if sim is None:
                             raise RuntimeError('No paused simulation is available. Reset and press Run.')
-                        running = True
+                        self._begin_work();running = True
                     elif action == 'pause':
                         running = False
                         if sim is not None:
                             publish()
+                        self._end_work()
                     elif action == 'reset':
+                        self._end_work()
                         was_mps=sim is not None and sim.device.type=='mps'
                         running, sim = False, None
                         self.latest.take()
@@ -135,8 +154,9 @@ class SimulationWorker(QThread):
                     elif action == 'step':
                         if sim is None or running:
                             raise RuntimeError('Step requires a paused, initialized simulation.')
-                        sim.step()
-                        publish()
+                        self._begin_work()
+                        try:sim.step();publish()
+                        finally:self._end_work()
                     elif action == 'detectors':
                         if sim is not None:
                             sim.measurements.configure(scene,sim.t)
@@ -163,6 +183,7 @@ class SimulationWorker(QThread):
                         if not self._commands and not self._closing:
                             self._condition.wait(max(0,self.BLOCK_INTERVAL*block/self.BLOCK_STEPS-(monotonic()-started)) if mode=="Economical" else 0)
             except Exception as error:
+                self._end_work()
                 running, sim = False, None
                 self.latest.put(Failure(identity,str(error) or type(error).__name__))
         was_mps=sim is not None and sim.device.type=='mps'

@@ -81,27 +81,37 @@ class SettingsDialog(QDialog):
         self.device.model().item(1).setEnabled(torch.backends.mps.is_available())
         form.addRow('Compute device',self.device)
         self.mode=QComboBox();self.mode.addItems(['Economical','Performance']);self.mode.setCurrentText(project.compute_mode);form.addRow('Compute mode',self.mode)
-        self.quality.currentTextChanged.connect(self.preset)
-        self.boxes['dx'].valueChanged.connect(self._custom_spacing)
+        form.addRow(QLabel('Resource limits (saved with this project)'))
+        from wave_studio.domain.resources import MAX_BUFFER_MIB,MAX_AXIS_CELLS
+        for name,label,minimum,maximum in (('buffer_limit_mib','Numerical buffer budget (MiB)',1,MAX_BUFFER_MIB),('max_axis_cells','Maximum cells per axis',8,MAX_AXIS_CELLS)):
+            box=QSpinBox();box.setRange(minimum,maximum);box.setSingleStep(64 if name=='buffer_limit_mib' else 256);box.setValue(getattr(project.settings,name));box.setKeyboardTracking(False)
+            box.setToolTip('Admission limit, not a prediction of total memory or a guarantee that this computer can run the grid.')
+            self.boxes[name]=box;form.addRow(label,box)
         body=QWidget();body.setLayout(form);scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(body);layout.addWidget(scroll)
         self.resize(600,min(720,QApplication.primaryScreen().availableGeometry().height()-80))
         note=QLabel('Geometry is preserved when quality changes. Preview may underresolve short waves and small structures. Final accuracy depends on the experiment.');note.setWordWrap(True);layout.addWidget(note)
         self.error=QLabel('');self.error.setWordWrap(True);layout.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel);buttons.accepted.connect(self.apply);buttons.rejected.connect(self.reject);layout.addWidget(buttons)
+        self.quality.currentTextChanged.connect(self.preset)
+        self.boxes['dx'].valueChanged.connect(self._custom_spacing)
+        for name,box in self.boxes.items():
+            if name!='dx':box.valueChanged.connect(lambda *args:self.preset(self.quality.currentText()))
+        self.preset(self.quality.currentText())
 
     def _custom_spacing(self,*args):
-        if not self._setting_preset:self.quality.setCurrentText('Custom')
+        if not self._setting_preset:
+            self.quality.setCurrentText('Custom');self.preset('Custom')
 
     def preset(self,name):
-        if name=='Custom': return
         from wave_studio.domain.quality import estimate
+        from wave_studio.domain.resources import summary
         try:
             settings=replace(self.project.settings,**{k:b.value() for k,b in self.boxes.items()})
-            result=estimate(replace(self.project,settings=settings),name)
+            result=estimate(replace(self.project,settings=settings),name,settings.dx if name=='Custom' else None)
             self._setting_preset=True
             self.boxes['dx'].setValue(result.dx)
             self._setting_preset=False
-            self.error.setText(result.reason or f'{result.nx} × {result.ny} · {result.estimated_bytes/1024**2:.1f} MiB · {result.cells_per_wavelength:.1f} cells / shortest wavelength · predicted phase drift {result.phase_radians:.3f} rad over {result.path:.2f} reference lengths.')
+            self.error.setText(summary(settings,result.nx,result.ny)+f'\n{result.cells_per_wavelength:.1f} cells / shortest wavelength · predicted phase drift {result.phase_radians:.3f} rad over {result.path:.2f} reference lengths.')
         except (ValueError,ZeroDivisionError) as error:self.error.setText(str(error))
 
     def apply(self):

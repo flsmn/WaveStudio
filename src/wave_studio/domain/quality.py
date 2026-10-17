@@ -5,9 +5,9 @@ from functools import reduce
 import math
 from wave_sim2d.dispersion import phase_drift
 from .project import SourceObject,MaterialObject,WallObject,LensObject
+from .resources import buffer_bytes,rejection
 
 PRESETS={'Preview':(10,2,math.pi),'Balanced':(12,4,math.pi/2),'High Quality':(20,6,math.pi/4)}
-BUFFER_LIMIT=512*1024**2
 
 
 def wall_cell_ties(project,dx):
@@ -79,7 +79,7 @@ def estimate(project,name,dx=None):
             target=dx*.9
         else:raise ValueError('Could not select a bounded quality grid.')
     nx,ny=round(s.width/dx),round(s.height/dx)
-    memory=nx*ny*72
-    supported=min(nx,ny)>=8 and max(nx,ny)<=4096 and memory<=BUFFER_LIMIT
-    reason='' if supported else f'{name} needs {nx} × {ny} cells and {memory/1024**2:.1f} MiB of numerical buffers; limit: 4096 cells per axis and 512 MiB. Reduce the domain or choose a lower quality.'
+    memory=buffer_bytes(nx,ny)
+    reason=rejection(s,nx,ny)
+    supported=not reason
     return QualityEstimate(name,dx,nx,ny,memory,wavelength/(index*dx),feature/dx if feature else None,path,phase_drift(wavelength,index,dx,s.courant,path),supported,reason)

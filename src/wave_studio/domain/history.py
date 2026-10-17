@@ -2,7 +2,8 @@ from dataclasses import asdict,replace
 
 
 def change_kind(before,after):
-    if (replace(before.settings,quality='Custom'),before.objects,before.reference_length)!=(replace(after.settings,quality='Custom'),after.objects,after.reference_length): return 'physical'
+    def physical(settings):return replace(settings,quality='Custom',buffer_limit_mib=512,max_axis_cells=4096)
+    if (physical(before.settings),before.objects,before.reference_length)!=(physical(after.settings),after.objects,after.reference_length): return 'physical'
     if before.detectors!=after.detectors: return 'measurement'
     return 'display'
 

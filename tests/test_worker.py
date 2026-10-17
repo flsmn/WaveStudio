@@ -45,6 +45,7 @@ def test_single_worker_pause_step_reset_and_shutdown():
         assert not lifecycle.accepts(stepped.identity)
         time.sleep(.05)
         assert worker.latest.take() is None
+        assert worker.reset_completed(lifecycle.identity)
         lifecycle.run()
         worker.submit('start',lifecycle.identity,compile_project(p),'cpu')
         restarted = frame_from(worker)
@@ -77,3 +78,26 @@ def test_worker_failure_stops_without_automatic_restart(monkeypatch):
         assert len(calls)==1 and worker.latest.take() is None
     finally:
         worker.shutdown();assert worker.wait(5000)
+
+
+def test_live_preview_keeps_full_paused_frames_and_does_not_mutate_solver(monkeypatch):
+    import torch,numpy as np
+    from wave_studio.simulation.worker import display_snapshot
+    field=torch.arange(128*64,dtype=torch.float32).reshape(64,128);original=field.clone()
+    image=display_snapshot(field,32)
+    assert image.shape==(16,32) and not image.flags.writeable
+    assert torch.equal(field,original)
+    np.testing.assert_array_equal(display_snapshot(field),field.numpy())
+    monkeypatch.setattr(SimulationWorker,'DISPLAY_AXIS_LIMIT',32)
+    p=Project();lifecycle=Lifecycle(p.id);lifecycle.run();worker=SimulationWorker();worker.start()
+    try:
+        worker.submit('start',lifecycle.identity,compile_project(p),'cpu')
+        live=frame_from(worker,lambda f:f.steps>0)
+        assert live.preview and live.field.shape==(32,32)
+        worker.submit('pause',lifecycle.identity)
+        paused=frame_from(worker,lambda f:f.paused)
+        assert not paused.preview and paused.field.shape==(256,256)
+        worker.submit('step',lifecycle.identity)
+        stepped=frame_from(worker,lambda f:f.steps>paused.steps)
+        assert stepped.paused and not stepped.preview and stepped.field.shape==(256,256)
+    finally:worker.shutdown();assert worker.wait(5000)

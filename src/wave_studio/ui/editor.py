@@ -107,7 +107,7 @@ class MainWindow(PrototypeWindow):
         self.second=pg.PlotWidget();self.second.setAspectLocked(True);self.second.setLabel('bottom','x',units='reference length');self.second.setLabel('left','y',units='reference length')
         self.plot.getViewBox().sigRangeChanged.connect(lambda *args:self._sync_views(self.plot,self.second))
         self.second.getViewBox().sigRangeChanged.connect(lambda *args:self._sync_views(self.second,self.plot))
-        self.second_image=pg.ImageItem(axisOrder='row-major');self.second.addItem(self.second_image)
+        self.second_image=pg.ImageItem(axisOrder='row-major',autoDownsample=True);self.second.addItem(self.second_image)
         self.second_scale=pg.ColorBarItem(values=(-1,1),colorMap=self._field_map(),interactive=False);self.second_scale.setImageItem(self.second_image,insert_in=self.second.getPlotItem())
         self.splitter.addWidget(self.second);self.second.hide();canvas.layout().insertWidget(1,self.splitter,1)
         self.secondary_view=QComboBox();self.secondary_view.addItems(['Intensity','Field','Material']);self.secondary_view.currentTextChanged.connect(self._views_changed);self.secondary_view.hide()
@@ -217,6 +217,8 @@ class MainWindow(PrototypeWindow):
         super()._update_grid_label()
         from wave_studio.domain.quality import estimate,wall_cell_ties
         e=estimate(self.project,self.project.settings.quality,self.project.settings.dx)
+        from wave_studio.domain.resources import summary
+        self.warning.setText(self.warning.text()+'\n'+summary(self.project.settings,e.nx,e.ny))
         if wall_cell_ties(self.project,self.project.settings.dx):self.warning.setText(self.warning.text()+'\nA wall face crosses cell centres; the half-open tie rule can break symmetry. Apply a preset or adjust grid spacing.')
         self.warning.setText(self.warning.text()+f'\n{e.name}: {e.cells_per_wavelength:.1f} cells / shortest wavelength; predicted phase drift {e.phase_radians:.3f} rad over {e.path:.2f} reference lengths. Homogeneous stencil estimate; interfaces and concave necks need convergence checks.')
 
@@ -375,7 +377,8 @@ class MainWindow(PrototypeWindow):
                 if self._empty_image is None or self._empty_image.shape!=self.scene.grid.shape:self._empty_image=np.zeros(self.scene.grid.shape,dtype=np.float32)
                 data=self._empty_image
             g=self.scene.grid
-            configuration=(view,levels,g.nx,g.ny,g.width,g.height)
+            if self.frame is not None and self.frame.preview and view!='Material':label+=' (live preview)'
+            configuration=(view,levels,g.nx,g.ny,g.width,g.height,data.shape,label)
             changed=self._image_configs.get(id(image))!=configuration
             if changed:
                 scale.setColorMap(color);scale.setLevels(levels);scale.getAxis('left').setLabel(label);scale.axis.setWidth(75)
@@ -418,11 +421,13 @@ class MainWindow(PrototypeWindow):
 
     def run_simulation(self):
         try:
-            scene=compile_project(self.project);fresh=self.lifecycle.run();self.scene=scene
+            # Every accepted physical edit already prepares this exact scene.
+            # Re-rasterizing millions of cells on Run/Resume blocks the GUI.
+            self.project.validate();scene=self.scene;fresh=self.lifecycle.run()
             if fresh:self.run_project=self.project;self.profiles={};self.frame=None;self._last_steps=0;self._last_rate=monotonic();self._frames=0
             self.worker.submit('start' if fresh else 'resume',self.lifecycle.identity,(scene,self.detector_specs()),self.project.settings.device)
             self.worker.submit('mode',self.lifecycle.identity,self.project.compute_mode);self._views_changed()
-            self.message.setText('Experiment running. Intensity view is a live preview; detector windows provide completed measurements.')
+            self.message.setText('Experiment running. '+('Large-grid live views are reduced; Pause shows full detail. Measurements keep full resolution.' if max(scene.grid.shape)>self.worker.DISPLAY_AXIS_LIMIT else 'Intensity view is a live preview; detector windows provide completed measurements.'))
         except Exception as error:self.lifecycle.fail(str(error));self.message.setText(str(error))
         self._refresh_controls()
 
@@ -446,7 +451,7 @@ class MainWindow(PrototypeWindow):
             self._last_rate=now;self._last_steps=result.steps;self._frames=0
 
     def metadata(self):
-        return {'scene':physical_data(self.run_project or self.project),'scene_revision':self.lifecycle.scene_revision,'run_id':self.lifecycle.run_id,'generation':self.lifecycle.generation,'engine_version':engine_version,'grid':asdict(self.scene.grid),'dt':self.scene.grid.dt,'backend':self.frame.backend if self.frame else self.project.settings.device,'dtype':'float32','time':self.frame.time if self.frame else 0,'steps':self.frame.steps if self.frame else 0}
+        return {'scene':physical_data(self.run_project or self.project),'scene_revision':self.lifecycle.scene_revision,'run_id':self.lifecycle.run_id,'generation':self.lifecycle.generation,'engine_version':engine_version,'grid':asdict(self.scene.grid),'dt':self.scene.grid.dt,'backend':self.frame.backend if self.frame else self.project.settings.device,'dtype':'float32','time':self.frame.time if self.frame else 0,'steps':self.frame.steps if self.frame else 0,'display_preview':bool(self.frame and self.frame.preview),'display_shape':list(self.frame.field.shape if self.frame.field is not None else self.frame.intensity.shape) if self.frame and (self.frame.field is not None or self.frame.intensity is not None) else None}
 
     def _plot_profiles(self,*args):
         if not hasattr(self,'profile_plot'):return

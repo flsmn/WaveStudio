@@ -13,7 +13,7 @@ def compile_project(project):
         if not e.supported:raise ValueError(e.reason)
         if wall_cell_ties(project,s.dx) or e.cells_per_wavelength<wave_cells-1e-7 or e.cells_per_feature is not None and e.cells_per_feature<feature_cells-1e-7 or e.phase_radians>budget+1e-7:
             raise ValueError('This grid no longer meets the selected quality. Reapply the preset or choose Custom.')
-    grid = Grid(round(s.width/s.dx),round(s.height/s.dx),s.dx,s.dx*s.courant,s.border_width,s.border_rate)
+    grid = Grid(round(s.width/s.dx),round(s.height/s.dx),s.dx,s.dx*s.courant,s.border_width,s.border_rate,s.max_axis_cells)
     materials, walls, sources = [], [], []
     for obj in project.objects:
         if isinstance(obj,MaterialObject):
@@ -25,8 +25,6 @@ def compile_project(project):
         elif isinstance(obj,SourceObject):
             sources.append(Source(obj.start,obj.end,obj.wavelength,obj.amplitude,obj.phase))
     for detector in project.detectors: detector_spec(detector,0).validate(grid)
-    if grid.estimated_bytes > 512*1024**2:
-        raise ValueError("Estimated numerical buffers exceed the 512 MiB development budget. Reduce resolution.")
     return prepare_scene(grid,materials,walls,sources)
 
 

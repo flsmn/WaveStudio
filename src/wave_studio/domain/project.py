@@ -47,6 +47,8 @@ class SimulationSettings:
     border_rate: float = 2
     device: str = 'cpu'
     quality: str = 'Custom'
+    buffer_limit_mib: int = 512
+    max_axis_cells: int = 4096
 
 
 @dataclass(frozen=True)
@@ -94,6 +96,9 @@ class Project:
             raise ValueError('This prototype offers CPU and MPS only.')
         if any(abs(v/s.dx-round(v/s.dx)) > 1e-7 for v in (s.width,s.height)):
             raise ValueError('Domain dimensions must be integer multiples of grid spacing.')
+        from .resources import rejection
+        reason=rejection(s,round(s.width/s.dx),round(s.height/s.dx))
+        if reason:raise ValueError(reason)
         if not self.id or len({o.id for o in self.objects}) != len(self.objects) or any(not o.id for o in self.objects):
             raise ValueError('Every object must have a distinct nonempty ID.')
         for obj in self.objects:

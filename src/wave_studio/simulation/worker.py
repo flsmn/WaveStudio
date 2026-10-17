@@ -5,6 +5,8 @@ from threading import Condition, Lock
 from time import monotonic
 from PySide6.QtCore import QThread
 import numpy as np
+import torch
+import torch.nn.functional as functional
 from wave_sim2d.wave_simulation import WaveSimulator2D
 from .lifecycle import Identity
 
@@ -19,6 +21,18 @@ class Frame:
     profiles: dict | None = None
     backend: str = "cpu"
     paused: bool = False
+    preview: bool = False
+
+
+def display_snapshot(tensor,max_axis=None):
+    """Bound live transfer/render cost. Paused frames retain every grid cell."""
+    value=tensor.detach()
+    if max_axis and max(value.shape)>max_axis:
+        ratio=max_axis/max(value.shape)
+        size=tuple(max(1,round(n*ratio)) for n in value.shape)
+        value=functional.interpolate(value[None,None],size=size,mode='bilinear',align_corners=False)[0,0]
+    result=value.cpu().numpy().copy();result.setflags(write=False)
+    return result
 
 
 @dataclass(frozen=True)
@@ -46,6 +60,7 @@ class SimulationWorker(QThread):
     BLOCK_STEPS = 4
     DISPLAY_INTERVAL = 1/30
     BLOCK_INTERVAL = 1/60
+    DISPLAY_AXIS_LIMIT = 1024
 
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -53,6 +68,10 @@ class SimulationWorker(QThread):
         self._condition = Condition()
         self._commands = deque()
         self._closing = False
+        self._reset_identity = None
+
+    def reset_completed(self,identity):
+        with self._condition:return self._reset_identity==identity
 
     def submit(self,action,identity,scene=None,device='cpu'):
         with self._condition:
@@ -76,11 +95,12 @@ class SimulationWorker(QThread):
         mode='Economical'
         def publish():
             if sim is None: return
+            limit=self.DISPLAY_AXIS_LIMIT if running else None
+            preview=bool(limit and max(sim.grid.shape)>limit)
             intensity=None
             if 'Intensity' in views:
-                intensity=sim.measurements.intensity.detach().cpu().numpy().copy()
-                intensity.setflags(write=False)
-            self.latest.put(Frame(identity,sim.t,sim.steps,sim.snapshot() if 'Field' in views else None,intensity,sim.measurements.results(),str(sim.device),not running))
+                intensity=display_snapshot(sim.measurements.intensity,limit)
+            self.latest.put(Frame(identity,sim.t,sim.steps,display_snapshot(sim.u,limit) if 'Field' in views else None,intensity,sim.measurements.results(),str(sim.device),not running,preview))
         while True:
             with self._condition:
                 while not self._closing and not self._commands and not running:
@@ -107,8 +127,11 @@ class SimulationWorker(QThread):
                         if sim is not None:
                             publish()
                     elif action == 'reset':
+                        was_mps=sim is not None and sim.device.type=='mps'
                         running, sim = False, None
                         self.latest.take()
+                        if was_mps:torch.mps.empty_cache()
+                        with self._condition:self._reset_identity=identity
                     elif action == 'step':
                         if sim is None or running:
                             raise RuntimeError('Step requires a paused, initialized simulation.')
@@ -142,4 +165,6 @@ class SimulationWorker(QThread):
             except Exception as error:
                 running, sim = False, None
                 self.latest.put(Failure(identity,str(error) or type(error).__name__))
+        was_mps=sim is not None and sim.device.type=='mps'
         sim = None
+        if was_mps:torch.mps.empty_cache()

@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         self.plot.showGrid(x=True,y=True,alpha=.12)
         self.plot.setMouseEnabled(x=True,y=True)
         self.plot.setMenuEnabled(False)
-        self.image = pg.ImageItem(axisOrder='row-major')
+        self.image = pg.ImageItem(axisOrder='row-major',autoDownsample=True)
         self.plot.addItem(self.image)
         self.source_marker = pg.ScatterPlotItem(size=10,pen=pg.mkPen('#ffffff',width=1.5),brush=pg.mkBrush('#55dbc0'))
         self.plot.addItem(self.source_marker)

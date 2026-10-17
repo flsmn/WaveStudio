@@ -1,6 +1,6 @@
 # Wave Studio – Fortschritt
 
-Stand: 17. Oktober 2026. **Studio / Engine 0.1.0.dev3**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
+Stand: 17. Oktober 2026. **Studio / Engine 0.1.0.dev4**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
 
 Der Nutzer hat Windows und Linux ausdrücklich auf später verschoben. Dieser Tracker trennt die lokale Mac-Abnahme von einem stabilen plattformübergreifenden Release. Frühere Zwischenstände und Ausgangsentscheidungen stehen in `docs/DEVELOPMENT_HISTORY.md`.
 
@@ -22,7 +22,7 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 - [x] Preview / Balanced / High Quality berücksichtigen mindestens 10 / 12 / 20 Zellen je kürzester Materialwellenlänge, 2 / 4 / 6 je erfasster Struktur und maximal π / π/2 / π/4 geschätzte Phasendrift. Geometrie und Messdefinitionen bleiben erhalten.
 - [x] Tatsächlich gewählte Doppelspaltraster 369×328 / 576×512 / 864×768 bestanden: Minimumfehler 5,06 / 3,39 / 3,39 %, Asymmetrie <0,0001 %, Wandfeld null.
 - [x] Tatsächliches Linsen-Preview-Raster 2845×1707 und benachbartes Custom-Raster 3200×1920 bestanden: Fokusfehler 6,00 / 6,25 %, Verstärkung 11,37 / 11,28, Fokusverschiebung 0,25 % ≤5 %.
-- [x] Linsen-Balanced/High Quality werden wegen 588,7 / 1322,2 MiB klar abgewiesen; High überschreitet zusätzlich die Achsengrenze. Diese Fälle sind ressourcenbedingt abgewiesen und ausdrücklich nicht physikalisch bestanden.
+- [x] Unter den dev3-Standardgrenzen wurden Linsen-Balanced/High Quality wegen 588,7 / 1322,2 MiB klar abgewiesen; High überschreitet zusätzlich die Achsengrenze. Diese historischen Fälle sind ressourcenbedingt abgewiesen und ausdrücklich nicht physikalisch bestanden. Dev4 erlaubt höhere explizite Projektbudgets; siehe Nachprüfung unten.
 - [x] Fehlbefunde erhalten: Preview-Eigenmodus 2,295 % Geschwindigkeitsfehler und zunächst 20,22 % Doppelspalt-Asymmetrie. Mindestauflösung erhöht; die Rasterwahl meidet Wandkanten auf Zellmittelpunkten. Halb-offene Rasterregel und alle Toleranzen unverändert. Prüfungen gleichen die veröffentlichten Messraster mit der aktuellen Auswahl ab.
 
 ## Mac-Bedienungsabnahme
@@ -30,7 +30,7 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 - [x] Agent bedient das native Paket mit Maus, nativen Menüs und Tastatur: Run/Pause/exakter Step/Reset, Änderungen ohne Autostart, alle Objektarten, Quellen-/Polygon-/Wand-/Linsengriffe, laufende passive Detektoren einschließlich Linie/Endpunkt, zwei Referenzen und Auswahl der älteren Referenz, Projekt speichern/wiederöffnen, ungültige Datei ohne Zustandsverlust, native CSV-/PNG-Exporte.
 - [x] Abstand und rechter Winkel bei zwei Maßstäben nativ geprüft: 5,03614 / 4,96992 Referenzlängen bei gerundeten Mauspositionen und jeweils 90,000°. Programmatische Qt-Prüfung mit exakten Koordinaten liefert jeweils 5,00000 / 90,000°.
 - [x] Zweite Ansicht, helle/dunkle Darstellung sowie 100/125/150-%-Schrift nativ sichtbar geprüft. Die Mindestgröße 980×660, beide Themes/alle Schriftstufen und lange Zähler werden zusätzlich in Qt automatisiert geprüft. Scrollbare Dialoge/Seitenleiste und umbrechende Werkzeugleisten halten Bedienelemente erreichbar.
-- [x] **43 Tests bestanden**: 15 Engine-, 28 Studio-Prüfungen. Zusätzlich echter Qt-/Worker-Integrationsablauf, CPU/MPS-Vergleich und Paketablauf. Materialreihenfolge, Copy/Delete, Tastaturkürzel und Wiederherstellungsbesitz/-bereinigung sind programmatisch abgedeckt. Dies wird nicht als menschliche Abnahme bezeichnet.
+- [x] **43 Tests im dev3-Abnahmestand bestanden**: 15 Engine-, 28 Studio-Prüfungen. Zusätzlich echter Qt-/Worker-Integrationsablauf, CPU/MPS-Vergleich und Paketablauf. Materialreihenfolge, Copy/Delete, Tastaturkürzel und Wiederherstellungsbesitz/-bereinigung sind programmatisch abgedeckt. Dies wird nicht als menschliche Abnahme bezeichnet.
 - [x] Behoben: veraltete Eigenschaften und Pausenraten, verlorene Referenzauswahl/Splitteraufteilung, verzerrter Zweitansichtsmaßstab, starre Schriftgrößen, Tab-Falle im Polygontext, verdeckte Punkt-/Linsengriffe, falsche Wandkoordinaten-Bezeichnung, alte Wiederherstellung nach Speichern/Verwerfen. Szenenänderungen erhalten jetzt Listenzeilen und Tastaturfokus; die Qt-Regression bestätigt beides.
 - [x] Abschließende native Sichtkontrolle: Achsen, Einheiten und Skalen im hellen Theme bei 150 % lesbar; aktuelle Referenzkurve/Legende zusätzlich im Paketablauf geprüft. Native Bearbeitung und Undo-Menü bestätigen aktualisierte Eigenschaften und sichtbare Listenzeile.
 - [ ] Restbefund Mac-Zugänglichkeitsbrücke: Nach Bearbeitung fehlt die weiterhin sichtbare Szenenliste im Accessibility-Snapshot der Automatisierung. Zeilenidentität und Tastaturfokus bestehen im Qt-Test; vollständige VoiceOver-/AX-Abnahme und native Command-Z-Bestätigung bleiben offen. Dies wird nicht als behoben oder bestanden geführt.
@@ -53,3 +53,14 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 
 - Engine: `84c9ad9` Dispersionsformeln und identische begrenzte Polygonrasterisierung; `76e2423` wiederholte physikalische Referenzen.
 - Studio: `13e33d1` Vorabkriterien; `0cc313a` qualitätsbezogene Raster und Mac-Bedienkorrekturen; `ae6d971` Griffe/Tab; `4380c53` Wiederherstellung/Tastatur/Messwerkzeuge; `11b2f1e` Listenfokus, Kontrast und eindeutige Qualitätsraster; `8c199f8` Einheitenbeschriftungen; `0017e00` Profil-Rendering und kurze MPS-Befehlsgrenzen; `3533c86` umbrechender Status bei großer Schrift. Abschlussnachweise und verbleibender AX-Befund sind im anschließenden Dokumentations-Commit festgehalten.
+
+## Konfigurierbare Ressourcenbudgets / Balanced (dev4)
+
+- [x] Speicherbudget und maximale Achsenlänge pro Projekt einstellbar, gespeichert und vor Rasterallokation geprüft; Vorgaben 512 MiB / 4096 bleiben für bestehende Dateien erhalten.
+- [x] Engine übernimmt explizites Achsenbudget bis in den Solver; reine Budgetänderung erhält Lauf/Messungen. Run/Fortsetzen verwendet vorbereitete Szene.
+- [x] 59 Regressionstests bestanden, einschließlich Altdateien, unzulässiger Budgets, Achsen oberhalb 4096, identischer Numerik und unverändertem Vollraster bei pausierter Vorschau.
+- [x] Zwei UI-Aussetzer-Läufe erhalten: zunächst 395 ms, mit reiner Render-Verkleinerung bis 1177 ms. Live-Übertragung großer Felder auf höchstens 1024 Zellen/Achse begrenzt und sichtbar gekennzeichnet; Pause/Step liefert volles Raster. Reset/Schließen gibt ungenutzten MPS-Cache frei. Die vorab festgelegten Grenzwerte bleiben unverändert.
+- [x] Balanced auf MPS mit 768 MiB bestanden: 3780×2268, 588,7 MiB Rechenpuffer, RSS-Spitze 1000 MiB, MPS-Treiber separat 1117,1 MiB; 18–20 Frames/s, sechs Pause-Vorgänge maximal 137,38 ms, GUI-Heartbeat maximal 135,08 ms. Reset bestätigt nach 25,49 ms, aktives Schließen 284,86 ms. Null MPS-Tensorbelegung nach Reset; 69,1 MiB Backend-Treiberspeicher verbleibt. Siehe `docs/BALANCED_MAC_ACCEPTANCE.md`.
+- [x] Reset-Messung korrigiert: Treiberbelegung ist nicht gleich lebende Solver-Tensoren; explizite Worker-Bestätigung statt unbegründeter Rückkehr-zum-Startwert-Annahme. Fehlbericht erhalten, Zeitgrenzen unverändert.
+- [ ] Physikalische Fokusabnahme für Balanced/High Quality weiterhin offen; diese Nachprüfung betrifft Ressourcen und Bedienbarkeit.
+- [ ] Aktualisiertes natives dev4-Paket bauen und Ressourcenfelder/Balanced bedienen; Nachweise und Commits abschließen.

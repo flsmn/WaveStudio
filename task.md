@@ -1,6 +1,6 @@
 # Wave Studio – Fortschritt
 
-Stand: 17. Oktober 2026. **Studio / Engine 0.1.0.dev4**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
+Stand: 18. Oktober 2026. **Studio / Engine 0.1.0.dev4**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
 
 Der Nutzer hat Windows und Linux ausdrücklich auf später verschoben. Dieser Tracker trennt die lokale Mac-Abnahme von einem stabilen plattformübergreifenden Release. Frühere Zwischenstände und Ausgangsentscheidungen stehen in `docs/DEVELOPMENT_HISTORY.md`.
 
@@ -63,4 +63,7 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 - [x] Balanced auf MPS mit 768 MiB bestanden: 3780×2268, 588,7 MiB Rechenpuffer, RSS-Spitze 1000 MiB, MPS-Treiber separat 1117,1 MiB; 18–20 Frames/s, sechs Pause-Vorgänge maximal 137,38 ms, GUI-Heartbeat maximal 135,08 ms. Reset bestätigt nach 25,49 ms, aktives Schließen 284,86 ms. Null MPS-Tensorbelegung nach Reset; 69,1 MiB Backend-Treiberspeicher verbleibt. Siehe `docs/BALANCED_MAC_ACCEPTANCE.md`.
 - [x] Reset-Messung korrigiert: Treiberbelegung ist nicht gleich lebende Solver-Tensoren; explizite Worker-Bestätigung statt unbegründeter Rückkehr-zum-Startwert-Annahme. Fehlbericht erhalten, Zeitgrenzen unverändert.
 - [ ] Physikalische Fokusabnahme für Balanced/High Quality weiterhin offen; diese Nachprüfung betrifft Ressourcen und Bedienbarkeit.
-- [ ] Aktualisiertes natives dev4-Paket bauen und Ressourcenfelder/Balanced bedienen; Nachweise und Commits abschließen.
+- [x] Natives dev4-Paket aus exakten Wheels gebaut; Paketablauf außerhalb der Quellen bestanden. Ressourcenfelder nativ bedient: 512-MiB-Ablehnung, 768-MiB-Freigabe, Achsenbudget 8192/zurück 4096, Balanced/MPS bestätigt, zwei Ansichten, Performance, Pause/Step 543→544, Fortsetzen bis 709 und Reset auf Ready/0. Native Projekt-/PNG-Dateien sichern Budgets, MPS und volles Pausenraster (`docs/balanced-native-results.json`).
+- [x] Einschränkung festgehalten: Native HUD-Stichproben während der UI-Automatisierung zeigten 5–8 Frames/s, der separate Ressourcenlauf 18–20/s. Keine feste Bildrate für dieses große Raster zugesagt; High Quality bleibt auf dem Mac ungetestet.
+
+- Dev4-Implementierung committet: Studio `8b8e23e`, Engine `10f7ce9`. Der native dev4-Build ist geprüft; die Nachweise werden im anschließenden Abschluss-Commit gesichert.

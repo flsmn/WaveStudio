@@ -1,23 +1,25 @@
 {
-  "studio_commit": "3533c86",
-  "engine_commit": "84c9ad9",
-  "version_pair": "0.1.0.dev3 / 0.1.0.dev3",
-  "app_installed_file_bytes": 1081154456,
+  "studio_commit": "8b8e23e",
+  "engine_commit": "10f7ce9",
+  "version_pair": "0.1.0.dev4 / 0.1.0.dev4",
+  "app_installed_file_bytes": 1081159032,
   "wheel_sources_match_current_source": true,
+  "tests": 59,
+  "balanced_resource_report": "balanced-resource-results.json",
+  "balanced_resource_passed": true,
   "frozen_workflow_from_cwd": "/private/tmp",
   "frozen_workflow_passed": true,
-  "native_mps_export_verified": true,
-  "resource_run_note": "Final passing resource run includes profile cache and per-step MPS commands; subsequent 3533c86 changes static footer layout only.",
+  "native_balanced_check": "passed; balanced-native-results.json",
   "wheels": [
     {
-      "name": "wave_studio-0.1.0.dev3-py3-none-any.whl",
-      "bytes": 43151,
-      "sha256": "e04fa88c524baa290ea8618d4d62ceff41e567282214f5efa81451fe997aa40c"
+      "name": "wave_studio-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 45353,
+      "sha256": "1ec7912084e8a431aa7192a080179551aec45157eef0912b5cd527bf2effc2dc"
     },
     {
-      "name": "wave_simulator_2d-0.1.0.dev3-py3-none-any.whl",
-      "bytes": 35930,
-      "sha256": "659cf4ba0b7291ebbd352042870f35390d1c50e71d1122f7c26b47d9c6604d48"
+      "name": "wave_simulator_2d-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 36026,
+      "sha256": "ff6acad32f4077adbfa2f34ad916573e6f6c0bfeab4a6f444bc42a8ab5576a19"
     }
   ]
 }

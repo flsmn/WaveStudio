@@ -1,0 +1,94 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "Apple M1 / 8 GiB",
+  "studio": "0.1.0.dev4",
+  "engine": "0.1.0.dev4",
+  "device": "mps",
+  "criteria": "docs/BALANCED_MAC_PLAN.md",
+  "measurements": {
+    "one_view_economical": {
+      "rss_peak_bytes": 939163648,
+      "mps_current_bytes": 420144640,
+      "mps_driver_bytes": 1169276928,
+      "wall_seconds": 10.04050395800732,
+      "displayed_frames_per_second": 10.557239003473008,
+      "steps_per_second": 10.85602878659017,
+      "process_cpu_seconds_per_second": 1.3512500026634724,
+      "gui_heartbeat_max_gap_ms": 148.38483300991356
+    },
+    "paused": {
+      "rss_peak_bytes": 939163648,
+      "mps_current_bytes": 248720128,
+      "mps_driver_bytes": 1169276928,
+      "wall_seconds": 1.000208167009987,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "process_cpu_seconds_per_second": 0.10777356509919811,
+      "gui_heartbeat_max_gap_ms": 61.71470903791487
+    },
+    "two_views_economical": {
+      "rss_peak_bytes": 939163648,
+      "mps_current_bytes": 248681728,
+      "mps_driver_bytes": 1169276928,
+      "wall_seconds": 10.069085041992366,
+      "displayed_frames_per_second": 8.243052834875732,
+      "steps_per_second": 10.82521396387295,
+      "process_cpu_seconds_per_second": 1.4785661197528381,
+      "gui_heartbeat_max_gap_ms": 155.35062499111518
+    },
+    "two_views_performance": {
+      "rss_peak_bytes": 939163648,
+      "mps_current_bytes": 248725248,
+      "mps_driver_bytes": 1169293312,
+      "wall_seconds": 10.094300457974896,
+      "displayed_frames_per_second": 8.222461808577009,
+      "steps_per_second": 10.996304346410218,
+      "process_cpu_seconds_per_second": 1.4248502964499112,
+      "gui_heartbeat_max_gap_ms": 395.380208035931
+    }
+  },
+  "pause_samples_ms": [
+    104.46174995740876,
+    158.6839579977095,
+    165.4232500004582,
+    130.57170901447535,
+    104.57016702275723,
+    123.41666704742238
+  ],
+  "note": "Process RSS and MPS allocations overlap on unified memory; do not add them. Resource/interaction acceptance only; no new focus certification.",
+  "system_swap_before": "vm.swapusage: total = 5120.00M  used = 4001.00M  free = 1119.00M  (encrypted)",
+  "baseline": {
+    "rss_peak_bytes": 292274176,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 393216
+  },
+  "grid": [
+    3780,
+    2268
+  ],
+  "dx": 0.021164021164021163,
+  "estimated_buffer_bytes": 617258880,
+  "buffer_limit_mib": 768,
+  "max_axis_cells": 4096,
+  "preparation_seconds": 0.7569243750185706,
+  "resource_json_roundtrip": true,
+  "run_handler_ms": 0.828165968414396,
+  "first_frame_seconds": 1.8831324169877917,
+  "paused_steps_stable": true,
+  "exact_step": true,
+  "resume_handler_ms": 1.1079590185545385,
+  "run_grid_measurements_preserved": true,
+  "paused_scene_screenshot": "docs/mac-artifacts/balanced-two-views.png",
+  "reset_handler_ms": 7.930207997560501,
+  "reset_release_ms": 7.952624990139157,
+  "after_reset": {
+    "rss_peak_bytes": 939163648,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 1169276928
+  },
+  "reset_stopped": true,
+  "active_shutdown_ms": 281.9272499764338,
+  "worker_stopped": true,
+  "system_swap_after": "vm.swapusage: total = 5120.00M  used = 4823.06M  free = 296.94M  (encrypted)",
+  "passed": false
+}

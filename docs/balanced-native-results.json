@@ -1,0 +1,62 @@
+{
+  "method": "Agent-operated native Mac packaged app; rate HUD snapshots are observations, not a timed benchmark. See separate controlled editor/worker resource run.",
+  "studio_commit": "8b8e23e",
+  "engine_commit": "10f7ce9",
+  "version_pair": "0.1.0.dev4 / 0.1.0.dev4",
+  "passed": true,
+  "checks": [
+    "native File > Examples > Biconvex lens",
+    "Balanced visibly rejected at default 512 MiB",
+    "buffer budget edited to 768 MiB, live requirements updated",
+    "axis budget edited to 8192 then restored to 4096, preset retained",
+    "reopened settings verified Balanced, 768 MiB and mps",
+    "Run, Performance mode and second intensity view",
+    "Pause, exact Step 543 -> 544, Resume reaches 709 without restart",
+    "native project Save includes both resource settings",
+    "native PNG export confirms actual MPS, dev4, Balanced grid and full paused image",
+    "Reset remains Ready at zero steps, Step disabled"
+  ],
+  "native_hud_fps_observations": [
+    5,
+    8
+  ],
+  "native_hud_note": "Slower during native UI automation than the separate 18\u201320-fps resource run; neither observation is a guaranteed frame rate. Large-grid acceptance does not impose the 512\u00b2 20-fps criterion.",
+  "pause_step_resume_steps": [
+    543,
+    544,
+    709
+  ],
+  "png_metadata": {
+    "backend": "mps",
+    "engine_version": "0.1.0.dev4",
+    "grid": {
+      "nx": 3780,
+      "ny": 2268,
+      "dx": 0.021164021164021163,
+      "dt": 0.010582010582010581,
+      "border_width": 6.0,
+      "border_rate": 2.0,
+      "max_axis_cells": 4096
+    },
+    "steps": 544,
+    "time": 5.756613756613756,
+    "display_preview": false,
+    "display_shape": [
+      2268,
+      3780
+    ],
+    "run_id": "5541736d-b2e5-48e6-8856-b211965679dc"
+  },
+  "saved_settings": {
+    "width": 80.0,
+    "height": 48.0,
+    "dx": 0.021164021164021163,
+    "courant": 0.5,
+    "border_width": 6.0,
+    "border_rate": 2.0,
+    "device": "mps",
+    "quality": "Balanced",
+    "buffer_limit_mib": 768,
+    "max_axis_cells": 4096
+  }
+}

@@ -13,7 +13,9 @@
       "border_width": 8,
       "border_rate": 2,
       "device": "cpu",
-      "quality": "Custom"
+      "quality": "Custom",
+      "buffer_limit_mib": 512,
+      "max_axis_cells": 4096
     },
     "objects": [
       {
@@ -58,7 +60,7 @@
       },
       {
         "type": "MaterialObject",
-        "id": "8a2d0208-eb9f-4988-91ba-37efa6278cb6",
+        "id": "4ee16187-d0cc-43b8-ae86-ff7fb10d99fb",
         "name": "Material",
         "vertices": [
           [
@@ -108,7 +110,7 @@
         "window": 24
       },
       {
-        "id": "73d24476-8c95-47a2-b2d2-26ee94f1fa5a",
+        "id": "45258675-ac4a-4e7a-9b7f-71650dec0855",
         "name": "Second detector",
         "start": [
           50,
@@ -1693,7 +1695,9 @@
               "border_width": 8,
               "border_rate": 2,
               "device": "cpu",
-              "quality": "Custom"
+              "quality": "Custom",
+              "buffer_limit_mib": 512,
+              "max_axis_cells": 4096
             },
             "objects": [
               {
@@ -1739,22 +1743,28 @@
             ]
           },
           "scene_revision": 0,
-          "run_id": "b68371b8-71b2-4352-bb57-275fc23af59a",
+          "run_id": "b19eae93-33d8-4cac-9c7d-7dc5460ade5a",
           "generation": 1,
-          "engine_version": "0.1.0.dev3",
+          "engine_version": "0.1.0.dev4",
           "grid": {
             "nx": 288,
             "ny": 256,
             "dx": 0.25,
             "dt": 0.125,
             "border_width": 8,
-            "border_rate": 2
+            "border_rate": 2,
+            "max_axis_cells": 4096
           },
           "dt": 0.125,
           "backend": "cpu",
           "dtype": "float32",
-          "time": 89.0,
-          "steps": 712
+          "time": 86.0,
+          "steps": 688,
+          "display_preview": false,
+          "display_shape": [
+            256,
+            288
+          ]
         }
       }
     ],

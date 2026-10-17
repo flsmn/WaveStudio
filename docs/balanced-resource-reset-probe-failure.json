@@ -1,0 +1,95 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "Apple M1 / 8 GiB",
+  "studio": "0.1.0.dev4",
+  "engine": "0.1.0.dev4",
+  "device": "mps",
+  "criteria": "docs/BALANCED_MAC_PLAN.md",
+  "measurements": {
+    "one_view_economical": {
+      "rss_peak_bytes": 928628736,
+      "mps_current_bytes": 351612416,
+      "mps_driver_bytes": 1171390464,
+      "wall_seconds": 10.001057750021573,
+      "displayed_frames_per_second": 17.898106827711686,
+      "steps_per_second": 17.898106827711686,
+      "process_cpu_seconds_per_second": 0.99376608439028,
+      "gui_heartbeat_max_gap_ms": 183.8763749692589
+    },
+    "paused": {
+      "rss_peak_bytes": 928628736,
+      "mps_current_bytes": 248681728,
+      "mps_driver_bytes": 1171390464,
+      "wall_seconds": 1.000322584004607,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "process_cpu_seconds_per_second": 0.12787874836124907,
+      "gui_heartbeat_max_gap_ms": 72.02962500741705
+    },
+    "two_views_economical": {
+      "rss_peak_bytes": 928628736,
+      "mps_current_bytes": 283012352,
+      "mps_driver_bytes": 1173913600,
+      "wall_seconds": 10.000646916974802,
+      "displayed_frames_per_second": 19.29875153100421,
+      "steps_per_second": 19.29875153100421,
+      "process_cpu_seconds_per_second": 0.6592304532629475,
+      "gui_heartbeat_max_gap_ms": 136.0485419863835
+    },
+    "two_views_performance": {
+      "rss_peak_bytes": 928628736,
+      "mps_current_bytes": 248725248,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.014066375035327,
+      "displayed_frames_per_second": 19.872047233089962,
+      "steps_per_second": 19.872047233089962,
+      "process_cpu_seconds_per_second": 0.5818117018401975,
+      "gui_heartbeat_max_gap_ms": 37.477292004041374
+    }
+  },
+  "pause_samples_ms": [
+    141.89466694369912,
+    68.22129199281335,
+    118.16558399004862,
+    107.0188750163652,
+    73.97370802937075,
+    80.17575001576915
+  ],
+  "note": "Process RSS and MPS allocations overlap on unified memory; do not add them. Resource/interaction acceptance only; no new focus certification.",
+  "system_swap_before": "vm.swapusage: total = 6144.00M  used = 4924.50M  free = 1219.50M  (encrypted)",
+  "baseline": {
+    "rss_peak_bytes": 312180736,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 393216
+  },
+  "grid": [
+    3780,
+    2268
+  ],
+  "dx": 0.021164021164021163,
+  "estimated_buffer_bytes": 617258880,
+  "buffer_limit_mib": 768,
+  "max_axis_cells": 4096,
+  "preparation_seconds": 0.7096851670066826,
+  "resource_json_roundtrip": true,
+  "run_handler_ms": 1.7554169753566384,
+  "first_frame_seconds": 2.0950774169759825,
+  "live_display_shape": [
+    614,
+    1024
+  ],
+  "live_preview_marked": true,
+  "paused_display_shape": [
+    2268,
+    3780
+  ],
+  "paused_full_detail": true,
+  "paused_steps_stable": true,
+  "exact_step": true,
+  "resume_handler_ms": 0.9507090435363352,
+  "run_grid_measurements_preserved": true,
+  "paused_scene_screenshot": "docs/mac-artifacts/balanced-two-views.png",
+  "reset_handler_ms": 22.59820798644796,
+  "passed": false,
+  "error": "Timed out: Press Run to start the experiment."
+}

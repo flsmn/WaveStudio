@@ -1,0 +1,23 @@
+{
+  "studio_commit": "3533c86",
+  "engine_commit": "84c9ad9",
+  "version_pair": "0.1.0.dev3 / 0.1.0.dev3",
+  "app_installed_file_bytes": 1081154456,
+  "wheel_sources_match_current_source": true,
+  "frozen_workflow_from_cwd": "/private/tmp",
+  "frozen_workflow_passed": true,
+  "native_mps_export_verified": true,
+  "resource_run_note": "Final passing resource run includes profile cache and per-step MPS commands; subsequent 3533c86 changes static footer layout only.",
+  "wheels": [
+    {
+      "name": "wave_studio-0.1.0.dev3-py3-none-any.whl",
+      "bytes": 43151,
+      "sha256": "e04fa88c524baa290ea8618d4d62ceff41e567282214f5efa81451fe997aa40c"
+    },
+    {
+      "name": "wave_simulator_2d-0.1.0.dev3-py3-none-any.whl",
+      "bytes": 35930,
+      "sha256": "659cf4ba0b7291ebbd352042870f35390d1c50e71d1122f7c26b47d9c6604d48"
+    }
+  ]
+}

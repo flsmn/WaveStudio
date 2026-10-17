@@ -6,6 +6,7 @@ import resource
 import time
 import numpy as np
 import torch
+from wave_sim2d.measurements import Detector
 from wave_sim2d.config import Grid,Source,Material,Wall,rectangle
 from wave_sim2d.geometry import prepare_scene
 from wave_sim2d.wave_simulation import WaveSimulator2D
@@ -15,14 +16,18 @@ report={'platform':platform.platform(),'torch':torch.__version__,'cpu_threads':1
 grid=Grid(128,128,.25,.125,4)
 scene=prepare_scene(grid,[Material(rectangle(19,8,5,16),1.5,.1)],walls=[Wall(26,0,.5,12)],sources=[Source((12,16),wavelength=4),Source((9,8),(9,24),wavelength=4,amplitude=.1)])
 reference=None
+reference_profile=None
 for backend in ('cpu','mps'):
     if backend=='mps' and not torch.backends.mps.is_available():
         report['backends'][backend]={'available':False}
         continue
     sim=WaveSimulator2D.from_scene(scene,device=backend)
+    sim.measurements.configure([Detector("profile",(24,8),(24,24),33,2,10)],0)
     sim.step(180)
     values=sim.snapshot()
-    if reference is None: reference=values
+    profile=np.array(sim.measurements.results()["profile"]["values"])
+    if reference is None: reference=values;reference_profile=profile
+    profile_error=float(np.linalg.norm(profile-reference_profile)/np.linalg.norm(reference_profile))
     l2=float(np.linalg.norm(values-reference)/np.linalg.norm(reference))
     maximum=float(abs(values-reference).max())
     big=WaveSimulator2D.from_scene(prepare_scene(Grid(512,512,.125,.0625,6),sources=[Source((32,32),wavelength=4)]),device=backend)
@@ -33,7 +38,7 @@ for backend in ('cpu','mps'):
     if backend=='mps': torch.mps.synchronize()
     elapsed=time.monotonic()-begin
     cpu_elapsed=time.process_time()-cpu_begin
-    report['backends'][backend]={'available':True,'relative_l2':l2,'max_absolute':maximum,'passed':l2<=.005 and maximum<=.0005,'steps_per_second_512':100/elapsed,'mean_step_ms_512':elapsed*10,'process_cpu_seconds_per_wall_second':cpu_elapsed/elapsed,'rss_peak_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}
+    report['backends'][backend]={'available':True,'relative_l2':l2,'max_absolute':maximum,'profile_relative_l2':profile_error,'passed':l2<=.005 and maximum<=.0005 and profile_error<=.005,'steps_per_second_512':100/elapsed,'mean_step_ms_512':elapsed*10,'process_cpu_seconds_per_wall_second':cpu_elapsed/elapsed,'rss_peak_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}
     if backend=='mps':
         report['backends'][backend]['mps_allocated_bytes']=torch.mps.current_allocated_memory()
         report['backends'][backend]['memory_note']='Unified memory: MPS allocation is reported separately and must not be added to RSS.'

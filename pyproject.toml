@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wave-studio"
-version = "0.1.0.dev1"
+version = "0.1.0.dev2"
 description = "Desktop workbench for scalar optical wave experiments"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = ["wave-simulator-2d==0.1.0.dev1", "PySide6>=6.8,<7", "pyqtgraph>=0.13.7,<0.15"]
+dependencies = ["wave-simulator-2d==0.1.0.dev2", "PySide6>=6.8,<7", "pyqtgraph>=0.13.7,<0.15"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "build>=1,<2", "pyinstaller>=6,<7"]
@@ -21,3 +21,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+wave_studio = ["data/examples/*.json"]

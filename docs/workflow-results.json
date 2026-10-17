@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "completed finite-window profile",
+    "reference freeze",
+    "same-run resume",
+    "exact single step",
+    "detector-only revision",
+    "other detector preserved",
+    "invalid edit preserved run",
+    "live intensity and second view",
+    "PNG embedded origin",
+    "CSV raw values",
+    "reset preserves reference",
+    "physical undo/redo stays stopped",
+    "file roundtrip including reference",
+    "recovery roundtrip",
+    "three examples compile",
+    "dark/light layout"
+  ],
+  "reference_run_id": "063bae7c-f8b6-4680-b8b3-f2738c00d861"
+}

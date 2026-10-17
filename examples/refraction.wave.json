@@ -1,0 +1,88 @@
+{
+  "format": "wave-studio",
+  "version": 1,
+  "project": {
+    "id": "03908b7f-b252-4ed6-a727-4cf1ff7eb4d4",
+    "name": "Refraction",
+    "reference_length": 1.0,
+    "settings": {
+      "width": 80,
+      "height": 64,
+      "dx": 0.25,
+      "courant": 0.5,
+      "border_width": 5,
+      "border_rate": 2,
+      "device": "cpu"
+    },
+    "objects": [
+      {
+        "type": "SourceObject",
+        "id": "9c197ea4-835e-4f08-8b32-06ea7b23ef39",
+        "name": "Inclined line source",
+        "start": [
+          26.142838281776786,
+          10.248613111120402
+        ],
+        "end": [
+          5.857161718223214,
+          53.751386888879594
+        ],
+        "wavelength": 4,
+        "amplitude": 1.0,
+        "phase": 0.0
+      },
+      {
+        "type": "MaterialObject",
+        "id": "c384d466-c966-43d5-8f8c-f72b0610bae3",
+        "name": "Material",
+        "vertices": [
+          [
+            40,
+            0
+          ],
+          [
+            80,
+            0
+          ],
+          [
+            80,
+            64
+          ],
+          [
+            40,
+            64
+          ]
+        ],
+        "refractive_index": 1.5,
+        "damping_rate": 0.0
+      }
+    ],
+    "display": {
+      "view": "Field",
+      "contrast": 0.25,
+      "intensity_range": 0.0002,
+      "theme": "Dark",
+      "secondary_view": "Intensity",
+      "secondary_visible": false
+    },
+    "detectors": [
+      {
+        "id": "9716eb52-7570-4d29-88f2-fef8dfee7d72",
+        "name": "Detector line",
+        "start": [
+          50,
+          24
+        ],
+        "end": [
+          50,
+          40
+        ],
+        "samples": 129,
+        "settling": 80,
+        "window": 24
+      }
+    ],
+    "references": [],
+    "compute_mode": "Economical"
+  }
+}

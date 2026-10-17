@@ -38,3 +38,13 @@ Engine: 7 Kernprüfungen bestanden; historische Prüfung 9/9 Gruppen. Studio: 4 
 - 17.10.2026: Plan und Bestand geprüft; Umsetzung von M0a und frühem M1-Prototyp begonnen.
 
 - 17.10.2026: Nutzer bestätigt: vorerst nur dieser Mac (M1/8 GB); Linux-/Windows-Tests folgen später. Diese Abnahmen bleiben offen, lokale Funktionsentwicklung wird fortgesetzt. MPS ist außerhalb der Sandbox verfügbar; T08 folgt.
+
+
+## Funktionsausbau nach M0/M1
+
+- E08: passive Punkt-/Liniensampling auf dem Rechengerät; pro Schritt bilineares Feldquadrat, endliches Fenster mit anteiligen Randzeitschritten; Live-Intensität getrennt. Zwei zusätzliche Engine-Prüfungen bestanden.
+- S05/S06: freier Aufbau, Objektliste/Eigenschaften, Ziehen, Polygon, Materialreihenfolge, Undo/Redo; atomische versionierte Projektdateien und begrenzte Wiederherstellung implementiert.
+- S07–S09/B04: Detektoren und Messrevisionen, vier eingefrorene Referenzen, gemeinsame Skalierung, PNG mit Metadaten und CSV-Rohwerte implementiert. Der tatsächliche Qt-/Worker-Integrationstest für den Doppelspalt besteht, einschließlich Detektorumbau im laufenden Feld und Wiederöffnung mit Referenz.
+- S10/S11: parametrisierte Linse nach dem T04-Konturvertrag, zweite Ansicht desselben Workers sowie Abstand/Winkel implementiert. Bei visueller Prüfung gefundenen Fehler der Ansichtskopplung behoben; getrennte Farbwerte für Feld und Intensität.
+- S12/S13: Qualitätsvorschläge/Expertenfelder, Gerätewahl, unabhängiger Rechenmodus, drei bearbeitbare Projektdateien, englische Hilfe und Themes vorhanden. Finale Abnahme, Dokumentation und erneuter nativer Build laufen.
+- Paketstand wird für die neue Mess-/Editor-API auf `0.1.0.dev2` angehoben; dies ist noch kein plattformübergreifendes Release.

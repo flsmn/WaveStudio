@@ -14,7 +14,11 @@ class Frame:
     identity: Identity
     time: float
     steps: int
-    field: np.ndarray
+    field: np.ndarray | None
+    intensity: np.ndarray | None = None
+    profiles: dict | None = None
+    backend: str = "cpu"
+    paused: bool = False
 
 
 @dataclass(frozen=True)
@@ -68,6 +72,15 @@ class SimulationWorker(QThread):
     def run(self):
         sim, identity, running = None, None, False
         last_frame = 0.0
+        views={'Field'}
+        mode='Economical'
+        def publish():
+            if sim is None: return
+            intensity=None
+            if 'Intensity' in views:
+                intensity=sim.measurements.intensity.detach().cpu().numpy().copy()
+                intensity.setflags(write=False)
+            self.latest.put(Frame(identity,sim.t,sim.steps,sim.snapshot() if 'Field' in views else None,intensity,sim.measurements.results(),str(sim.device),not running))
         while True:
             with self._condition:
                 while not self._closing and not self._commands and not running:
@@ -80,7 +93,9 @@ class SimulationWorker(QThread):
                     action, identity, scene, device = command
                     if action == 'start':
                         sim = None  # release old backend state before allocating a new one
-                        sim = WaveSimulator2D.from_scene(scene,device=device)
+                        prepared,specs=(scene if isinstance(scene,tuple) else (scene,()))
+                        sim = WaveSimulator2D.from_scene(prepared,device=device)
+                        sim.measurements.configure(specs,0)
                         running = True
                         last_frame = 0
                     elif action == 'resume':
@@ -90,7 +105,7 @@ class SimulationWorker(QThread):
                     elif action == 'pause':
                         running = False
                         if sim is not None:
-                            self.latest.put(Frame(identity,sim.t,sim.steps,sim.snapshot()))
+                            publish()
                     elif action == 'reset':
                         running, sim = False, None
                         self.latest.take()
@@ -98,7 +113,16 @@ class SimulationWorker(QThread):
                         if sim is None or running:
                             raise RuntimeError('Step requires a paused, initialized simulation.')
                         sim.step()
-                        self.latest.put(Frame(identity,sim.t,sim.steps,sim.snapshot()))
+                        publish()
+                    elif action == 'detectors':
+                        if sim is not None:
+                            sim.measurements.configure(scene,sim.t)
+                            publish()
+                    elif action == 'views':
+                        views=set(scene)
+                        publish()
+                    elif action == 'mode':
+                        mode=scene
                     else:
                         raise RuntimeError('Unknown simulation command.')
                     continue
@@ -107,12 +131,12 @@ class SimulationWorker(QThread):
                     sim.step(self.BLOCK_STEPS)
                     now = monotonic()
                     if now-last_frame >= self.DISPLAY_INTERVAL:
-                        self.latest.put(Frame(identity,sim.t,sim.steps,sim.snapshot()))
+                        publish()
                         last_frame = now
                     # Separate compute and display limits. Commands wake the wait immediately.
                     with self._condition:
                         if not self._commands and not self._closing:
-                            self._condition.wait(max(0,self.BLOCK_INTERVAL-(monotonic()-started)))
+                            self._condition.wait(max(0,self.BLOCK_INTERVAL-(monotonic()-started)) if mode=="Economical" else 0)
             except Exception as error:
                 running, sim = False, None
                 self.latest.put(Failure(identity,str(error) or type(error).__name__))

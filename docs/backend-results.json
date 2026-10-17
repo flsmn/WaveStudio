@@ -1,0 +1,33 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "torch": "2.5.1",
+  "cpu_threads": 1,
+  "comparison_tolerances": {
+    "relative_l2": 0.005,
+    "max_absolute": 0.0005
+  },
+  "backends": {
+    "cpu": {
+      "available": true,
+      "relative_l2": 0.0,
+      "max_absolute": 0.0,
+      "passed": true,
+      "steps_per_second_512": 882.5950054973912,
+      "mean_step_ms_512": 1.1330225004348904,
+      "process_cpu_seconds_per_wall_second": 0.9912689285242839,
+      "rss_peak_bytes": 234127360
+    },
+    "mps": {
+      "available": true,
+      "relative_l2": 1.041618475028372e-06,
+      "max_absolute": 2.0116567611694336e-07,
+      "passed": true,
+      "steps_per_second_512": 756.8561707944261,
+      "mean_step_ms_512": 1.3212550000753254,
+      "process_cpu_seconds_per_wall_second": 0.6345633507174643,
+      "rss_peak_bytes": 276545536,
+      "mps_allocated_bytes": 7163648,
+      "memory_note": "Unified memory: MPS allocation is reported separately and must not be added to RSS."
+    }
+  }
+}

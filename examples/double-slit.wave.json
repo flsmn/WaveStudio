@@ -1,0 +1,87 @@
+{
+  "format": "wave-studio",
+  "version": 1,
+  "project": {
+    "id": "b9f1c7a7-57dd-445f-9bcb-143dab643d8b",
+    "name": "Double slit",
+    "reference_length": 1.0,
+    "settings": {
+      "width": 72,
+      "height": 64,
+      "dx": 0.25,
+      "courant": 0.5,
+      "border_width": 8,
+      "border_rate": 2,
+      "device": "cpu"
+    },
+    "objects": [
+      {
+        "type": "SourceObject",
+        "id": "6197a367-d8c6-499c-9950-a85eca2568f7",
+        "name": "Point source",
+        "start": [
+          14,
+          32
+        ],
+        "end": null,
+        "wavelength": 2,
+        "amplitude": 1.0,
+        "phase": 0.0
+      },
+      {
+        "type": "WallObject",
+        "id": "63ce2709-07af-4c52-8b8e-ca325635a973",
+        "name": "Lower wall",
+        "x": 30,
+        "y": 0,
+        "width": 0.5,
+        "height": 28.5
+      },
+      {
+        "type": "WallObject",
+        "id": "05d2e8a9-dd3a-49e2-a4d8-ec0057a90758",
+        "name": "Centre wall",
+        "x": 30,
+        "y": 29.5,
+        "width": 0.5,
+        "height": 5
+      },
+      {
+        "type": "WallObject",
+        "id": "825e699a-29b9-4626-af5d-029ec4addd96",
+        "name": "Upper wall",
+        "x": 30,
+        "y": 35.5,
+        "width": 0.5,
+        "height": 28.5
+      }
+    ],
+    "display": {
+      "view": "Field",
+      "contrast": 0.25,
+      "intensity_range": 0.0002,
+      "theme": "Dark",
+      "secondary_view": "Intensity",
+      "secondary_visible": false
+    },
+    "detectors": [
+      {
+        "id": "55e1c920-f1fe-4658-8ca5-ad1c8dc99219",
+        "name": "Detector line",
+        "start": [
+          52,
+          24
+        ],
+        "end": [
+          52,
+          40
+        ],
+        "samples": 257,
+        "settling": 60,
+        "window": 24
+      }
+    ],
+    "references": [],
+    "compute_mode": "Economical"
+  }
+}

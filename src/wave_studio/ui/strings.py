@@ -1,0 +1,6 @@
+TITLE = 'Wave Studio'
+SUBTITLE = 'A workbench for wave experiments'
+READY = 'Press Run to start the experiment.'
+CHANGED = 'Setup changed. Press Run to begin a fresh experiment.'
+MEASUREMENTS = 'No measurements in this experiment.'
+PAUSE_TO_EDIT = 'Pause the experiment to edit its physical setup.'

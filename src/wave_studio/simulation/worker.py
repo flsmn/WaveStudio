@@ -128,7 +128,9 @@ class SimulationWorker(QThread):
                     continue
                 if running:
                     started = monotonic()
-                    sim.step(self.BLOCK_STEPS)
+                    # Keep command boundaries short when quality selects millions of cells.
+                    block=max(1,min(self.BLOCK_STEPS,1048576//(sim.grid.nx*sim.grid.ny)))
+                    sim.step(block)
                     now = monotonic()
                     if now-last_frame >= self.DISPLAY_INTERVAL:
                         publish()

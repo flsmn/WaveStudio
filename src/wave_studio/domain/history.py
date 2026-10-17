@@ -1,8 +1,8 @@
-from dataclasses import asdict
+from dataclasses import asdict,replace
 
 
 def change_kind(before,after):
-    if (before.settings,before.objects,before.reference_length)!=(after.settings,after.objects,after.reference_length): return 'physical'
+    if (replace(before.settings,quality='Custom'),before.objects,before.reference_length)!=(replace(after.settings,quality='Custom'),after.objects,after.reference_length): return 'physical'
     if before.detectors!=after.detectors: return 'measurement'
     return 'display'
 

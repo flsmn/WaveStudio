@@ -1,6 +1,6 @@
 # Wave Studio
 
-Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev2**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
+Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev3**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
 
 Implementiert sind freier Aufbau mit Quellen, Materialien, Polygonen, Wänden und bikonvexen Linsen, Undo/Redo, Run/Pause/Step/Reset, passive Detektoren mit endlichen Messfenstern, Referenzvergleich, zwei Ansichten, Abstand/Winkel, sichere Projektdateien, Wiederherstellung sowie PNG/CSV. Drei bearbeitbare Beispiele liegen unter `examples/` und im File-Menü.
 

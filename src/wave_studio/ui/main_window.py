@@ -14,6 +14,7 @@ from wave_studio.simulation.compiler import compile_project
 from wave_studio.simulation.lifecycle import Lifecycle, State
 from wave_studio.simulation.worker import SimulationWorker, Frame, Failure
 from . import strings
+from .flow_layout import FlowLayout
 
 
 class MainWindow(QMainWindow):
@@ -49,10 +50,13 @@ class MainWindow(QMainWindow):
         layout.setSpacing(14)
         header = QHBoxLayout()
         heading = QLabel('Wave Studio')
+        self.heading=heading
         heading.setStyleSheet('font-size:24px;font-weight:650;')
         header.addWidget(heading)
         subtitle = QLabel(strings.SUBTITLE)
         subtitle.setObjectName('muted')
+        subtitle.setWordWrap(True)
+        subtitle.setMinimumWidth(0)
         header.addWidget(subtitle)
         header.addStretch()
         self.theme = QComboBox()
@@ -61,7 +65,7 @@ class MainWindow(QMainWindow):
         self.theme.currentTextChanged.connect(self._theme_changed)
         header.addWidget(self.theme)
         layout.addLayout(header)
-        controls = QHBoxLayout()
+        controls = FlowLayout()
         self.run_button = QPushButton('▶  Run')
         self.run_button.setObjectName('primary')
         self.run_button.setShortcut('Ctrl+R')
@@ -194,8 +198,11 @@ class MainWindow(QMainWindow):
     def _apply_theme(self,theme):
         dark = theme == 'Dark'
         bg, panel, text, muted, border = ('#10151c','#181f29','#e6edf5','#95a5b8','#2b3544') if dark else ('#f4f6f8','#ffffff','#172536','#546579','#d6dfe8')
+        factor=self.project.display.text_scale
+        self.heading.setStyleSheet(f'font-size:{24*factor:g}px;font-weight:650;')
+        self.scene_title.setStyleSheet(f'font-size:{15*factor:g}px;font-weight:600;')
         self.setStyleSheet(f'''
-            QMainWindow,QWidget {{ background:{bg}; color:{text}; font-size:13px; }}
+            QMainWindow,QWidget {{ background:{bg}; color:{text}; font-size:{13*factor:g}px; }}
             QDockWidget::title {{ padding:10px; font-weight:600; background:{panel}; }}
             QTreeWidget,QDoubleSpinBox,QComboBox {{ background:{panel}; border:1px solid {border}; border-radius:5px; padding:5px; }}
             QPushButton {{ background:{panel}; border:1px solid {border}; border-radius:6px; padding:7px 15px; }}
@@ -203,7 +210,7 @@ class MainWindow(QMainWindow):
             QPushButton:disabled {{ color:{muted}; }}
             QPushButton#primary {{ background:#58cdb5; color:#10251f; font-weight:600; }}
             QPushButton#primary:disabled {{ background:{panel}; color:{muted}; }}
-            QLabel#muted {{ color:{muted}; font-size:12px; }}
+            QLabel#muted {{ color:{muted}; font-size:{12*factor:g}px; }}
         ''')
         self.plot.setBackground('#101925' if dark else '#eaf0f5')
         for name in ('left','bottom','right'):

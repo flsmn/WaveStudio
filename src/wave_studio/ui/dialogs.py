@@ -1,7 +1,7 @@
 from dataclasses import fields,replace
 import json
 import math
-from PySide6.QtWidgets import (QDialog,QDialogButtonBox,QDoubleSpinBox,QSpinBox,QLineEdit,QPlainTextEdit,QComboBox,QLabel,QFormLayout,QVBoxLayout,QCheckBox)
+from PySide6.QtWidgets import (QDialog,QDialogButtonBox,QDoubleSpinBox,QSpinBox,QLineEdit,QPlainTextEdit,QComboBox,QLabel,QFormLayout,QVBoxLayout,QCheckBox,QScrollArea,QWidget,QApplication)
 from wave_studio.domain.project import SourceObject,MaterialObject,WallObject,LensObject,DetectorObject
 
 LABELS={'start':'Start','end':'End','x':'Centre x','y':'Centre y','width':'Width','height':'Height','radius':'Curvature radius','aperture':'Aperture','refractive_index':'Refractive index','damping_rate':'Damping / time','wavelength':'Reference wavelength','amplitude':'Forcing amplitude','phase':'Phase (degrees)','angle':'Rotation (degrees)','samples':'Spatial samples','settling':'Settling time','window':'Window duration','vertices':'Vertices: [[x, y], …]','name':'Name'}
@@ -15,6 +15,7 @@ class ObjectDialog(QDialog):
         self.editors={}
         layout=QVBoxLayout(self)
         form=QFormLayout()
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
         for f in fields(obj):
             if f.name=='id': continue
             value=getattr(obj,f.name)
@@ -30,7 +31,8 @@ class ObjectDialog(QDialog):
             else:
                 editor=self.number(math.degrees(value) if f.name in ('phase','angle') else value,integer=f.name=='samples')
                 self.editors[f.name]=editor; form.addRow(LABELS.get(f.name,f.name),editor)
-        layout.addLayout(form)
+        body=QWidget();body.setLayout(form);scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(body);layout.addWidget(scroll)
+        self.resize(560, min(660,QApplication.primaryScreen().availableGeometry().height()-80))
         self.error=QLabel(''); self.error.setWordWrap(True); self.error.setStyleSheet('color:#dd805f');layout.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
         buttons.accepted.connect(self.apply);buttons.rejected.connect(self.reject);layout.addWidget(buttons)
@@ -65,38 +67,47 @@ class SettingsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle('Simulation settings')
         self.project,self.validate,self.result_project=project,validate,None
-        layout=QVBoxLayout(self);form=QFormLayout();self.boxes={}
-        self.quality=QComboBox();self.quality.addItems(['Custom','Preview','Balanced','High Quality']);form.addRow('Quality',self.quality)
+        layout=QVBoxLayout(self);form=QFormLayout();form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows);self.boxes={};self._setting_preset=False
+        self.quality=QComboBox();self.quality.addItems(['Custom','Preview','Balanced','High Quality']);self.quality.setCurrentText(project.settings.quality);form.addRow('Quality',self.quality)
         for name,label in [('width','Domain width'),('height','Domain height'),('dx','Grid spacing'),('courant','Time step / grid spacing'),('border_width','Damped border width'),('border_rate','Border damping rate')]:
-            box=QDoubleSpinBox();box.setDecimals(6);box.setRange(.000001 if name in ('dx','courant') else 0,100);box.setValue(getattr(project.settings,name));self.boxes[name]=box;form.addRow(label,box)
+            box=QDoubleSpinBox();box.setDecimals(12);box.setRange(.000001 if name in ('dx','courant') else 0,100);box.setValue(getattr(project.settings,name));box.setKeyboardTracking(False);self.boxes[name]=box;form.addRow(label,box)
         self.device=QComboBox();self.device.addItems(['cpu','mps','auto']);self.device.setCurrentText(project.settings.device)
         import torch
         self.device.model().item(1).setEnabled(torch.backends.mps.is_available())
         form.addRow('Compute device',self.device)
         self.mode=QComboBox();self.mode.addItems(['Economical','Performance']);self.mode.setCurrentText(project.compute_mode);form.addRow('Compute mode',self.mode)
         self.quality.currentTextChanged.connect(self.preset)
-        layout.addLayout(form)
+        self.boxes['dx'].valueChanged.connect(self._custom_spacing)
+        body=QWidget();body.setLayout(form);scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(body);layout.addWidget(scroll)
+        self.resize(600,min(720,QApplication.primaryScreen().availableGeometry().height()-80))
         note=QLabel('Geometry is preserved when quality changes. Preview may underresolve short waves and small structures. Final accuracy depends on the experiment.');note.setWordWrap(True);layout.addWidget(note)
         self.error=QLabel('');self.error.setWordWrap(True);layout.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel);buttons.accepted.connect(self.apply);buttons.rejected.connect(self.reject);layout.addWidget(buttons)
 
+    def _custom_spacing(self,*args):
+        if not self._setting_preset:self.quality.setCurrentText('Custom')
+
     def preset(self,name):
         if name=='Custom': return
-        sources=[o for o in self.project.objects if isinstance(o,SourceObject)]
-        materials=[o for o in self.project.objects if isinstance(o,(MaterialObject,LensObject))]
-        wavelength=min((o.wavelength for o in sources),default=2)
-        n=max((o.refractive_index for o in materials),default=1)
-        target=wavelength/n/{'Preview':8,'Balanced':12,'High Quality':20}[name]
-        walls=[o for o in self.project.objects if isinstance(o,WallObject)]
-        target=min([target]+[min(o.width,o.height)/2 for o in walls])
-        # Power-of-two subdivision of project units preserves the fixed 32×32 domain.
-        dx=2**math.floor(math.log2(target))
-        self.boxes['dx'].setValue(dx)
-        self.boxes['courant'].setValue(.5)
+        from wave_studio.domain.quality import estimate
+        try:
+            settings=replace(self.project.settings,**{k:b.value() for k,b in self.boxes.items()})
+            result=estimate(replace(self.project,settings=settings),name)
+            self._setting_preset=True
+            self.boxes['dx'].setValue(result.dx)
+            self._setting_preset=False
+            self.error.setText(result.reason or f'{result.nx} × {result.ny} · {result.estimated_bytes/1024**2:.1f} MiB · {result.cells_per_wavelength:.1f} cells / shortest wavelength · predicted phase drift {result.phase_radians:.3f} rad over {result.path:.2f} reference lengths.')
+        except (ValueError,ZeroDivisionError) as error:self.error.setText(str(error))
 
     def apply(self):
         try:
-            settings=replace(self.project.settings,device=self.device.currentText(),**{k:b.value() for k,b in self.boxes.items()})
+            settings=replace(self.project.settings,quality=self.quality.currentText(),device=self.device.currentText(),**{k:b.value() for k,b in self.boxes.items()})
             candidate=replace(self.project,settings=settings,compute_mode=self.mode.currentText())
+            if self.quality.currentText()!='Custom':
+                from wave_studio.domain.quality import estimate
+                result=estimate(candidate,self.quality.currentText())
+                if not result.supported:raise ValueError(result.reason)
+                settings=replace(settings,dx=result.dx)
+                candidate=replace(candidate,settings=settings)
             self.validate(candidate);self.result_project=candidate;self.accept()
         except (ValueError,TypeError) as error:self.error.setText(str(error))

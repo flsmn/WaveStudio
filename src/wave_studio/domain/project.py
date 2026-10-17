@@ -46,6 +46,7 @@ class SimulationSettings:
     border_width: float = 3
     border_rate: float = 2
     device: str = 'cpu'
+    quality: str = 'Custom'
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,7 @@ class DisplaySettings:
     theme: str = 'Dark'
     secondary_view: str = 'Intensity'
     secondary_visible: bool = False
+    text_scale: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -87,6 +89,7 @@ class Project:
         for name in ('border_width','border_rate'):
             number(getattr(s,name),name)
             if getattr(s,name) < 0: raise ValueError(f'{name} must be nonnegative.')
+        if s.quality not in ('Custom','Preview','Balanced','High Quality'):raise ValueError('Unknown quality setting.')
         if s.device not in ('cpu','mps','auto'):
             raise ValueError('This prototype offers CPU and MPS only.')
         if any(abs(v/s.dx-round(v/s.dx)) > 1e-7 for v in (s.width,s.height)):
@@ -107,6 +110,7 @@ class Project:
         if len(ids)!=len(set(ids)): raise ValueError('Object and detector IDs must be unique.')
         if self.display.view not in ('Field','Intensity','Material') or self.display.secondary_view not in ('Field','Intensity','Material') or self.display.theme not in ('Dark','Light'):
             raise ValueError('Unsupported display settings.')
+        if self.display.text_scale not in (1.,1.25,1.5):raise ValueError('Text size must be 100%, 125% or 150%.')
         number(self.display.contrast,'Display range',True)
         number(self.display.intensity_range,'Intensity display range',True)
         if self.compute_mode not in ('Economical','Performance'): raise ValueError('Unknown compute mode.')

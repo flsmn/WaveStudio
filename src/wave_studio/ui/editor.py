@@ -10,8 +10,8 @@ from uuid import uuid4
 import numpy as np
 import pyqtgraph as pg
 from PySide6.QtCore import Qt,QTimer,QRectF,QStandardPaths,QByteArray,QBuffer,QIODevice
-from PySide6.QtGui import QAction,QKeySequence
-from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog)
+from PySide6.QtGui import QAction,QKeySequence,QFont
+from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog,QScrollArea)
 from wave_sim2d import __version__ as engine_version
 from wave_sim2d.geometry import lens_vertices
 from wave_studio.domain.project import (Project,SourceObject,MaterialObject,WallObject,LensObject,DetectorObject)
@@ -23,6 +23,7 @@ from wave_studio.persistence.projects import save,load,physical_data,atomic_writ
 from wave_studio.persistence.exports import export_csv
 from .main_window import MainWindow as PrototypeWindow
 from .dialogs import ObjectDialog,SettingsDialog
+from .flow_layout import FlowLayout
 
 
 class MainWindow(PrototypeWindow):
@@ -30,7 +31,7 @@ class MainWindow(PrototypeWindow):
         self._image_configs={}
         self._empty_image=None
         self.history=History();self.selected=None;self.revisions={};self.profiles={}
-        self.run_project=None;self.path=None;self.overlays=[];self._rebuilding=False
+        self.run_project=None;self.path=None;self.overlays=[];self._rebuilding=False;self._linking_ranges=False
         self.polygon_points=None;self.measure_points=None;self._frames=0;self._last_rate=monotonic();self._last_steps=0
         super().__init__()
         self.recovery=Path(os.environ.get('WAVESTUDIO_RECOVERY_DIR',QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)))/'recovery.wave.json'
@@ -73,6 +74,8 @@ class MainWindow(PrototypeWindow):
         self.action(edit,'Send backward',lambda:self.reorder(-1))
         self.action(edit,'Finish polygon',self.finish_polygon,'Return')
         view_menu=self.menuBar().addMenu('&View')
+        text_menu=view_menu.addMenu('Text size')
+        for percent in (100,125,150):self.action(text_menu,f'{percent}%',lambda checked=False,p=percent:self.commit(replace(self.project,display=replace(self.project.display,text_scale=p/100))))
         self.secondary_action=QAction('Second view',self,checkable=True)
         self.secondary_action.toggled.connect(self._second_view);view_menu.addAction(self.secondary_action)
         self.action(view_menu,'Fit experiment',lambda:self.plot.setRange(xRange=(0,self.scene.grid.width),yRange=(0,self.scene.grid.height),padding=.02),'Ctrl+0')
@@ -94,13 +97,15 @@ class MainWindow(PrototypeWindow):
         self.edit_hint=QLabel('Pause to edit sources, materials and walls. Detectors remain editable while running.');self.edit_hint.setWordWrap(True);side.addWidget(self.edit_hint)
         self.warning=QLabel('');self.warning.setWordWrap(True);side.addWidget(self.warning)
         self.settings_button=QPushButton('Simulation settings…');self.settings_button.clicked.connect(self.settings_dialog);side.addWidget(self.settings_button)
-        self.dock.setWidget(panel);self.dock.setMinimumWidth(290)
+        scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(panel);self.dock.setWidget(scroll);self.dock.setMinimumWidth(290)
         self.inputs={}
         canvas=self.centralWidget().layout().itemAt(2).widget()
         canvas.layout().removeWidget(self.plot)
         self.splitter=QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.plot)
-        self.second=pg.PlotWidget();self.second.setAspectLocked(False);self.second.setLabel('bottom','x',units='reference length');self.second.setLabel('left','y',units='reference length');self.second.setXLink(self.plot);self.second.setYLink(self.plot);self.second.getViewBox().sigRangeChangedManually.connect(self._second_zoom)
+        self.second=pg.PlotWidget();self.second.setAspectLocked(True);self.second.setLabel('bottom','x',units='reference length');self.second.setLabel('left','y',units='reference length')
+        self.plot.getViewBox().sigRangeChanged.connect(lambda *args:self._sync_views(self.plot,self.second))
+        self.second.getViewBox().sigRangeChanged.connect(lambda *args:self._sync_views(self.second,self.plot))
         self.second_image=pg.ImageItem(axisOrder='row-major');self.second.addItem(self.second_image)
         self.second_scale=pg.ColorBarItem(values=(-1,1),colorMap=self._field_map(),interactive=False);self.second_scale.setImageItem(self.second_image,insert_in=self.second.getPlotItem())
         self.splitter.addWidget(self.second);self.second.hide();canvas.layout().insertWidget(1,self.splitter,1)
@@ -108,7 +113,7 @@ class MainWindow(PrototypeWindow):
         self.centralWidget().layout().itemAt(1).layout().addWidget(self.secondary_view)
         self.plot.removeItem(self.source_marker)
         self.plot.scene().sigMouseClicked.connect(self.canvas_click)
-        measure=QWidget();ml=QVBoxLayout(measure);bar=QHBoxLayout()
+        measure=QWidget();ml=QVBoxLayout(measure);bar=FlowLayout()
         self.detector_combo=QComboBox();self.detector_combo.currentIndexChanged.connect(self._plot_profiles);bar.addWidget(self.detector_combo)
         self.norm=QComboBox();self.norm.addItems(['Raw values','Shared maximum = 1']);self.norm.currentTextChanged.connect(self._plot_profiles);bar.addWidget(self.norm)
         freeze=QPushButton('Hold reference');freeze.clicked.connect(self.hold_reference);bar.addWidget(freeze)
@@ -131,11 +136,19 @@ class MainWindow(PrototypeWindow):
                 for side in ('left','bottom','right'):chart.getAxis(side).setTextPen(pg.mkPen(ink));chart.getAxis(side).setPen(pg.mkPen(ink))
             for scale in (self.scale,self.second_scale):
                 for side in ('left','right'):scale.getAxis(side).setTextPen(pg.mkPen(ink))
+            font=QFont();font.setPixelSize(round(11*self.project.display.text_scale))
+            for chart in (self.plot,self.second,self.profile_plot):
+                for side in ('left','bottom','right'):
+                    axis=chart.getAxis(side);axis.setStyle(tickFont=font)
+                    axis.setLabel(**{'font-size':f'{11*self.project.display.text_scale:g}px'})
+            for scale in (self.scale,self.second_scale):
+                scale.axis.setStyle(tickFont=font);scale.axis.setLabel(**{'font-size':f'{11*self.project.display.text_scale:g}px'})
 
     def _refresh_controls(self):
         running=self.lifecycle.state==State.RUNNING
         self.run_button.setEnabled(not running);self.pause_button.setEnabled(running);self.step_button.setEnabled(self.lifecycle.can_step)
         self.state_label.setText(self.lifecycle.state.value)
+        if not running:self.rate_label.setText('0 steps/s · 0 frames/s')
         self.range_label.setText('Max' if self.project.display.view=='Intensity' else 'Range ±')
         self.settings_button.setEnabled(not running)
         self.undo_action.setEnabled(bool(self.history.undo_stack));self.redo_action.setEnabled(bool(self.history.redo_stack))
@@ -155,6 +168,8 @@ class MainWindow(PrototypeWindow):
     def commit(self,candidate,history=True):
         if candidate==self.project:return True
         kind=change_kind(self.project,candidate)
+        if (candidate.objects,candidate.detectors)!=(self.project.objects,self.project.detectors) and candidate.settings==self.project.settings:
+            candidate=replace(candidate,settings=replace(candidate.settings,quality='Custom'))
         if kind=='physical' and self.lifecycle.state==State.RUNNING:
             self.message.setText('Pause before changing the physical setup.');self._rebuild_scene();return False
         try:
@@ -185,7 +200,7 @@ class MainWindow(PrototypeWindow):
         self.contrast.blockSignals(True);self.contrast.setValue(candidate.display.intensity_range if candidate.display.view=='Intensity' else candidate.display.contrast);self.contrast.blockSignals(False)
         self.secondary_action.blockSignals(True);self.secondary_action.setChecked(candidate.display.secondary_visible);self.secondary_action.blockSignals(False)
         self.second.setVisible(candidate.display.secondary_visible);self.secondary_view.setVisible(candidate.display.secondary_visible)
-        if candidate.display.secondary_visible:self.splitter.setSizes([500,500])
+        if candidate.display.secondary_visible and not before.display.secondary_visible:self.splitter.setSizes([500,500])
         self._apply_theme(candidate.display.theme)
         if kind=='display':self._draw();self._plot_profiles()
         else:self._rebuild_scene()
@@ -193,11 +208,18 @@ class MainWindow(PrototypeWindow):
 
     def detector_specs(self):return tuple(detector_spec(d,self.revisions.get(d.id,0)) for d in self.project.detectors)
 
+    def _update_grid_label(self):
+        super()._update_grid_label()
+        from wave_studio.domain.quality import estimate
+        e=estimate(self.project,self.project.settings.quality,self.project.settings.dx)
+        self.warning.setText(self.warning.text()+f'\n{e.name}: {e.cells_per_wavelength:.1f} cells / shortest wavelength; predicted phase drift {e.phase_radians:.3f} rad over {e.path:.2f} reference lengths. Homogeneous stencil estimate; interfaces and concave necks need convergence checks.')
+
     def _selected(self):
         items=self.tree.selectedItems();self.selected=items[0].data(0,Qt.ItemDataRole.UserRole) if items else None
         obj=self.find_selected()
         if obj:
             self.properties.setText(obj.name+'\n'+'\n'.join(f'{key}: {value}' for key,value in asdict(obj).items() if key not in ('id','vertices','name')))
+        else:self.properties.setText('Select an object to edit its properties.')
         self._rebuild_overlays()
 
     def find_selected(self):return next((o for o in self.project.objects+self.project.detectors if o.id==self.selected),None)
@@ -213,12 +235,13 @@ class MainWindow(PrototypeWindow):
         index=self.detector_combo.findData(current)
         if index>=0:self.detector_combo.setCurrentIndex(index)
         self.detector_combo.blockSignals(False)
+        reference_index=self.ref_combo.currentData()
         self.ref_combo.blockSignals(True);self.ref_combo.clear();self.ref_combo.addItem('No reference',-1)
         for i,ref in enumerate(self.project.references):self.ref_combo.addItem(f'Reference {i+1}',i)
-        if self.project.references:self.ref_combo.setCurrentIndex(len(self.project.references))
+        if isinstance(reference_index,int) and -1<=reference_index<len(self.project.references):self.ref_combo.setCurrentIndex(reference_index+1)
         self.ref_combo.blockSignals(False)
         self.scene_title.setText(self.project.name)
-        self._update_grid_label();self._rebuilding=False;self._rebuild_overlays();self._draw();self._plot_profiles()
+        self._update_grid_label();self._rebuilding=False;self._selected();self._draw();self._plot_profiles()
 
     def _rebuild_overlays(self):
         if self._rebuilding:return
@@ -359,8 +382,16 @@ class MainWindow(PrototypeWindow):
         if self.lifecycle.run_id:self.worker.submit('views',self.lifecycle.identity,(self.project.display.view, self.secondary_view.currentText() if self.second.isVisible() else self.project.display.view))
         self._draw()
 
-    def _second_zoom(self,*args):
-        ranges=self.second.viewRange();self.plot.setRange(xRange=ranges[0],yRange=ranges[1],padding=0)
+    def _sync_views(self,source,target):
+        if self._linking_ranges or not self.second.isVisible():return
+        self._linking_ranges=True
+        try:
+            view=source.getViewBox();other=target.getViewBox();ranges=view.viewRange()
+            scale=max((ranges[0][1]-ranges[0][0])/max(1,view.width()),(ranges[1][1]-ranges[1][0])/max(1,view.height()))
+            centre=[sum(r)/2 for r in ranges]
+            half=[other.width()*scale/2,other.height()*scale/2]
+            other.setRange(xRange=(centre[0]-half[0],centre[0]+half[0]),yRange=(centre[1]-half[1],centre[1]+half[1]),padding=0)
+        finally:self._linking_ranges=False
 
     def _second_view(self,visible):
         self.commit(replace(self.project,display=replace(self.project.display,secondary_visible=visible)))
@@ -391,7 +422,7 @@ class MainWindow(PrototypeWindow):
         self._draw();self._plot_profiles()
         now=monotonic()
         if now-self._last_rate>=1:
-            self.rate_label.setText(f'{(result.steps-self._last_steps)/(now-self._last_rate):.0f} steps/s · {self._frames/(now-self._last_rate):.0f} frames/s')
+            if self.lifecycle.state==State.RUNNING:self.rate_label.setText(f'{(result.steps-self._last_steps)/(now-self._last_rate):.0f} steps/s · {self._frames/(now-self._last_rate):.0f} frames/s')
             self._last_rate=now;self._last_steps=result.steps;self._frames=0
 
     def metadata(self):
@@ -422,7 +453,7 @@ class MainWindow(PrototypeWindow):
     def hold_reference(self):
         profile=self.profiles.get(self.detector_combo.currentData())
         if not profile or profile['status']!='complete':self.message.setText('Wait for a completed detector window before holding a reference.');return
-        self.project=replace(self.project,references=(self.project.references+(deepcopy(profile),))[-4:]);self.lifecycle.dirty=True;self._rebuild_scene();self._refresh_controls()
+        self.project=replace(self.project,references=(self.project.references+(deepcopy(profile),))[-4:]);self.lifecycle.dirty=True;self._rebuild_scene();self.ref_combo.setCurrentIndex(len(self.project.references));self._refresh_controls()
 
     def export_profile(self,reference=False):
         index=self.ref_combo.currentData()

@@ -74,3 +74,12 @@ Die grobe T04-Linse liegt mit 18,5 % / 11,5 % Fokusfehler und 7 % Rasterverschie
 - Begonnen: gezielte native Bedienprüfung und zusätzliche Qualitätsprüfung nach `docs/MAC_ACCEPTANCE_PLAN.md`. Windows/Linux bleiben zurückgestellt.
 - Bereits reproduziert: Nach einer über den nativen Eigenschaftendialog geänderten Wellenlänge zeigt der Dialog den neuen Wert, die ausgewählte Eigenschaftenzusammenfassung jedoch weiterhin den alten. Die Rateanzeige zeigt nach Pause/physikalischer Änderung alte positive Werte. Beides wird korrigiert.
 - Bestehende Qualitätsvorschläge berücksichtigen noch keine Ausbreitungsdistanz und dünnen Material-/Linsenkonturen; skalierte Schrift wird durch feste Pixelgrößen übergangen. Dazu werden vorab festgelegte Prüfungen und begrenzte Verbesserungen umgesetzt.
+
+### Zwischenstand der Mac-Abnahme
+
+- [x] Vorab-Protokoll und verbindliche lokale Budgets in `13e33d1` festgelegt.
+- [x] 29 automatisierte Prüfungen bestanden, einschließlich neuer Regressionen für Eigenschaftentext, Pause-Rate, Referenzauswahl, exakte Presets, Ressourcenablehnung, gleichmäßigen Zweitansichtsmaßstab und 150-%-Schrift.
+- [x] Doppelspalt bei allen drei tatsächlich gewählten Rastern bestanden (Minimumfehler 6,72 / 3,39 / 3,39 %, Asymmetrie < 0,0001 %, Wandfeld null).
+- [x] Preview-Fehler bei schrägem Eigenmodus gefunden (2,295 %); Mindestauflösung von 8 auf 10 Zellen/Wellenlänge erhöht, unveränderte 2-%-Grenze danach bestanden. Erstbefund bleibt in `quality-preflight-initial-failure.json` erhalten.
+- [x] Engine `84c9ad9`: überprüfbare Dispersionsformeln und identische Rasterisierung mit begrenztem Polygon-Arbeitsbereich; Version dev3.
+- [ ] Feinere Linsenkonvergenz, abschließende Ressourcenmessung und erneute native Bedienprüfung laufen noch.

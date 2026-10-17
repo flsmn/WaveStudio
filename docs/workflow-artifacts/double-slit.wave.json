@@ -12,7 +12,8 @@
       "courant": 0.5,
       "border_width": 8,
       "border_rate": 2,
-      "device": "cpu"
+      "device": "cpu",
+      "quality": "Custom"
     },
     "objects": [
       {
@@ -57,7 +58,7 @@
       },
       {
         "type": "MaterialObject",
-        "id": "0a8dafeb-de03-4445-938e-5837813f943e",
+        "id": "8a2d0208-eb9f-4988-91ba-37efa6278cb6",
         "name": "Material",
         "vertices": [
           [
@@ -87,7 +88,8 @@
       "intensity_range": 0.0002,
       "theme": "Dark",
       "secondary_view": "Intensity",
-      "secondary_visible": true
+      "secondary_visible": true,
+      "text_scale": 1.0
     },
     "detectors": [
       {
@@ -106,7 +108,7 @@
         "window": 24
       },
       {
-        "id": "ca40cd46-2bc8-40c9-ac51-0c9dcb45932e",
+        "id": "73d24476-8c95-47a2-b2d2-26ee94f1fa5a",
         "name": "Second detector",
         "start": [
           50,
@@ -1690,7 +1692,8 @@
               "courant": 0.5,
               "border_width": 8,
               "border_rate": 2,
-              "device": "cpu"
+              "device": "cpu",
+              "quality": "Custom"
             },
             "objects": [
               {
@@ -1736,9 +1739,9 @@
             ]
           },
           "scene_revision": 0,
-          "run_id": "d526b300-1096-499d-a87d-35f8540490e4",
+          "run_id": "b68371b8-71b2-4352-bb57-275fc23af59a",
           "generation": 1,
-          "engine_version": "0.1.0.dev2",
+          "engine_version": "0.1.0.dev3",
           "grid": {
             "nx": 288,
             "ny": 256,
@@ -1750,8 +1753,8 @@
           "dt": 0.125,
           "backend": "cpu",
           "dtype": "float32",
-          "time": 85.5,
-          "steps": 684
+          "time": 89.0,
+          "steps": 712
         }
       }
     ],

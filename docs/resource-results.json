@@ -5,72 +5,141 @@
     512
   ],
   "cpu_threads": 1,
-  "memory_note": "RSS peak is process-wide. MPS allocation is reported separately, never added to unified-memory RSS. GPU utilization was not sampled.",
+  "memory_note": "RSS peak is process-wide. MPS allocation is reported separately, never added to unified-memory RSS. GPU counters are system-wide IORegistry samples, including other apps and the window compositor; no calibrated process energy attribution.",
   "cpu": {
     "idle": {
-      "process_cpu_seconds_per_second": 0.03683555791001521,
+      "process_cpu_seconds_per_second": 0.08755106657512439,
       "displayed_frames_per_second": 0.0,
       "steps_per_second": 0.0,
-      "rss_peak_bytes": 381812736
+      "rss_peak_bytes": 230916096,
+      "gpu_system_sample": {
+        "Device Utilization %": 39,
+        "Renderer Utilization %": 38,
+        "Tiler Utilization %": 39
+      }
     },
     "one_view_economical": {
-      "process_cpu_seconds_per_second": 1.0088901379939523,
-      "displayed_frames_per_second": 24.902579042677957,
-      "steps_per_second": 219.142695575566,
-      "rss_peak_bytes": 453591040
+      "process_cpu_seconds_per_second": 1.2123849853144792,
+      "displayed_frames_per_second": 22.32750740937315,
+      "steps_per_second": 195.94887099569274,
+      "rss_peak_bytes": 254558208,
+      "gpu_system_sample": {
+        "Device Utilization %": 46,
+        "Renderer Utilization %": 46,
+        "Tiler Utilization %": 46
+      }
     },
     "two_views_economical": {
-      "process_cpu_seconds_per_second": 1.0459704665292193,
-      "displayed_frames_per_second": 25.92750669014506,
-      "steps_per_second": 219.38659507045818,
-      "rss_peak_bytes": 465272832
+      "process_cpu_seconds_per_second": 0.7597217561401747,
+      "displayed_frames_per_second": 25.659644477095654,
+      "steps_per_second": 222.60574689220647,
+      "rss_peak_bytes": 254558208,
+      "gpu_system_sample": {
+        "Device Utilization %": 50,
+        "Renderer Utilization %": 49,
+        "Tiler Utilization %": 50
+      }
     },
-    "pause_latency_ms": 32.04562497558072,
+    "pause_latency_ms": 8.814417000394315,
+    "pause_samples_ms": [
+      5.19225001335144,
+      5.0663750153034925,
+      4.084207990672439,
+      4.45054197916761,
+      8.814417000394315
+    ],
     "paused": {
-      "process_cpu_seconds_per_second": 0.06356893215254084,
+      "process_cpu_seconds_per_second": 0.04113796940835242,
       "displayed_frames_per_second": 0.0,
       "steps_per_second": 0.0,
-      "rss_peak_bytes": 465305600
+      "rss_peak_bytes": 254558208,
+      "gpu_system_sample": {
+        "Device Utilization %": 37,
+        "Renderer Utilization %": 35,
+        "Tiler Utilization %": 37
+      }
     },
     "two_views_performance": {
-      "process_cpu_seconds_per_second": 1.3066405721310332,
-      "displayed_frames_per_second": 25.557108093836142,
-      "steps_per_second": 550.4607897133938,
-      "rss_peak_bytes": 477249536
-    }
+      "process_cpu_seconds_per_second": 1.1194272568797616,
+      "displayed_frames_per_second": 25.324923348702743,
+      "steps_per_second": 394.53564795873746,
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 31,
+        "Renderer Utilization %": 30,
+        "Tiler Utilization %": 31
+      }
+    },
+    "mode_preserved_run_grid_measurements": true,
+    "passed": true
   },
   "mps": {
     "idle": {
-      "process_cpu_seconds_per_second": 0.06964750820898863,
+      "process_cpu_seconds_per_second": 0.07158714248994189,
       "displayed_frames_per_second": 0.0,
       "steps_per_second": 0.0,
-      "rss_peak_bytes": 477249536
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 32,
+        "Renderer Utilization %": 30,
+        "Tiler Utilization %": 32
+      }
     },
     "one_view_economical": {
-      "process_cpu_seconds_per_second": 0.9542798363218158,
-      "displayed_frames_per_second": 23.973692852524387,
-      "steps_per_second": 199.78077377103656,
-      "rss_peak_bytes": 511557632
+      "process_cpu_seconds_per_second": 1.1340537863395463,
+      "displayed_frames_per_second": 26.305276931585382,
+      "steps_per_second": 122.86895174373424,
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 50,
+        "Renderer Utilization %": 36,
+        "Tiler Utilization %": 37
+      }
     },
     "two_views_economical": {
-      "process_cpu_seconds_per_second": 1.150958164311469,
-      "displayed_frames_per_second": 25.626194948133616,
-      "steps_per_second": 220.7795257069973,
-      "rss_peak_bytes": 511557632
+      "process_cpu_seconds_per_second": 0.6435184874001819,
+      "displayed_frames_per_second": 24.331662899553567,
+      "steps_per_second": 140.32369973578153,
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 52,
+        "Renderer Utilization %": 37,
+        "Tiler Utilization %": 37
+      }
     },
-    "pause_latency_ms": 46.76770803052932,
+    "pause_latency_ms": 36.36600001482293,
+    "pause_samples_ms": [
+      13.928917003795505,
+      36.36600001482293,
+      19.097499956842512,
+      4.235624975990504,
+      36.3273749826476
+    ],
     "paused": {
-      "process_cpu_seconds_per_second": 0.0718196456215196,
+      "process_cpu_seconds_per_second": 0.07224105710216147,
       "displayed_frames_per_second": 0.0,
       "steps_per_second": 0.0,
-      "rss_peak_bytes": 511557632
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 28,
+        "Renderer Utilization %": 26,
+        "Tiler Utilization %": 28
+      }
     },
     "two_views_performance": {
-      "process_cpu_seconds_per_second": 1.0513874453610808,
-      "displayed_frames_per_second": 25.698706211808886,
-      "steps_per_second": 237.21882657054357,
-      "rss_peak_bytes": 511557632
+      "process_cpu_seconds_per_second": 0.6808427957902974,
+      "displayed_frames_per_second": 27.3284950510328,
+      "steps_per_second": 167.30371360510324,
+      "rss_peak_bytes": 299859968,
+      "gpu_system_sample": {
+        "Device Utilization %": 56,
+        "Renderer Utilization %": 39,
+        "Tiler Utilization %": 40
+      }
     },
+    "mode_preserved_run_grid_measurements": true,
+    "passed": true,
     "mps_allocated_bytes": 10757120
-  }
+  },
+  "passed": true
 }

@@ -1,0 +1,18 @@
+{
+  "studio_commit": "d5e9c7f",
+  "engine_commit": "3813481",
+  "version_pair": "0.1.0.dev2 / 0.1.0.dev2",
+  "app_installed_file_bytes": 642893259,
+  "wheels": [
+    {
+      "name": "wave_studio-0.1.0.dev2-py3-none-any.whl",
+      "bytes": 37970,
+      "sha256": "2c7e04c37cd0979ffe391c90188153742ea3667ecd56e30c288bbd33c0d64e7c"
+    },
+    {
+      "name": "wave_simulator_2d-0.1.0.dev2-py3-none-any.whl",
+      "bytes": 34847,
+      "sha256": "b9566e4232cdd79e0386f95d5e647c1bfc87aba84b62125737334e170273fa1d"
+    }
+  ]
+}

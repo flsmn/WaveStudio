@@ -13,10 +13,10 @@
       "max_absolute": 0.0,
       "profile_relative_l2": 0.0,
       "passed": true,
-      "steps_per_second_512": 894.175780377647,
-      "mean_step_ms_512": 1.1183483403874561,
-      "process_cpu_seconds_per_wall_second": 0.9939926227412029,
-      "rss_peak_bytes": 232456192
+      "steps_per_second_512": 684.8625138180087,
+      "mean_step_ms_512": 1.4601470803609118,
+      "process_cpu_seconds_per_wall_second": 0.9720048199864846,
+      "rss_peak_bytes": 233308160
     },
     "mps": {
       "available": true,
@@ -24,10 +24,10 @@
       "max_absolute": 2.0116567611694336e-07,
       "profile_relative_l2": 5.795623723783588e-06,
       "passed": true,
-      "steps_per_second_512": 651.198882760424,
-      "mean_step_ms_512": 1.535629170248285,
-      "process_cpu_seconds_per_wall_second": 0.6164964942981206,
-      "rss_peak_bytes": 305889280,
+      "steps_per_second_512": 560.4680832273228,
+      "mean_step_ms_512": 1.784222919959575,
+      "process_cpu_seconds_per_wall_second": 0.5644193832140757,
+      "rss_peak_bytes": 311623680,
       "mps_allocated_bytes": 8281344,
       "memory_note": "Unified memory: MPS allocation is reported separately and must not be added to RSS."
     }

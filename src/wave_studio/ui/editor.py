@@ -483,7 +483,8 @@ class MainWindow(PrototypeWindow):
         if not self.lifecycle.dirty:return True
         choice=QMessageBox.question(self,'Unsaved experiment','Save changes to this experiment?',QMessageBox.StandardButton.Save|QMessageBox.StandardButton.Discard|QMessageBox.StandardButton.Cancel)
         if choice==QMessageBox.StandardButton.Save:return self.save_project()
-        return choice==QMessageBox.StandardButton.Discard
+        if choice==QMessageBox.StandardButton.Discard:self._clear_recovery(self.project.id);return True
+        return False
 
     def replace_project(self,project,path=None):
         scene=compile_project(project)
@@ -517,7 +518,7 @@ class MainWindow(PrototypeWindow):
             path=Path(value)
         try:save(path,self.project)
         except (OSError,ValueError) as error:self.message.setText(str(error));return False
-        self.path=path;self.lifecycle.dirty=False;self._refresh_controls();self.message.setText('Experiment saved.');return True
+        self.path=path;self.lifecycle.dirty=False;self._clear_recovery(self.project.id);self._refresh_controls();self.message.setText('Experiment saved.');return True
 
     def open_example(self,name):
         from wave_studio.examples import example
@@ -527,6 +528,12 @@ class MainWindow(PrototypeWindow):
         if not self.lifecycle.dirty:return
         try:self.recovery.parent.mkdir(parents=True,exist_ok=True);save(self.recovery,self.project)
         except (OSError,ValueError) as error:self.message.setText('Recovery could not be saved: '+str(error))
+
+    def _clear_recovery(self,project_id):
+        # A deliberate save/discard supersedes this project's autosave only.
+        try:
+            if self.recovery.exists() and load(self.recovery).id==project_id:self.recovery.unlink()
+        except (OSError,ValueError):pass
 
     def _offer_recovery(self):
         if self.recovery.exists():

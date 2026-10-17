@@ -113,3 +113,57 @@ def test_selected_lens_grip_is_above_overlapping_polygon(window):
     assert target.zValue()>polygon.zValue()
     point=target.mapToScene(QPointF(0,0));items=w.plot.scene().items(point)
     assert items.index(target)<items.index(polygon)
+
+
+def test_mac_standard_shortcuts_route_to_history_and_run(window):
+    from PySide6.QtCore import Qt
+    from PySide6.QtGui import QKeySequence
+    from PySide6.QtTest import QTest
+    from wave_studio.simulation.lifecycle import State
+    w=window;source=w.project.objects[0]
+    w.activateWindow();w.setFocus();QApplication.processEvents()
+    w.commit(replace(w.project,objects=(replace(source,wavelength=1.5),)))
+    QTest.keySequence(w,QKeySequence(QKeySequence.StandardKey.Undo));QApplication.processEvents()
+    assert w.project.objects[0].wavelength==2
+    QTest.keySequence(w,QKeySequence(QKeySequence.StandardKey.Redo));QApplication.processEvents()
+    assert w.project.objects[0].wavelength==1.5
+    QTest.keySequence(w,QKeySequence('Ctrl+R'));QTest.qWait(150);QApplication.processEvents()
+    assert w.lifecycle.state==State.RUNNING
+    w.pause_simulation()
+
+
+def test_geometric_tools_convert_screen_points_at_two_zoom_levels(window):
+    from PySide6.QtCore import Qt,QPointF
+    w=window
+    class Event:
+        def __init__(self,p):self.p=p
+        def button(self):return Qt.MouseButton.LeftButton
+        def scenePos(self):return w.plot.getViewBox().mapViewToScene(QPointF(*self.p))
+    for extent in (32,16):
+        w.plot.setRange(xRange=(0,extent),yRange=(0,extent),padding=0);QApplication.processEvents()
+        w.start_measure('distance')
+        for point in ((3,4),(6,8)):w.canvas_click(Event(point))
+        assert w.message.text()=='Distance: 5.00000 reference lengths'
+        w.start_measure('angle')
+        for point in ((3,4),(6,4),(6,8)):w.canvas_click(Event(point))
+        assert w.message.text()=='Angle: 90.000°'
+
+
+def test_imported_preset_label_cannot_certify_a_coarse_grid():
+    p=example('Refraction')
+    with pytest.raises(ValueError,match='no longer meets'):
+        compile_project(replace(p,settings=replace(p.settings,quality='High Quality',dx=.5)))
+
+
+def test_save_and_discard_supersede_only_own_recovery(window,tmp_path,monkeypatch):
+    from PySide6.QtWidgets import QMessageBox
+    from wave_studio.persistence.projects import save,load
+    w=window;w.path=tmp_path/'saved.wave.json'
+    w.lifecycle.dirty=True;w._recover_save();assert w.recovery.exists()
+    assert w.save_project() and not w.recovery.exists()
+    w.lifecycle.dirty=True;w._recover_save()
+    monkeypatch.setattr(QMessageBox,'question',lambda *a:QMessageBox.StandardButton.Discard)
+    assert w.confirm_discard() and not w.recovery.exists()
+    other=Project(name='Other experiment');save(w.recovery,other)
+    assert w.confirm_discard() and load(w.recovery)==other
+    w.recovery.unlink()

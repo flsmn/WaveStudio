@@ -1,0 +1,76 @@
+{
+  "machine": "Apple M1 / 8 GiB",
+  "grid": [
+    512,
+    512
+  ],
+  "cpu_threads": 1,
+  "memory_note": "RSS peak is process-wide. MPS allocation is reported separately, never added to unified-memory RSS. GPU utilization was not sampled.",
+  "cpu": {
+    "idle": {
+      "process_cpu_seconds_per_second": 0.03683555791001521,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "rss_peak_bytes": 381812736
+    },
+    "one_view_economical": {
+      "process_cpu_seconds_per_second": 1.0088901379939523,
+      "displayed_frames_per_second": 24.902579042677957,
+      "steps_per_second": 219.142695575566,
+      "rss_peak_bytes": 453591040
+    },
+    "two_views_economical": {
+      "process_cpu_seconds_per_second": 1.0459704665292193,
+      "displayed_frames_per_second": 25.92750669014506,
+      "steps_per_second": 219.38659507045818,
+      "rss_peak_bytes": 465272832
+    },
+    "pause_latency_ms": 32.04562497558072,
+    "paused": {
+      "process_cpu_seconds_per_second": 0.06356893215254084,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "rss_peak_bytes": 465305600
+    },
+    "two_views_performance": {
+      "process_cpu_seconds_per_second": 1.3066405721310332,
+      "displayed_frames_per_second": 25.557108093836142,
+      "steps_per_second": 550.4607897133938,
+      "rss_peak_bytes": 477249536
+    }
+  },
+  "mps": {
+    "idle": {
+      "process_cpu_seconds_per_second": 0.06964750820898863,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "rss_peak_bytes": 477249536
+    },
+    "one_view_economical": {
+      "process_cpu_seconds_per_second": 0.9542798363218158,
+      "displayed_frames_per_second": 23.973692852524387,
+      "steps_per_second": 199.78077377103656,
+      "rss_peak_bytes": 511557632
+    },
+    "two_views_economical": {
+      "process_cpu_seconds_per_second": 1.150958164311469,
+      "displayed_frames_per_second": 25.626194948133616,
+      "steps_per_second": 220.7795257069973,
+      "rss_peak_bytes": 511557632
+    },
+    "pause_latency_ms": 46.76770803052932,
+    "paused": {
+      "process_cpu_seconds_per_second": 0.0718196456215196,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "rss_peak_bytes": 511557632
+    },
+    "two_views_performance": {
+      "process_cpu_seconds_per_second": 1.0513874453610808,
+      "displayed_frames_per_second": 25.698706211808886,
+      "steps_per_second": 237.21882657054357,
+      "rss_peak_bytes": 511557632
+    },
+    "mps_allocated_bytes": 10757120
+  }
+}

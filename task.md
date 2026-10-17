@@ -32,7 +32,7 @@ Maßgeblich: DEVELOPMENT_PLAN.md, PRD.md, PROJECT_PLAN.md. Dies ist eine funktio
 - [x] S12 Implementierung: wellenlängen-/strukturbezogene Qualitätsvorschläge, Expertenwerte, Speicherprüfung, CPU/MPS/Auto und unabhängige sparsame/höhere Rechenmodi. Finale Qualitätsfreigabe siehe offen.
 - [x] S13 Implementierung: drei bearbeitbare JSON-Beispiele, englische Hilfe, helle/dunkle Darstellung, Tastaturbefehle und Benutzer-/Entwicklungsdokumentation.
 - [x] T08 lokal: CPU/MPS-Feld- und Detektorprofilvergleich bestanden; CUDA wird nicht angeboten.
-- [x] Native macOS-Paketierung aus fest gebauten Wheels; früher Paketstart erfolgreich. Finaler kompletter Pakettest wird unten ergänzt.
+- [x] Native macOS-Paketierung aus fest gebauten Wheels; früher Paketstart erfolgreich. Der finale vollständige Pakettest besteht aus `/private/tmp`; `frozen=true`, Engine-/Studio-Importpfade im Bundle, Beispiele, PNG/CSV und Projekt-/Referenz-Roundtrip bestätigt (`docs/native-results.json`).
 
 ## Prüfungen
 
@@ -59,3 +59,12 @@ Die grobe T04-Linse liegt mit 18,5 % / 11,5 % Fokusfehler und 7 % Rasterverschie
 - Engine: `134bd37` Cachebereinigung; `d06d04b` vorab eingefrorene Toleranzen; `84df638` kalibrierter Kern/Referenzen; `b0c4af0` geräteinterne Detektoren und Messfenster.
 - Studio: `323e453` Baseline; `c490eaa` Worker-Prototyp; `33b754c` Editor, Dateien, Messungen und Exporte. Weitere Abschlusscommits halten Verifikation, Paketierung und Darstellungsoptimierung fest.
 - Beide Pakete verwenden dasselbe Entwicklungsversionspaar `0.1.0.dev2`; native Builds beziehen die Engine aus dem Wheel, nicht aus einem beweglichen Nachbarcheckout.
+
+
+## Abschluss dieses Entwicklungsstands
+
+- Finaler nativer macOS-Build aus dem gepinnten Versionspaar erfolgreich. Anwendung: `dist/WaveStudio.app`; Wheels in den jeweiligen `dist/`-Verzeichnissen. Keine Nachbarquellen zur Laufzeit erforderlich. Wheel-Hashes und Build-Zuordnung in `docs/build-results.json`.
+- Abschließender T05/T06-Integrationstest im tatsächlichen eingefrorenen Paket erfolgreich; beide Importe kommen aus dem Bundle. Prüfausgaben in `docs/native-results.json` und `/tmp/wave-studio-native-final-check/`.
+- Finale 512²-Messung auf dem M1: ca. 24–26 Frames/s, Pause ca. 32 ms CPU / 47 ms MPS; maximal beobachteter Prozess-RSS ca. 512 MB. Pausiert null Schritte/Frames. Das vorläufige 30-fps-Ziel ist damit noch nicht als allgemeines Ziel bestätigt; siehe offene Budget-/Qualitätsabnahme.
+- Lokale Funktionsimplementierung M0–M4 verfügbar; die oben aufgeführten Plattform-, Qualitäts-, menschlichen Bedien- und Release-Abnahmen bleiben offen. Es wurde kein stabiles plattformübergreifendes Release behauptet.
+- Engine-Abschlussstand: `3813481`; Studio-Anwendungscode: `d5e9c7f`. Der folgende Dokumentations-/Build-Commit hält die vollständigen lokalen Nachweise fest.

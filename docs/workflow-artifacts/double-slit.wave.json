@@ -2,7 +2,7 @@
   "format": "wave-studio",
   "version": 1,
   "project": {
-    "id": "399b759e-5cf7-46eb-94e8-7ff4f0bff2af",
+    "id": "b9f1c7a7-57dd-445f-9bcb-143dab643d8b",
     "name": "Double slit",
     "reference_length": 1.0,
     "settings": {
@@ -17,7 +17,7 @@
     "objects": [
       {
         "type": "SourceObject",
-        "id": "369cad99-8fd9-4c6c-be39-4a191485c74a",
+        "id": "6197a367-d8c6-499c-9950-a85eca2568f7",
         "name": "Point source",
         "start": [
           14,
@@ -30,7 +30,7 @@
       },
       {
         "type": "WallObject",
-        "id": "5853d5e6-b0c0-45d5-ab84-a96703e575c0",
+        "id": "63ce2709-07af-4c52-8b8e-ca325635a973",
         "name": "Lower wall",
         "x": 30,
         "y": 0,
@@ -39,7 +39,7 @@
       },
       {
         "type": "WallObject",
-        "id": "da3f6422-9e1b-4e07-a5b7-631a0a3ad5c3",
+        "id": "05d2e8a9-dd3a-49e2-a4d8-ec0057a90758",
         "name": "Centre wall",
         "x": 30,
         "y": 29.5,
@@ -48,7 +48,7 @@
       },
       {
         "type": "WallObject",
-        "id": "f446b556-2313-489e-8d9a-2f13542ae0f7",
+        "id": "825e699a-29b9-4626-af5d-029ec4addd96",
         "name": "Upper wall",
         "x": 30,
         "y": 35.5,
@@ -57,7 +57,7 @@
       },
       {
         "type": "MaterialObject",
-        "id": "f8dae3d3-c00b-4894-a7ea-fd9ffe350443",
+        "id": "0a8dafeb-de03-4445-938e-5837813f943e",
         "name": "Material",
         "vertices": [
           [
@@ -91,7 +91,7 @@
     },
     "detectors": [
       {
-        "id": "e474edf5-d706-42cf-a1b0-caf9b2fe7dc6",
+        "id": "55e1c920-f1fe-4658-8ca5-ad1c8dc99219",
         "name": "Detector line",
         "start": [
           53,
@@ -106,7 +106,7 @@
         "window": 24
       },
       {
-        "id": "3ad1628c-57a6-46e1-8f1d-ff27cdbe9ae1",
+        "id": "ca40cd46-2bc8-40c9-ac51-0c9dcb45932e",
         "name": "Second detector",
         "start": [
           50,
@@ -120,7 +120,7 @@
     ],
     "references": [
       {
-        "detector_id": "e474edf5-d706-42cf-a1b0-caf9b2fe7dc6",
+        "detector_id": "55e1c920-f1fe-4658-8ca5-ad1c8dc99219",
         "measurement_revision": 0,
         "status": "complete",
         "activated": 0,
@@ -1680,7 +1680,7 @@
         ],
         "metadata": {
           "scene": {
-            "id": "399b759e-5cf7-46eb-94e8-7ff4f0bff2af",
+            "id": "b9f1c7a7-57dd-445f-9bcb-143dab643d8b",
             "name": "Double slit",
             "reference_length": 1.0,
             "settings": {
@@ -1695,7 +1695,7 @@
             "objects": [
               {
                 "type": "SourceObject",
-                "id": "369cad99-8fd9-4c6c-be39-4a191485c74a",
+                "id": "6197a367-d8c6-499c-9950-a85eca2568f7",
                 "name": "Point source",
                 "start": [
                   14,
@@ -1708,7 +1708,7 @@
               },
               {
                 "type": "WallObject",
-                "id": "5853d5e6-b0c0-45d5-ab84-a96703e575c0",
+                "id": "63ce2709-07af-4c52-8b8e-ca325635a973",
                 "name": "Lower wall",
                 "x": 30,
                 "y": 0,
@@ -1717,7 +1717,7 @@
               },
               {
                 "type": "WallObject",
-                "id": "da3f6422-9e1b-4e07-a5b7-631a0a3ad5c3",
+                "id": "05d2e8a9-dd3a-49e2-a4d8-ec0057a90758",
                 "name": "Centre wall",
                 "x": 30,
                 "y": 29.5,
@@ -1726,7 +1726,7 @@
               },
               {
                 "type": "WallObject",
-                "id": "f446b556-2313-489e-8d9a-2f13542ae0f7",
+                "id": "825e699a-29b9-4626-af5d-029ec4addd96",
                 "name": "Upper wall",
                 "x": 30,
                 "y": 35.5,
@@ -1736,9 +1736,9 @@
             ]
           },
           "scene_revision": 0,
-          "run_id": "348ed4fb-e6f7-4b48-97ad-6b567c359a72",
+          "run_id": "d526b300-1096-499d-a87d-35f8540490e4",
           "generation": 1,
-          "engine_version": "0.1.0.dev1",
+          "engine_version": "0.1.0.dev2",
           "grid": {
             "nx": 288,
             "ny": 256,
@@ -1750,8 +1750,8 @@
           "dt": 0.125,
           "backend": "cpu",
           "dtype": "float32",
-          "time": 87.5,
-          "steps": 700
+          "time": 85.5,
+          "steps": 684
         }
       }
     ],

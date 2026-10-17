@@ -16,7 +16,7 @@ app=QApplication([]);w=MainWindow();w.show()
 report={'machine':'Apple M1 / 8 GiB','grid':[512,512],'cpu_threads':1,'memory_note':'RSS peak is process-wide. MPS allocation is reported separately, never added to unified-memory RSS. GPU utilization was not sampled.'}
 
 def observe(seconds):
-    start=time.monotonic();cpu=time.process_time();frames=0;last=-1;first=w.frame.steps if w.frame else 0
+    start=time.monotonic();cpu=time.process_time();frames=0;last=w.frame.steps if w.frame else -1;first=w.frame.steps if w.frame else 0
     while time.monotonic()-start<seconds:
         app.processEvents()
         if w.frame and w.frame.steps!=last:frames+=1;last=w.frame.steps
@@ -28,7 +28,7 @@ try:
     for backend in ('cpu','mps'):
         if backend=='mps' and not torch.backends.mps.is_available():continue
         p=Project(settings=SimulationSettings(64,64,.125,.5,6,2,backend),objects=(SourceObject(start=(32,32),wavelength=4),),detectors=(DetectorObject(start=(48,20),end=(48,44),samples=161,settling=10,window=20),))
-        w.replace_project(p);idle=observe(.4)
+        w.replace_project(p);observe(.7);idle=observe(.8)
         w.run_simulation();observe(.3);one=observe(1)
         w.secondary_action.setChecked(True);observe(.2);two=observe(1)
         begin=time.monotonic();w.pause_simulation()
@@ -36,7 +36,7 @@ try:
             app.processEvents();time.sleep(.001)
             if time.monotonic()-begin>2:raise AssertionError('Pause timed out')
         latency=(time.monotonic()-begin)*1000
-        paused=observe(.4)
+        observe(.15);paused=observe(.8)
         data={'idle':idle,'one_view_economical':one,'two_views_economical':two,'pause_latency_ms':latency,'paused':paused}
         w.run_simulation();w.mode_combo.setCurrentText('Performance');observe(.2);data['two_views_performance']=observe(.5)
         w.pause_simulation();observe(.1)

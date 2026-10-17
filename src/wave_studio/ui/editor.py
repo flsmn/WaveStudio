@@ -19,6 +19,7 @@ from wave_studio.domain.history import History,change_kind
 from wave_studio.simulation.compiler import compile_project,detector_spec
 from wave_studio.simulation.lifecycle import Lifecycle,State
 from wave_studio.simulation.worker import Frame,Failure
+from wave_studio.simulation.rates import FrameRates
 from wave_studio.persistence.projects import save,load,physical_data,atomic_write
 from wave_studio.persistence.exports import export_csv
 from .main_window import MainWindow as PrototypeWindow
@@ -32,7 +33,7 @@ class MainWindow(PrototypeWindow):
         self._empty_image=None
         self.history=History();self.selected=None;self.revisions={};self.profiles={}
         self.run_project=None;self.path=None;self.overlays=[];self._rebuilding=False;self._linking_ranges=False
-        self.polygon_points=None;self.measure_points=None;self._frames=0;self._last_rate=monotonic();self._last_steps=0
+        self.polygon_points=None;self.measure_points=None;self._rates=FrameRates()
         super().__init__()
         self.recovery=Path(os.environ.get('WAVESTUDIO_RECOVERY_DIR',QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)))/'recovery.wave.json'
         self.recovery_timer=QTimer(self);self.recovery_timer.timeout.connect(self._recover_save);self.recovery_timer.start(30000)
@@ -153,7 +154,7 @@ class MainWindow(PrototypeWindow):
         running=self.lifecycle.state==State.RUNNING
         self.run_button.setEnabled(not running);self.pause_button.setEnabled(running);self.step_button.setEnabled(self.lifecycle.can_step)
         self.state_label.setText(self.lifecycle.state.value)
-        if not running:self.rate_label.setText('0 steps/s · 0 frames/s')
+        if not running:self._rates.reset();self.rate_label.setText('0 steps/s · 0 frames/s')
         self.range_label.setText('Max' if self.project.display.view=='Intensity' else 'Range ±')
         self.settings_button.setEnabled(not running)
         self.undo_action.setEnabled(bool(self.history.undo_stack));self.redo_action.setEnabled(bool(self.history.redo_stack))
@@ -424,7 +425,8 @@ class MainWindow(PrototypeWindow):
             # Every accepted physical edit already prepares this exact scene.
             # Re-rasterizing millions of cells on Run/Resume blocks the GUI.
             self.project.validate();scene=self.scene;fresh=self.lifecycle.run()
-            if fresh:self.run_project=self.project;self.profiles={};self.frame=None;self._last_steps=0;self._last_rate=monotonic();self._frames=0
+            self._rates.reset();self.rate_label.setText('Measuring rate…')
+            if fresh:self.run_project=self.project;self.profiles={};self.frame=None
             self.worker.submit('start' if fresh else 'resume',self.lifecycle.identity,(scene,self.detector_specs()),self.project.settings.device)
             self.worker.submit('mode',self.lifecycle.identity,self.project.compute_mode);self._views_changed()
             self.message.setText('Experiment running. '+('Large-grid live views are reduced; Pause shows full detail. Measurements keep full resolution.' if max(scene.grid.shape)>self.worker.DISPLAY_AXIS_LIMIT else 'Intensity view is a live preview; detector windows provide completed measurements.'))
@@ -439,16 +441,17 @@ class MainWindow(PrototypeWindow):
         if result is None or not self.lifecycle.accepts(result.identity):return
         if isinstance(result,Failure):
             self.lifecycle.fail(result.message);self.frame=None;self.profiles={};self.message.setText(result.message);self._draw();self._plot_profiles();self._refresh_controls();return
-        self.frame=result;self._frames+=1
+        self.frame=result
         for key,profile in (result.profiles or {}).items():
             if profile['measurement_revision']==self.revisions.get(key,0):
                 self.profiles[key]={**profile,'metadata':self.metadata()}
         self.time_label.setText(f't = {result.time:.3f} · {result.steps:,} steps')
         self._draw();self._plot_profiles()
-        now=monotonic()
-        if now-self._last_rate>=1:
-            if self.lifecycle.state==State.RUNNING:self.rate_label.setText(f'{(result.steps-self._last_steps)/(now-self._last_rate):.0f} steps/s · {self._frames/(now-self._last_rate):.0f} frames/s')
-            self._last_rate=now;self._last_steps=result.steps;self._frames=0
+        if self.lifecycle.state!=State.RUNNING or result.paused:
+            self._rates.reset();self.rate_label.setText('0 steps/s · 0 frames/s')
+        else:
+            rate=self._rates.observe(result.steps,monotonic())
+            if rate:self.rate_label.setText(f'{rate[0]:.0f} steps/s · {rate[1]:.0f} frames/s')
 
     def metadata(self):
         return {'scene':physical_data(self.run_project or self.project),'scene_revision':self.lifecycle.scene_revision,'run_id':self.lifecycle.run_id,'generation':self.lifecycle.generation,'engine_version':engine_version,'grid':asdict(self.scene.grid),'dt':self.scene.grid.dt,'backend':self.frame.backend if self.frame else self.project.settings.device,'dtype':'float32','time':self.frame.time if self.frame else 0,'steps':self.frame.steps if self.frame else 0,'display_preview':bool(self.frame and self.frame.preview),'display_shape':list(self.frame.field.shape if self.frame.field is not None else self.frame.intensity.shape) if self.frame and (self.frame.field is not None or self.frame.intensity is not None) else None}

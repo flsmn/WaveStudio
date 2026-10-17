@@ -7,7 +7,6 @@ import numpy as np
 import torch
 import pyqtgraph as pg
 from PySide6 import __version__ as qt_binding_version
-from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QAccessible
 import wave_sim2d
@@ -26,7 +25,7 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
     output=Path(output_directory);output.mkdir(parents=True,exist_ok=True)
     os.environ['WAVESTUDIO_RECOVERY_DIR']=str(output/'.recovery')
     app=QApplication([]);app.setApplicationName('Wave Studio');app.setOrganizationName('Wave Studio');app.setStyle('Fusion')
-    timings={};enabled=False;received=0;states={};gaps=[];last_beat=time.monotonic()
+    timings={};enabled=False;received=0;states={};gaps=[];last_beat=time.monotonic();advance=None;finished=False
     thread_info={}
     def thread_qos():
         if sys.platform!='darwin':return None
@@ -53,10 +52,14 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
     pg.ImageItem.render=measure('image_render_ms',original_render)
     class Window(MainWindow):
         def _poll(self):
-            nonlocal received
+            nonlocal received,last_beat
+            now=time.monotonic()
+            if enabled:gaps.append((now-last_beat)*1000)
+            last_beat=now
             before=self.frame
             super()._poll()
             if enabled and self.frame is not None and self.frame is not before:received+=1
+            if advance is not None:advance()
         _draw=measure('gui_draw_ms',MainWindow._draw)
         _plot_profiles=measure('gui_profiles_ms',MainWindow._plot_profiles)
     w=Window();w.resize(1320,860);w.show()
@@ -64,20 +67,14 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
     if without_activity:w.worker.activity.supported=False
     p=example('Biconvex lens');p=replace(p,settings=replace(p.settings,buffer_limit_mib=768,device='mps'))
     e=estimate(p,'Balanced');p=replace(p,settings=replace(p.settings,quality='Balanced',dx=e.dx));w.replace_project(p)
-    report={'version':__version__,'engine_version':wave_sim2d.__version__,'frozen':bool(getattr(sys,'frozen',False)),'event_loop':event_loop,'platform':platform.platform(),'python':platform.python_version(),'torch':torch.__version__,'qt_binding':qt_binding_version,'pyqtgraph':pg.__version__,'engine_location':wave_sim2d.__file__,'application_location':__file__,'grid':[e.nx,e.ny],'seconds_per_case':seconds,'without_activity':without_activity,'measurements':{},'count_note':'Received latest frames and ImageItem conversions are distinct from compositor scanout FPS.'}
+    report={'version':__version__,'engine_version':wave_sim2d.__version__,'pid':os.getpid(),'frozen':bool(getattr(sys,'frozen',False)),'event_loop':event_loop,'platform':platform.platform(),'python':platform.python_version(),'torch':torch.__version__,'qt_binding':qt_binding_version,'pyqtgraph':pg.__version__,'engine_location':wave_sim2d.__file__,'application_location':__file__,'grid':[e.nx,e.ny],'seconds_per_case':seconds,'without_activity':without_activity,'measurements':{},'count_note':'Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.'}
     cases=[('one_view_economical',False,'Economical'),('two_views_economical',True,'Economical'),('two_views_performance',True,'Performance')]
     index=0;phase='starting';deadline=time.monotonic()+15;began=0;start_steps=0;cpu_start=0
-    def heartbeat():
-        nonlocal last_beat
-        now=time.monotonic()
-        if enabled:gaps.append((now-last_beat)*1000)
-        last_beat=now
-    heartbeat_timer=QTimer();heartbeat_timer.setInterval(10);heartbeat_timer.timeout.connect(heartbeat);heartbeat_timer.start()
     def stats(values):
         return {'count':len(values),'total':sum(values),'median':float(np.median(values)),'p95':float(np.percentile(values,95)),'max':max(values)} if values else {'count':0}
     def finish(error=None):
-        nonlocal enabled
-        enabled=False;timer.stop();heartbeat_timer.stop()
+        nonlocal enabled,finished
+        enabled=False;finished=True
         report['passed']=error is None
         if error:report['error']=error
         report['rss_peak_bytes']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -92,10 +89,12 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
     def tick():
         nonlocal index,phase,deadline,began,start_steps,cpu_start,enabled,received,timings,states,gaps,last_beat
         now=time.monotonic()
+        if finished:return
         if phase=='starting':
             if w.frame is None or w.frame.steps<4:
                 if now>deadline:finish('First frame timed out: '+w.message.text())
                 return
+            report['startup_seconds']=now-run_started
             phase='warmup';deadline=now+2
         if phase=='warmup' and now>=deadline:
             timings={};received=0;states={};gaps=[];last_beat=now;began=now;cpu_start=time.process_time();start_steps=w.frame.steps;enabled=True;phase='measuring';deadline=now+seconds
@@ -110,11 +109,14 @@ def run_performance(output_directory,event_loop='native',seconds=10,without_acti
             index+=1
             if index==len(cases):finish();return
             _,two,mode=cases[index];w.secondary_action.setChecked(two);w.mode_combo.setCurrentText(mode);phase='warmup';deadline=time.monotonic()+2
-    timer=QTimer();timer.setInterval(50);timer.timeout.connect(tick);timer.start();w.run_simulation()
+    advance=tick;run_started=time.monotonic();w.run_simulation()
+    report['extra_python_timers']=False
+    (output/'ready.json').write_text(json.dumps({'pid':os.getpid(),'version':__version__})+'\n')
+    print('PERFORMANCE_READY',flush=True)
     try:
         if event_loop=='native':app.exec()
         else:
-            while timer.isActive():app.processEvents();time.sleep(.001)
+            while not finished:app.processEvents();time.sleep(.001)
     finally:
         WaveSimulator2D.step=original_step;worker.display_snapshot=original_snapshot;pg.ImageItem.render=original_render
         if w.worker.isRunning():w.lifecycle.dirty=False;w.close()

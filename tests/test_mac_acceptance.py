@@ -47,7 +47,7 @@ def test_property_summary_and_reference_selection_survive_rebuild(window):
 
 def test_paused_rates_remain_zero_after_acknowledgement(window):
     from wave_studio.simulation.worker import Frame
-    w=window;w.lifecycle.run();w.lifecycle.pause();w._last_rate=time.monotonic()-2
+    w=window;w.lifecycle.run();w._rates.observe(1,time.monotonic()-2);w.lifecycle.pause()
     w.worker.latest.put(Frame(w.lifecycle.identity,1,240,None,paused=True))
     w._refresh_controls();w._poll()
     assert w.rate_label.text()=='0 steps/s · 0 frames/s'

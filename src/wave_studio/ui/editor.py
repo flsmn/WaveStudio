@@ -27,6 +27,8 @@ from .dialogs import ObjectDialog,SettingsDialog
 
 class MainWindow(PrototypeWindow):
     def __init__(self):
+        self._image_configs={}
+        self._empty_image=None
         self.history=History();self.selected=None;self.revisions={};self.profiles={}
         self.run_project=None;self.path=None;self.overlays=[];self._rebuilding=False
         self.polygon_points=None;self.measure_points=None;self._frames=0;self._last_rate=monotonic();self._last_steps=0
@@ -124,6 +126,11 @@ class MainWindow(PrototypeWindow):
         if hasattr(self,'second'):
             color='#101925' if theme=='Dark' else '#eaf0f5'
             self.second.setBackground(color);self.profile_plot.setBackground(color)
+            ink='#95a5b8' if theme=='Dark' else '#42566b'
+            for chart in (self.second,self.profile_plot):
+                for side in ('left','bottom','right'):chart.getAxis(side).setTextPen(pg.mkPen(ink));chart.getAxis(side).setPen(pg.mkPen(ink))
+            for scale in (self.scale,self.second_scale):
+                for side in ('left','right'):scale.getAxis(side).setTextPen(pg.mkPen(ink))
 
     def _refresh_controls(self):
         running=self.lifecycle.state==State.RUNNING
@@ -314,13 +321,25 @@ class MainWindow(PrototypeWindow):
 
     def _draw(self):
         if not hasattr(self,'second'):return super()._draw()
-        for view,image,scale,plot in [(self.project.display.view,self.image,self.scale,self.plot),(self.secondary_view.currentText(),self.second_image,self.second_scale,self.second)]:
+        panes=[(self.project.display.view,self.image,self.scale,self.plot)]
+        if self.second.isVisible():panes.append((self.secondary_view.currentText(),self.second_image,self.second_scale,self.second))
+        for view,image,scale,plot in panes:
             if view=='Material':data=self.scene.refractive_index;levels=(1,max(2,float(data.max())));color=pg.ColorMap([0,1],['#162331','#6cdec8']);label='Refractive index'
             elif view=='Intensity':
                 data=self.frame.intensity if self.frame is not None else None;levels=(0,self.project.display.intensity_range);color=pg.ColorMap([0,1],['#101925','#f0ca78']);label='Live mean field² (relative)'
             else:data=self.frame.field if self.frame is not None else None;levels=(-self.project.display.contrast,self.project.display.contrast);color=self._field_map();label='Field (relative)'
-            if data is None:data=np.zeros(self.scene.grid.shape,dtype=np.float32)
-            scale.setColorMap(color);scale.setLevels(levels);scale.getAxis('left').setLabel(label);image.setImage(data,autoLevels=False);image.setRect(QRectF(0,0,self.scene.grid.width,self.scene.grid.height))
+            if data is None:
+                if self._empty_image is None or self._empty_image.shape!=self.scene.grid.shape:self._empty_image=np.zeros(self.scene.grid.shape,dtype=np.float32)
+                data=self._empty_image
+            g=self.scene.grid
+            configuration=(view,levels,g.nx,g.ny,g.width,g.height)
+            changed=self._image_configs.get(id(image))!=configuration
+            if changed:
+                scale.setColorMap(color);scale.setLevels(levels);scale.getAxis('left').setLabel(label);scale.axis.setWidth(75)
+                self._image_configs[id(image)]=configuration
+            if changed or image.image is not data:
+                image.setImage(data,autoLevels=False)
+                if changed:image.setRect(QRectF(0,0,g.width,g.height))
 
     def _view_changed(self,view):
         self.commit(replace(self.project,display=replace(self.project.display,view=view)))
@@ -383,11 +402,16 @@ class MainWindow(PrototypeWindow):
         self.profile_plot.clear()
         current=self.profiles.get(self.detector_combo.currentData())
         index=self.ref_combo.currentData();reference=self.project.references[index] if isinstance(index,int) and 0<=index<len(self.project.references) else None
-        series=[('Current',current,'#65d5bd'),('Reference',reference,'#f2bd72')]
+        series=[('Current',current,'#65d5bd' if self.project.display.theme=='Dark' else '#147964'),('Reference',reference,'#f2bd72' if self.project.display.theme=='Dark' else '#925700')]
+        origin=current or reference
+        axis=0
+        if origin:
+            points=np.array(origin['positions']);axis=1 if np.ptp(points[:,1])>np.ptp(points[:,0]) else 0
+            self.profile_plot.setLabel('bottom','y' if axis==1 else 'x',units='reference length')
         denominator=max([max(p['values'],default=0) for _,p,_ in series if p]+[1e-30]) if self.norm.currentText()!='Raw values' else 1
         for name,profile,color in series:
             if profile:
-                positions=np.array(profile['positions']);axis=1 if np.ptp(positions[:,1])>np.ptp(positions[:,0]) else 0
+                positions=np.array(profile['positions'])
                 self.profile_plot.plot(positions[:,axis],np.array(profile['values'])/denominator,pen=pg.mkPen(color,width=2),symbol='o' if len(positions)==1 else None,name=name)
                 self.profile_plot.setLabel('bottom','y' if axis==1 else 'x',units='reference length')
         if current:self.profile_status.setText(f"{current['status'].capitalize()} · {current['elapsed']:.2f}/{current['duration']:g} time · {current['sample_count']} samples")

@@ -1,50 +1,61 @@
 # Wave Studio – Fortschritt
 
-Stand: 17. Oktober 2026. Maßgeblich sind DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
+Stand: 17. Oktober 2026. Entwicklungsstand: **Studio und Engine 0.1.0.dev2**.
+Maßgeblich: DEVELOPMENT_PLAN.md, PRD.md, PROJECT_PLAN.md. Dies ist eine funktionale Entwicklungsversion; keine abgeschlossene plattformübergreifende Release-Abnahme.
 
-## Ausgangslage
+## Ausgangslage und Entscheidungen
 
-- Zwei eigenständige Repositories; der Workspace selbst ist kein Git-Repository.
-- Engine-Baseline: `5620234f539b1be3974f4dca122c16f272845271`.
-- Vorhandene Engine-Änderungen: korrigierter Beispiel-Link im README, portabler Importpfad in test_comprehensive.py und neun gelöschte versionierte Cachedateien. Diese Änderungen werden erhalten; Cachebereinigung wird separat versioniert.
-- Studio: Planungsdokumente vorhanden, bisher kein Commit und kein Anwendungscode.
+- Zwei eigenständige Git-Repositories; der Workspace selbst ist kein Git-Repository.
+- Engine-Ausgangscommit: `5620234f539b1be3974f4dca122c16f272845271`. Vorhandene Änderungen am README-Beispiellink und portablen Test-Import wurden erhalten. Neun bereits gelöschte versionierte Cachedateien wurden separat bereinigt (`134bd37`).
+- Studio hatte anfangs nur die Planung und keinen Commit; Baseline samt Tracker in `323e453` gesichert.
+- Nutzerentscheidung vom 17.10.: vorerst nur der aktuelle Apple M1 / 8 GB; Linux- und Windows-Tests folgen später. Der lokale Funktionsausbau wurde nach M0 und dem macOS-Prototyp fortgesetzt; die fehlenden Plattformnachweise bleiben ausdrücklich offen.
+- B02: Step nur im initialisierten pausierten Lauf. Reset gibt den Zustand frei, erneuert die Generation, bleibt bereit und sperrt Step bis Run → Pause.
+- O01: kalibrierter Neunpunkt-Stencil, c0=1, additive skalierte Delta-/Linienanregung, Zellmittelpunktraster, Dirichlet-Wände, zeitbezogene Dämpfung; Vertrag in der Engine unter `docs/MODEL.md`.
+- O02: Toleranzen vor den Referenzmessungen in `d06d04b` eingefroren. Fehlgeschlagene schmale Randzone dokumentiert und räumlich verbessert; keine nachträgliche Toleranzaufweitung.
+- O05: bikonvexe Linse als Schnitt zweier Kreise, symmetrisch, Randdicke null; Apertur <2R. Dieselbe feste Kontur wie T04, gitterunabhängig.
+- O06: editierbare Einlauf-/Fensterdefaults 32/16 Simulationszeiteinheiten; vier Referenzen; eine Wiederherstellungsdatei, maximal 8 MiB, alle 30 Sekunden bei Änderungen. Keine automatische Aussage „eingeschwungen“.
 
-## Arbeitspakete
+## Abgeschlossene Implementierung
 
-- [x] B01: Python-3.12-Entwicklungsumgebung, Baseline, Entwicklungsanleitung.
-- [x] E01: installierbare Engine, optionale Visualisierung, Wheel-/Editable-Prüfung.
-- [x] B02: versionierter API-, Einheiten- und Lebenszyklusvertrag.
-- [x] E02: kalibrierter Stencil, Stabilitätsprüfung, Parametergrenzen.
-- [x] E03: explizites Gerät, Initialfeld, vollständiger Reset, kontrollierte Schritte.
-- [x] E04: additive, räumlich und zeitlich skalierte Quellen.
-- [x] E05: Materialreihenfolge, Rasterisierung, Dirichlet-Wände.
-- [x] E06: zeitbezogene Dämpfung und getrennte Randzone.
-- [x] E07: T01–T04 mit vorab festgelegten Toleranzen und numerischem Bericht.
-- [x] S01: startbares PySide6-/PyQtGraph-Anwendungspaket.
-- [x] S02: Qt-unabhängiges Projektmodell und Scene Compiler.
-- [x] S03: einzelner Worker mit begrenzter Frame-Übergabe.
-- [x] S04: Run/Pause/Step/Reset, Revisionen, Fehlerpfade.
-- [ ] B03: Ressourcenmessungen und native Erstpakete auf drei Systemen.
-- [ ] S05–S06 / M2: freier Editor, Undo/Redo, sichere Projektdateien.
-- [ ] E08, S07–S09, B04 / M3: Messung, Referenzen, Export, Doppelspalt-Ablauf.
-- [ ] S10–S13, E09, B05 / M4: vollständiger Umfang und Release-Abnahme.
+- [x] B01: unabhängige Versionierung, Python-3.12-Umgebung und Entwicklungsanleitung.
+- [x] E01: installierbare Engine, optionale alte Visualisierung, Editable-Integration und isolierter Wheel-/CPU-/Detektortest außerhalb des Quellbaums.
+- [x] B02: API-, Einheiten-, Puffer- und Lebenszyklusvertrag einschließlich Reset-/Messidentitäten.
+- [x] E02–E06: Skalierung/Stabilität, Gerätewahl, Initialfeld/Reset/Schritte, additive Quellen, Materialreihenfolge, Rasterisierung, Wände, getrennte Randzone und physikalische Dämpfungsrate.
+- [x] E07: vier ausführbare Referenzfälle; T01–T04 bestehen innerhalb der vorher festgelegten begrenzten Toleranzen. Punkt-/Linienquellen wurden auch über zwei Auflösungen verglichen.
+- [x] S01–S04: startbare englische Oberfläche, Projektmodell/Compiler, ein Worker mit vier Schritten pro Block, ein Frame-Puffer, Run/Pause/Step/Reset, Revisionen und kontrollierte Fehlerpfade.
+- [x] S05: freier Aufbau mit Punkt-/Linienquellen, Materialrechtecken/-polygonen, Wänden; Auswahl, Verschieben/Griffe, numerische Eigenschaften, Duplizieren/Löschen, Reihenfolge, Undo/Redo. Physikalische Änderungen bleiben angehalten.
+- [x] S06: versioniertes JSON, vollständige Prüfung vor Projektwechsel, atomisches Speichern, Speicherstatus und begrenzte Wiederherstellung.
+- [x] E08/S07: passive Punkt-/Liniendetektoren, bilineares Feldquadrat pro Rechenschritt, endliche Fenster mit anteiligen Randzeitschritten, geräteinterne Akkumulation, eigene Messrevision und Live-Intensitätsvorschau.
+- [x] S08/S09: bis zu vier eingefrorene Profile samt Ursprungsszene, gemeinsamer Vergleich/Rohskalierung, PNG mit Skala/Metadaten, CSV mit unnormalisierten Werten und vollständiger Zuordnung.
+- [x] B04 lokal: Doppelspalt im tatsächlichen Qt-/Worker-Ablauf bis Referenz, Export und Wiederöffnung geprüft. Geänderte Detektoren erhalten eine neue Messrevision, ohne Feld/Lauf oder andere Detektoren zu ändern.
+- [x] S10/S11 Implementierung: parametrisierte Linse nach T04-Vertrag, zweite Ansicht desselben Laufs, synchronisierte Ausschnitte, Abstand und Winkel.
+- [x] S12 Implementierung: wellenlängen-/strukturbezogene Qualitätsvorschläge, Expertenwerte, Speicherprüfung, CPU/MPS/Auto und unabhängige sparsame/höhere Rechenmodi. Finale Qualitätsfreigabe siehe offen.
+- [x] S13 Implementierung: drei bearbeitbare JSON-Beispiele, englische Hilfe, helle/dunkle Darstellung, Tastaturbefehle und Benutzer-/Entwicklungsdokumentation.
+- [x] T08 lokal: CPU/MPS-Feld- und Detektorprofilvergleich bestanden; CUDA wird nicht angeboten.
+- [x] Native macOS-Paketierung aus fest gebauten Wheels; früher Paketstart erfolgreich. Finaler kompletter Pakettest wird unten ergänzt.
 
-## Prüfungen und Grenzen
+## Prüfungen
 
-Engine: 7 Kernprüfungen bestanden; historische Prüfung 9/9 Gruppen. Studio: 4 Kern-/Worker-Prüfungen bestanden. T01–T04 bestanden innerhalb der vorab eingefrorenen, begrenzten Referenztoleranzen; Rohwerte und bekannte Grenzen unter ../WaveSimulator2D/docs/. Wheel in sauberer temporärer Python-Umgebung außerhalb des Quellbaums mit CPU-Lauf und pip check geprüft. PySide6-Prototyp startet/schließt kontrolliert; Screenshot visuell geprüft. Nativer macOS-Prototyp gebaut; Paketstart noch zu prüfen. Physikalische Abnahme und Plattformnachweise werden getrennt vom Implementierungsstand geführt. Gemäß Development Plan beginnt der umfangreiche Editor-Ausbau erst nach E07/B03. Nicht verfügbare Zielplattformen werden ausdrücklich offen geführt.
+- **17 Kernprüfungen bestanden:** neun Engine-, acht Studio-Prüfungen; darunter kontrollierter Workerfehler ohne automatischen Neustart, vollständiger Reset, alte Frames, Messfenster, ungültige Dateien und fehlgeschlagener atomischer Austausch.
+- **T01–T04 bestanden**, Rohwerte in `../WaveSimulator2D/docs/physical-results.json`, Protokoll/Toleranzen unter `../WaveSimulator2D/validation/`. Geschwindigkeitsfehler <0,5 %, Quellen-Amplitudenabweichung zwischen Gittern: Punkt 0,448 %, Linie 2,880 %.
+- **T05/T06 lokaler Integrationstest bestanden:** tatsächliche Qt-Widgets und echter Worker; Referenz, Step/Resume, Detektoränderung, ungültige Eingabe, zwei Ansichten, PNG/CSV, Projekt-/Referenz-Roundtrip und Wiederherstellung. Artefakte unter `docs/workflow-artifacts/`.
+- **MPS-Vergleich bestanden:** Feld relativ 1,04e-6, Profil relativ 5,80e-6. Ergebnisse unter `docs/backend-results.json`.
+- Ressourcenmessungen unter `docs/resource-results.json`; Startkosten und stationäre Leerlauflast werden durch Aufwärmphase getrennt. Keine zusätzlichen numerischen Schritte/Frames im pausierten Lauf. GPU-Auslastung nicht direkt gemessen; MPS-Speicher nicht zum gemeinsamen RAM doppelt addiert.
+- Visuelle Prüfung beider Themes und Exportbilder durchgeführt. Fehler der zweiten Ansicht, Referenz-JSON-Roundtrip und Farbbereiche wurden dabei behoben. Statische Farbskalen, Bildtransformationen und unsichtbare Ansichten werden nicht mehr pro Frame neu aufgebaut.
+- Isolierter Engine-Wheel-Test 0.1.0.dev2: CPU-Lauf und abgeschlossenes Detektorfenster; Import aus separaten site-packages, `pip check` bestanden.
 
-## Arbeitsprotokoll
+## Offene Abnahmen / nächste Arbeit
 
-- 17.10.2026: Plan und Bestand geprüft; Umsetzung von M0a und frühem M1-Prototyp begonnen.
+- [ ] **B03/B05/T09 Windows und Linux:** native Pakete, Offline-Abläufe und schwächere Testhardware – ausdrücklich auf später verschoben.
+- [ ] **S12 finale Qualitäts-/Leistungsfreigabe:** Vorschläge implementiert; vollständige Preset-/Langweg-/Strukturvalidierung und abgestimmte verbindliche Budgets stehen aus. Das vorläufige 30-fps-Ziel ist kein universelles Versprechen.
+- [ ] **M4 menschliche T05/T06-Abnahme:** kompletter Maus-/Tastaturablauf, alle Ziehgriffe, Messwerkzeuge, skalierte Schrift und Zugänglichkeit. Die programmatische Integration ersetzt diese Abnahme nicht.
+- [ ] **B03 ergänzende Ressourcenprüfung:** direkte GPU-/Energielast und schwächere Hardware.
+- [ ] **E09/B05 stabiles Release:** unterstützte Mindestbetriebssysteme, Signierung/Notarisierung, Verteilung/Updates und plattformübergreifende Freigabe. Der aktuelle Stand bleibt `0.1.0.dev2`.
 
-- 17.10.2026: Nutzer bestätigt: vorerst nur dieser Mac (M1/8 GB); Linux-/Windows-Tests folgen später. Diese Abnahmen bleiben offen, lokale Funktionsentwicklung wird fortgesetzt. MPS ist außerhalb der Sandbox verfügbar; T08 folgt.
+Die grobe T04-Linse liegt mit 18,5 % / 11,5 % Fokusfehler und 7 % Rasterverschiebung innerhalb der bewusst breiten Demonstrationstoleranz. Daraus folgt keine Präzisionsoptik-Zusage. Die kleinere Standardrandzone und beliebige Nutzergeometrien erben ebenfalls keinen pauschalen Genauigkeitsnachweis.
 
+## Git- und Integrationsstände
 
-## Funktionsausbau nach M0/M1
-
-- E08: passive Punkt-/Liniensampling auf dem Rechengerät; pro Schritt bilineares Feldquadrat, endliches Fenster mit anteiligen Randzeitschritten; Live-Intensität getrennt. Zwei zusätzliche Engine-Prüfungen bestanden.
-- S05/S06: freier Aufbau, Objektliste/Eigenschaften, Ziehen, Polygon, Materialreihenfolge, Undo/Redo; atomische versionierte Projektdateien und begrenzte Wiederherstellung implementiert.
-- S07–S09/B04: Detektoren und Messrevisionen, vier eingefrorene Referenzen, gemeinsame Skalierung, PNG mit Metadaten und CSV-Rohwerte implementiert. Der tatsächliche Qt-/Worker-Integrationstest für den Doppelspalt besteht, einschließlich Detektorumbau im laufenden Feld und Wiederöffnung mit Referenz.
-- S10/S11: parametrisierte Linse nach dem T04-Konturvertrag, zweite Ansicht desselben Workers sowie Abstand/Winkel implementiert. Bei visueller Prüfung gefundenen Fehler der Ansichtskopplung behoben; getrennte Farbwerte für Feld und Intensität.
-- S12/S13: Qualitätsvorschläge/Expertenfelder, Gerätewahl, unabhängiger Rechenmodus, drei bearbeitbare Projektdateien, englische Hilfe und Themes vorhanden. Finale Abnahme, Dokumentation und erneuter nativer Build laufen.
-- Paketstand wird für die neue Mess-/Editor-API auf `0.1.0.dev2` angehoben; dies ist noch kein plattformübergreifendes Release.
+- Engine: `134bd37` Cachebereinigung; `d06d04b` vorab eingefrorene Toleranzen; `84df638` kalibrierter Kern/Referenzen; `b0c4af0` geräteinterne Detektoren und Messfenster.
+- Studio: `323e453` Baseline; `c490eaa` Worker-Prototyp; `33b754c` Editor, Dateien, Messungen und Exporte. Weitere Abschlusscommits halten Verifikation, Paketierung und Darstellungsoptimierung fest.
+- Beide Pakete verwenden dasselbe Entwicklungsversionspaar `0.1.0.dev2`; native Builds beziehen die Engine aus dem Wheel, nicht aus einem beweglichen Nachbarcheckout.

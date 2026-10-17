@@ -2,6 +2,8 @@
 from dataclasses import replace
 from pathlib import Path
 import json
+import sys
+import wave_sim2d
 import os
 import tempfile
 import time
@@ -89,7 +91,7 @@ def run_workflow(output_directory):
         window.theme.setCurrentText('Dark');app.processEvents();window.grab().save(str(output/'editor-dark.png'))
         for name in ('Refraction','Biconvex lens'):
             window.replace_project(example(name));app.processEvents()
-        results={'passed':True,'checks':['completed finite-window profile','reference freeze','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','PNG embedded origin','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
+        results={'passed':True,'frozen':bool(getattr(sys,'frozen',False)),'engine_location':wave_sim2d.__file__,'application_location':__file__,'checks':['completed finite-window profile','reference freeze','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','PNG embedded origin','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
     finally:
         window.lifecycle.dirty=False;window.close();app.processEvents()
     (output/'workflow-results.json').write_text(json.dumps(results,indent=2)+'\n')

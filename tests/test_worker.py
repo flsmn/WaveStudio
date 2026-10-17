@@ -53,3 +53,27 @@ def test_single_worker_pause_step_reset_and_shutdown():
     finally:
         worker.shutdown()
         assert worker.wait(5000)
+
+
+def test_worker_failure_stops_without_automatic_restart(monkeypatch):
+    from wave_studio.simulation.worker import Failure
+    from wave_sim2d.wave_simulation import WaveSimulator2D
+    calls=[]
+    def fail(self,*args):
+        calls.append(1)
+        raise RuntimeError('Controlled backend failure')
+    monkeypatch.setattr(WaveSimulator2D,'step',fail)
+    p=Project();c=Lifecycle(p.id);c.run();worker=SimulationWorker();worker.start()
+    try:
+        worker.submit('start',c.identity,compile_project(p),'cpu')
+        deadline=time.monotonic()+3
+        result=None
+        while time.monotonic()<deadline:
+            result=worker.latest.take()
+            if isinstance(result,Failure):break
+            time.sleep(.005)
+        assert isinstance(result,Failure) and 'Controlled backend failure' in result.message
+        time.sleep(.03)
+        assert len(calls)==1 and worker.latest.take() is None
+    finally:
+        worker.shutdown();assert worker.wait(5000)

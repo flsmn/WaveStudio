@@ -83,3 +83,7 @@ Die grobe T04-Linse liegt mit 18,5 % / 11,5 % Fokusfehler und 7 % Rasterverschie
 - [x] Preview-Fehler bei schrägem Eigenmodus gefunden (2,295 %); Mindestauflösung von 8 auf 10 Zellen/Wellenlänge erhöht, unveränderte 2-%-Grenze danach bestanden. Erstbefund bleibt in `quality-preflight-initial-failure.json` erhalten.
 - [x] Engine `84c9ad9`: überprüfbare Dispersionsformeln und identische Rasterisierung mit begrenztem Polygon-Arbeitsbereich; Version dev3.
 - [ ] Feinere Linsenkonvergenz, abschließende Ressourcenmessung und erneute native Bedienprüfung laufen noch.
+
+- Native Bedienprüfung: Punkt-/Linienquelle, Materialecke, freies Polygon per Enter und beide Wandgriffe bedient; ungültige Linsenapertur abgewiesen und korrigiert; Projekt über nativen Speicherdialog nach `/tmp/wave-mac-native-objects.wave.json` gesichert.
+- Zwei zusätzliche native Befunde behoben: Tab im Polygontext wechselt jetzt den Fokus, und ausgewählte Punkt-/Linsen-/Detektorgriffe liegen über den Trefferflächen überlappender Polygone. Wandkoordinaten heißen korrekt Left x / Bottom y. 31 Regressionstests bestehen.
+- Feinere Linsenmessung abgeschlossen: Preview 7,75 % Fokusfehler / Verstärkung 10,78; benachbartes finanzierbares Custom-Raster 6,25 % / 11,28; Fokusverschiebung 1,5 % ≤ 5 %. Balanced/High Quality dieser Linse werden wegen 588,7 / 1322,2 MiB ausdrücklich abgewiesen.

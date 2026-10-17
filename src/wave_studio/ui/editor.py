@@ -38,6 +38,7 @@ class MainWindow(PrototypeWindow):
         self.recovery_timer=QTimer(self);self.recovery_timer.timeout.connect(self._recover_save);self.recovery_timer.start(30000)
         QTimer.singleShot(150,self._offer_recovery)
         QTimer.singleShot(0,lambda:self.resizeDocks([self.measure_dock],[240],Qt.Orientation.Vertical))
+        QTimer.singleShot(0,lambda:self.resizeDocks([self.dock],[320],Qt.Orientation.Horizontal))
         self._rebuild_scene()
 
     def action(self,menu,title,callback,shortcut=None):
@@ -275,6 +276,8 @@ class MainWindow(PrototypeWindow):
             elif hasattr(roi,'sigClicked'):
                 roi.setAcceptedMouseButtons(Qt.MouseButton.LeftButton)
                 roi.sigClicked.connect(lambda *args,i=obj.id:QTimer.singleShot(0,lambda:self.select_object(i)))
+            # Keep point grips above the hit areas of overlapping material polygons.
+            roi.setZValue(30 if obj.id==self.selected else 20 if isinstance(obj,(SourceObject,DetectorObject,LensObject)) else 10)
             self.plot.addItem(roi);self.overlays.append((roi,not isinstance(obj,DetectorObject)))
             signal=roi.sigPositionChangeFinished if isinstance(roi,pg.TargetItem) else roi.sigRegionChangeFinished
             signal.connect(lambda *args,g=get:self._drag_finished(g))

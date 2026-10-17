@@ -25,12 +25,14 @@ class ObjectDialog(QDialog):
                     box=self.number(value[i]); self.editors[(f.name,i)]=box; form.addRow(LABELS[f.name]+' '+axis,box)
             elif f.name=='vertices':
                 editor=QPlainTextEdit(json.dumps(value)); editor.setMaximumHeight(110)
+                editor.setTabChangesFocus(True)
                 self.editors[f.name]=editor; form.addRow(LABELS[f.name],editor)
             elif isinstance(value,str):
                 editor=QLineEdit(value); self.editors[f.name]=editor; form.addRow(LABELS.get(f.name,f.name),editor)
             else:
                 editor=self.number(math.degrees(value) if f.name in ('phase','angle') else value,integer=f.name=='samples')
-                self.editors[f.name]=editor; form.addRow(LABELS.get(f.name,f.name),editor)
+                label={'x':'Left x','y':'Bottom y'}.get(f.name,LABELS.get(f.name,f.name)) if isinstance(obj,WallObject) else LABELS.get(f.name,f.name)
+                self.editors[f.name]=editor; form.addRow(label,editor)
         body=QWidget();body.setLayout(form);scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(body);layout.addWidget(scroll)
         self.resize(560, min(660,QApplication.primaryScreen().availableGeometry().height()-80))
         self.error=QLabel(''); self.error.setWordWrap(True); self.error.setStyleSheet('color:#dd805f');layout.addWidget(self.error)
@@ -50,7 +52,10 @@ class ObjectDialog(QDialog):
             for key,editor in self.editors.items():
                 if isinstance(key,tuple): continue
                 if isinstance(editor,QLineEdit): value=editor.text()
-                elif isinstance(editor,QPlainTextEdit): value=tuple(tuple(p) for p in json.loads(editor.toPlainText()))
+                elif isinstance(editor,QPlainTextEdit):
+                    raw=json.loads(editor.toPlainText())
+                    if not isinstance(raw,list) or len(raw)<3 or any(not isinstance(p,(list,tuple)) or len(p)!=2 for p in raw):raise ValueError('Vertices must be a list of at least three [x, y] pairs.')
+                    value=tuple(tuple(p) for p in raw)
                 else: value=editor.value()
                 changes[key]=math.radians(value) if key in ('phase','angle') else value
             for key in ('start','end'):

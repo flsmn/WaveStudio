@@ -89,3 +89,27 @@ def test_large_text_controls_and_dialog_buttons_stay_accessible(window,tmp_path)
             d=ObjectDialog(DetectorObject(),lambda o:None,w);d.show();QApplication.processEvents()
             for button in d.findChild(QDialogButtonBox).buttons():assert d.rect().contains(button.mapTo(d,button.rect().bottomRight()))
             d.close()
+
+
+def test_polygon_editor_tab_navigation_and_clear_invalid_shape(window):
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+    d=ObjectDialog(MaterialObject(),lambda o:None,window);d.show();QApplication.processEvents()
+    editor=d.editors['vertices'];editor.setFocus();QTest.keyClick(editor,Qt.Key.Key_Tab)
+    assert d.focusWidget() is not editor
+    editor.setPlainText('5');d.apply()
+    assert d.result_object is None and '[x, y]' in d.error.text()
+
+
+def test_selected_lens_grip_is_above_overlapping_polygon(window):
+    import pyqtgraph as pg
+    from PySide6.QtCore import QPointF
+    from wave_studio.domain.project import LensObject
+    w=window;lens=LensObject(x=21,y=16)
+    w.replace_project(Project(objects=(MaterialObject(),lens)))
+    w.select_object(lens.id);QApplication.processEvents()
+    target=next(item for item,_ in w.overlays if isinstance(item,pg.TargetItem))
+    polygon=next(item for item,_ in w.overlays if isinstance(item,pg.PolyLineROI))
+    assert target.zValue()>polygon.zValue()
+    point=target.mapToScene(QPointF(0,0));items=w.plot.scene().items(point)
+    assert items.index(target)<items.index(polygon)

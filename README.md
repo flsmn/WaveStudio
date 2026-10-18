@@ -1,14 +1,16 @@
 # Wave Studio
 
-Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev8**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
+Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev15**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
 
 Implementiert sind freier Aufbau mit Quellen, Materialien, Polygonen, Wänden und bikonvexen Linsen, Undo/Redo, Run/Pause/Step/Reset, passive Detektoren mit endlichen Messfenstern, Referenzvergleich, zwei Ansichten, Abstand/Winkel, sichere Projektdateien, Wiederherstellung sowie PNG/CSV. Drei bearbeitbare Beispiele liegen unter `examples/` und im File-Menü.
+
+In der Proben-Leiste schaltet **Quantity → Intensity / Field** zwischen dem Intensitäts-Mittelwert und dem momentanen Feld mit Vorzeichen um. Die Feldanzeige bleibt nach Abschluss des Intensitätsfensters live. Die Auswahl wird im Projekt gespeichert. Details zu Referenzen und CSV: [Probenanzeige](docs/PROBE_DISPLAY.md).
 
 Der aktuelle Mac (Apple M1, 8 GB) ist die lokale Prüfplattform. Windows/Linux folgen gemäß Nutzerentscheidung später. Ein plattformübergreifendes Release ist noch nicht abgenommen. Qualitätsstufen sind nachvollziehbare Auflösungsvorschläge; sie ersetzen keine Genauigkeitsprüfung des eigenen Aufbaus. Bekannte Grenzen und offene Nachweise stehen in [task.md](task.md).
 
 ## Start auf diesem Mac
 
-Das gebaute Anwendungspaket liegt unter `dist/WaveStudio.app`. Es enthält seine Python-Laufzeit und die fest gebaute Engine. Alternativ aus der eingerichteten Entwicklungsumgebung:
+Das gebaute Anwendungspaket liegt unter `dist/ax-dev15/WaveStudio.app`. Es enthält seine Python-Laufzeit und die fest gebaute Engine. Alternativ aus der eingerichteten Entwicklungsumgebung:
 
 ```sh
 cd WaveStudio
@@ -41,6 +43,8 @@ python -m wave_studio --check-workflow /tmp/wave-studio-check
 Die Referenzprüfung setzt eine installierte Engine voraus und verwendet keinen lokalen Importpfad. Der Qt-Integrationstest öffnet ein Fenster, führt den Doppelspalt-Ablauf aus, schreibt prüfbare Artefakte ins angegebene Verzeichnis und schließt wieder. Für Umgebungen ohne Bildschirm kann `QT_QPA_PLATFORM=offscreen` gesetzt werden. CPU/MPS- und Ressourcenprüfungen: `scripts/check_backends.py`, `scripts/check_resources.py` auf realer Hardware.
 
 ## Dokumentation
+
+- [Änderungen und Build dev15](docs/CHANGES-dev15.md)
 
 - [Fortschritt und offene Abnahmen](task.md)
 - [Bedienung und Modellgrenzen](docs/USER_GUIDE.md)

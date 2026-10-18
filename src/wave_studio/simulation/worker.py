@@ -132,7 +132,7 @@ class SimulationWorker(QThread):
                         sim = None  # release old backend state before allocating a new one
                         prepared,specs=(scene if isinstance(scene,tuple) else (scene,()))
                         sim = WaveSimulator2D.from_scene(prepared,device=device)
-                        sim.measurements.configure(specs,0)
+                        sim.measurements.configure(specs,0,field=sim.u)
                         running = True
                         last_frame = 0
                     elif action == 'resume':
@@ -159,7 +159,7 @@ class SimulationWorker(QThread):
                         finally:self._end_work()
                     elif action == 'detectors':
                         if sim is not None:
-                            sim.measurements.configure(scene,sim.t)
+                            sim.measurements.configure(scene,sim.t,field=sim.u)
                             publish()
                     elif action == 'views':
                         views=set(scene)

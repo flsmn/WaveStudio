@@ -5,7 +5,7 @@ import pyqtgraph as pg
 from PySide6.QtCore import Qt, QTimer, QRectF
 from PySide6.QtGui import QAction, QColor, QPalette, QKeySequence
 from PySide6.QtWidgets import (
-    QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFormLayout,
+    QApplication, QComboBox, QDockWidget, QFormLayout,
     QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton,
     QSplitter, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
 )
@@ -15,6 +15,7 @@ from wave_studio.simulation.lifecycle import Lifecycle, State
 from wave_studio.simulation.worker import SimulationWorker, Frame, Failure
 from . import strings
 from .flow_layout import FlowLayout
+from .numbers import NumberBox
 
 
 class MainWindow(QMainWindow):
@@ -83,10 +84,9 @@ class MainWindow(QMainWindow):
         self.view.currentTextChanged.connect(self._view_changed)
         controls.addWidget(self.view)
         self.range_label=QLabel('Range ±');controls.addWidget(self.range_label)
-        self.contrast = QDoubleSpinBox()
+        self.contrast = NumberBox()
         self.contrast.setRange(.01,100)
         self.contrast.setValue(1)
-        self.contrast.setSingleStep(.1)
         self.contrast.setAccessibleName('Field color range')
         self.contrast.valueChanged.connect(self._contrast_changed)
         controls.addWidget(self.contrast)
@@ -152,11 +152,9 @@ class MainWindow(QMainWindow):
             ('amplitude','Amplitude',source.amplitude,0,20),
             ('phase','Phase (°)',0,-3600,3600),
         ):
-            box = QDoubleSpinBox()
-            box.setDecimals(3)
+            box = NumberBox()
             box.setRange(low,high)
             box.setValue(value)
-            box.setSingleStep(.125 if name in ('x','y') else .1)
             box.setKeyboardTracking(False)
             box.setAccessibleName(title)
             box.editingFinished.connect(self._edit_source)

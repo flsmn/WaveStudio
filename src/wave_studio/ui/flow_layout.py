@@ -1,6 +1,22 @@
 """Wrapping tool controls, including when application text is enlarged."""
-from PySide6.QtCore import QRect,QSize,Qt
-from PySide6.QtWidgets import QLayout,QSpacerItem,QSizePolicy
+from PySide6.QtCore import QEvent,QRect,QSize,Qt
+from PySide6.QtWidgets import QLayout,QSpacerItem,QSizePolicy,QWidget
+
+
+class WrappingPanel(QWidget):
+    """Reserve enough height for controls that wrap at narrow widths."""
+    def _fit_height(self):
+        if self.layout():
+            height=max(0,self.layout().heightForWidth(self.width()))
+            if height!=self.minimumHeight():self.setMinimumHeight(height)
+
+    def resizeEvent(self,event):
+        super().resizeEvent(event);self._fit_height()
+
+    def event(self,event):
+        handled=super().event(event)
+        if event.type()==QEvent.Type.LayoutRequest:self._fit_height()
+        return handled
 
 
 class FlowLayout(QLayout):

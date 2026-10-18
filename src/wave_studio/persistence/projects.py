@@ -46,6 +46,12 @@ def validate_reference(ref):
     values,axis,positions=ref.get('values'),ref.get('axis'),ref.get('positions')
     if not isinstance(values,list) or not 1<=len(values)<=2048 or not isinstance(axis,list) or len(axis)!=len(values) or not isinstance(positions,list) or len(positions)!=len(values): raise ValueError('Reference profile dimensions are invalid.')
     if any(isinstance(v,bool) or not isinstance(v,(int,float)) or v<0 for v in values): raise ValueError('Reference intensities must be nonnegative numbers.')
+    if 'field_values' in ref:
+        field=ref['field_values'];time=ref.get('field_time')
+        if not isinstance(field,list) or len(field)!=len(values) or any(isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) for v in field):
+            raise ValueError('Reference field samples must be finite numbers matching the sampling path.')
+        if isinstance(time,bool) or not isinstance(time,(int,float)) or not math.isfinite(time) or time<0:
+            raise ValueError('Reference field snapshot time is invalid.')
     if any(not isinstance(p,list) or len(p)!=2 or any(not isinstance(v,(int,float)) for v in p) for p in positions): raise ValueError('Reference coordinates are invalid.')
     if any(not isinstance(v,(int,float)) for v in axis) or any(b<a for a,b in zip(axis,axis[1:])): raise ValueError('Reference axis must be ordered.')
     if ref.get('duration',0)<=0 or ref.get('sample_count',0)<1: raise ValueError('Reference measurement metadata is invalid.')

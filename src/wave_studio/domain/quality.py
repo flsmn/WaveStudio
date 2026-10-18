@@ -8,6 +8,8 @@ from .project import SourceObject,MaterialObject,WallObject,LensObject
 from .resources import buffer_bytes,rejection
 
 PRESETS={'Preview':(10,2,math.pi),'Balanced':(12,4,math.pi/2),'High Quality':(20,6,math.pi/4)}
+# Minimum visual resolution on the longer axis; numerical accuracy may need more.
+PRESET_AXIS_CELLS={'Preview':512,'Balanced':1024,'High Quality':1920}
 
 
 def wall_cell_ties(project,dx):
@@ -62,7 +64,8 @@ def estimate(project,name,dx=None):
     s=project.settings
     if dx is None:
         cells,feature_cells,budget=PRESETS[name]
-        target=min(wavelength/index/cells,feature/feature_cells if feature else math.inf)
+        target=min(wavelength/index/cells,feature/feature_cells if feature else math.inf,
+                   max(s.width,s.height)/PRESET_AXIS_CELLS[name])
         # A rational common domain unit avoids power-of-two over-refinement while
         # retaining square cells and the exact physical domain on both axes.
         sizes=[Fraction(str(v)).limit_denominator(1000000) for v in (s.width,s.height)]

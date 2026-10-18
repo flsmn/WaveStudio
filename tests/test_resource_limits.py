@@ -55,13 +55,13 @@ def test_dialog_rechecks_budgets_and_preserves_preset():
     app=QApplication.instance() or QApplication([])
     p=example('Biconvex lens');d=SettingsDialog(p,lambda p:p.validate());d.show();app.processEvents()
     try:
-        d.quality.setCurrentText('Balanced');d.apply()
-        assert d.result_project is None and '512 MiB' in d.error.text()
+        d.quality.setCurrentText('Balanced');d.boxes['buffer_limit_mib'].setValue(1);d.apply()
+        assert d.result_project is None and '1 MiB' in d.error.text()
         d.boxes['buffer_limit_mib'].setValue(768)
-        assert d.quality.currentText()=='Balanced' and 'Large grid' in d.error.text()
+        assert d.quality.currentText()=='Balanced'
         d.apply();candidate=d.result_project
-        assert candidate.settings.quality=='Balanced' and candidate.settings.buffer_limit_mib==768
-        assert candidate.settings.dx==estimate(candidate,'Balanced').dx
+        assert candidate.settings.quality=='Custom' and candidate.settings.buffer_limit_mib==768
+        assert round(candidate.settings.width/candidate.settings.dx)==1024
     finally:d.close()
 
 

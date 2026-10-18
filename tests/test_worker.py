@@ -101,3 +101,31 @@ def test_live_preview_keeps_full_paused_frames_and_does_not_mutate_solver(monkey
         stepped=frame_from(worker,lambda f:f.steps>paused.steps)
         assert stepped.paused and not stepped.preview and stepped.field.shape==(256,256)
     finally:worker.shutdown();assert worker.wait(5000)
+
+
+def test_probe_field_samples_match_solver_and_survive_intensity_only_views():
+    import numpy as np
+    from wave_studio.domain.project import DetectorObject
+    from wave_studio.simulation.compiler import detector_spec
+    project=Project();scene=compile_project(project)
+    detector=detector_spec(DetectorObject(start=(15.5,16),end=(16.5,16),samples=3,settling=0,window=.5),0)
+    lifecycle=Lifecycle(project.id);lifecycle.run();worker=SimulationWorker();worker.start()
+    try:
+        worker.submit('start',lifecycle.identity,(scene,(detector,)),'cpu')
+        frame_from(worker,lambda f:f.steps>=16)
+        worker.submit('pause',lifecycle.identity)
+        paused=frame_from(worker,lambda f:f.paused)
+        profile=paused.profiles[detector.id]
+        expected=[]
+        for x,y in profile['positions']:
+            gx,gy=x/scene.grid.dx-.5,y/scene.grid.dx-.5
+            ix,iy=int(np.floor(gx)),int(np.floor(gy));fx,fy=gx-ix,gy-iy
+            expected.append(sum(paused.field[iy+dy,ix+dx]*(fx if dx else 1-fx)*(fy if dy else 1-fy) for dy in (0,1) for dx in (0,1)))
+        np.testing.assert_allclose(profile['field_values'],expected,rtol=1e-6,atol=1e-8)
+        assert profile['field_time']==paused.time
+        worker.submit('views',lifecycle.identity,('Intensity',))
+        intensity_only=frame_from(worker,lambda f:f.field is None)
+        assert intensity_only.profiles[detector.id]['field_values']==profile['field_values']
+        assert intensity_only.identity==paused.identity
+    finally:
+        worker.shutdown();assert worker.wait(5000)

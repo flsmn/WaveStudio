@@ -63,6 +63,7 @@ class DisplaySettings:
     text_scale: float = 1.0
     field_scheme: str = 'Classic'
     intensity_scheme: str = 'Classic'
+    probe_view: str = 'Intensity'
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,8 @@ class Project:
         number(self.display.intensity_range,'Intensity display range',True)
         if self.display.field_scheme not in FIELD_SCHEMES or self.display.intensity_scheme not in INTENSITY_SCHEMES:
             raise ValueError('Unsupported field or intensity color scheme.')
+        if self.display.probe_view not in ('Intensity','Field'):
+            raise ValueError('Unsupported probe display quantity.')
         if self.compute_mode not in ('Economical','Performance'): raise ValueError('Unknown compute mode.')
         return self
 

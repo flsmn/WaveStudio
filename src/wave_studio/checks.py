@@ -13,10 +13,9 @@ from PySide6.QtGui import QImage
 from wave_studio.ui.editor import MainWindow
 from wave_studio.examples import example
 from wave_studio.domain.project import Project,DetectorObject,MaterialObject
-from wave_studio.domain.colors import FIELD_SCHEMES,INTENSITY_SCHEMES
 from wave_studio.ui.dialogs import SettingsDialog
-from wave_studio.ui.colors import color_map
 from wave_studio.simulation.compiler import compile_project
+from wave_studio.domain.resolution import pixel_dimensions
 from wave_studio.persistence.projects import save,load,encode,decode
 from wave_studio.persistence.exports import export_csv
 from wave_studio.simulation.lifecycle import State
@@ -39,14 +38,21 @@ def run_workflow(output_directory):
         raise AssertionError('Timed out: '+window.message.text())
     
     try:
-        project=Project()
-        project=replace(project,settings=replace(project.settings,quality='Custom',dx=1))
-        dialog=SettingsDialog(project,compile_project,window)
+        app.processEvents()
+        assert hasattr(window,'control_panel') and not window.secondary_view.isVisible()
+        dialog=SettingsDialog(Project(),lambda p:p.validate(),window)
         try:
-            dialog.boxes['width'].setValue(150);dialog.boxes['height'].setValue(125);dialog.apply()
-            assert dialog.result_project is not None,dialog.error.text()
-            restored=decode(encode(dialog.result_project))
-            assert (restored.settings.width,restored.settings.height)==(150,125)
+            assert 'dx' not in dialog.boxes and 'courant' not in dialog.boxes
+            dialog.boxes['width'].setValue(1920);dialog.boxes['height'].setValue(1080);dialog.apply()
+            pixel_project=dialog.result_project;assert pixel_project is not None,dialog.error.text()
+            assert pixel_dimensions(pixel_project.settings)==(1920,1080)
+            pixel_scene=compile_project(pixel_project)
+            assert pixel_scene.grid.shape==(1080,1920) and pixel_scene.grid.dt==.5*pixel_scene.grid.dx
+            assert dialog.boxes['border_rate'].text()=='2'
+            dialog.boxes['border_rate'].setValue(.5);assert dialog.boxes['border_rate'].text()=='0.5'
+            save(output/'full-hd.wave.json',pixel_project)
+            assert pixel_dimensions(load(output/'full-hd.wave.json').settings)==(1920,1080)
+            del pixel_scene
         finally:dialog.close()
         # Same three walls and illumination as numerical T03, created as editable model objects.
         p=example('Double slit')
@@ -59,6 +65,12 @@ def run_workflow(output_directory):
         assert len(window.project.references)==1
         reference=window.project.references[0]
         export_csv(output/'double-slit.csv',reference)
+        window.probe_view.setCurrentText('Field')
+        assert window.lifecycle.identity==run and len(reference['field_values'])==len(reference['values'])
+        export_csv(output/'double-slit-field.csv',reference,quantity='Field')
+        reference_time=reference['field_time']
+        wait_until(lambda:window.profiles[reference['detector_id']]['field_time']>reference_time)
+        assert window.project.references[0]['field_time']==reference_time
         window.pause_simulation()
         wait_until(lambda:window.frame is not None and window.frame.paused)
         before=window.frame.steps
@@ -78,29 +90,13 @@ def run_workflow(output_directory):
         assert not window.commit(replace(valid,detectors=(replace(moved,start=(-1,24)),valid.detectors[1])))
         assert window.project==valid and window.lifecycle.identity==run
         window.view.setCurrentText('Intensity');window.secondary_toggle.click()
-        assert window.secondary_action.isChecked() and window.second.isVisible()
-        window.secondary_view.setCurrentText('Field')
-        window.contrast.setValue(.5);window.intensity_range.setValue(.002)
-        assert window.scale.levels()==(0,.002) and window.second_scale.levels()==(-.5,.5)
-        for name,view,schemes,scale in (('field_scheme','Field',FIELD_SCHEMES,window.second_scale),('intensity_scheme','Intensity',INTENSITY_SCHEMES,window.scale)):
-            for scheme in schemes:
-                window.color_combos[name].setCurrentText(scheme)
-                assert scale.colorMap() is color_map(view,scheme)
-        window.color_combos['field_scheme'].setCurrentText('Blue / Red')
-        window.color_combos['intensity_scheme'].setCurrentText('Inferno')
-        window.secondary_toggle.click()
-        assert not window.secondary_action.isChecked() and not window.second.isVisible()
-        window.secondary_action.setChecked(True)
-        assert window.secondary_toggle.isChecked() and window.second.isVisible()
-        assert window.lifecycle.identity==run
+        assert window.secondary_action.isChecked() and window.secondary_view.isVisible()
         wait_until(lambda:window.frame is not None and window.frame.intensity is not None)
         window.pause_simulation();wait_until(lambda:window.frame.paused)
         window.write_png(output/'double-slit.png')
         image=QImage(str(output/'double-slit.png'))
         assert not image.isNull()
-        metadata=json.loads(image.text('wave-studio-metadata'))
-        assert metadata['run_id']==run.run_id
-        assert metadata['display']['field_scheme']=='Blue / Red' and metadata['display']['intensity_scheme']=='Inferno'
+        assert json.loads(image.text('wave-studio-metadata'))['run_id']==run.run_id
         window.reset_simulation();assert window.project.references[0]==reference
         assert not window.lifecycle.can_step
         material=MaterialObject(vertices=((35,4),(38,4),(38,8),(35,8)),refractive_index=1.2)
@@ -121,7 +117,7 @@ def run_workflow(output_directory):
         window.theme.setCurrentText('Dark');app.processEvents();window.grab().save(str(output/'editor-dark.png'))
         for name in ('Refraction','Biconvex lens'):
             window.replace_project(example(name));app.processEvents()
-        results={'passed':True,'frozen':bool(getattr(sys,'frozen',False)),'engine_location':wave_sim2d.__file__,'application_location':__file__,'checks':['domain dimensions above 100 roundtrip','completed finite-window profile','reference freeze','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','independent field and intensity ranges','all bundled color schemes','second view toolbar/menu synchronization','display edits preserve running identity','PNG embedded origin and color schemes','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference and display settings','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
+        results={'passed':True,'frozen':bool(getattr(sys,'frozen',False)),'engine_location':wave_sim2d.__file__,'application_location':__file__,'checks':['exact Full HD pixel input and roundtrip','automatic spacing and time step','compact English numbers','organized toolbar and conditional second view','completed finite-window profile','reference freeze','signed live probe field','field reference timestamp freeze','field CSV export','same-run quantity switch','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','PNG embedded origin','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
     finally:
         window.lifecycle.dirty=False;window.close();app.processEvents()
     (output/'workflow-results.json').write_text(json.dumps(results,indent=2)+'\n')

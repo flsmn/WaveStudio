@@ -56,11 +56,11 @@ def test_paused_rates_remain_zero_after_acknowledgement(window):
 def test_settings_keep_exact_preset_and_reject_without_project_change(window):
     w=window;p=example('Double slit');d=SettingsDialog(p,compile_project,w)
     d.quality.setCurrentText('High Quality');d.apply()
-    assert d.result_project.settings.dx==estimate(p,'High Quality').dx
-    d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('Balanced');d.boxes['dx'].setValue(.25)
+    assert round(d.result_project.settings.width/d.result_project.settings.dx)==1920
+    d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('Balanced');d.boxes['width'].setValue(1000)
     assert d.quality.currentText()=='Custom'
-    p=example('Biconvex lens');d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('High Quality');d.apply()
-    assert d.result_project is None and '512 MiB' in d.error.text()
+    p=example('Biconvex lens');d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('High Quality');d.boxes['buffer_limit_mib'].setValue(1);d.apply()
+    assert d.result_project is None and '1 MiB' in d.error.text()
 
 
 def test_two_views_preserve_units_and_camera_on_display_change(window):
@@ -232,7 +232,7 @@ def test_presets_avoid_half_open_wall_ties_and_warn_for_custom(window):
     assert 'half-open tie rule' in window.warning.text()
 
 
-def test_published_physical_acceptance_uses_actual_selected_grids():
+def test_historical_physical_acceptance_grids_meet_their_numerical_criteria():
     import json
     from pathlib import Path
     root=Path(__file__).resolve().parents[1]
@@ -240,8 +240,14 @@ def test_published_physical_acceptance_uses_actual_selected_grids():
         report=json.loads((root/'docs'/filename).read_text());assert report['passed']
         for result in report['cases']:
             if result['name'] not in PRESETS:continue
-            selected=estimate(example(scene),result['name'])
+            # These reports predate the visual raster floors. Keep their measured
+            # grids and numerical criteria; they do not certify the new presets.
+            selected=estimate(example(scene),result['name'],result['dx'])
             assert result['grid']==[selected.nx,selected.ny] and result['dx']==selected.dx
+            waves,features,budget=PRESETS[result['name']]
+            assert selected.cells_per_wavelength>=waves
+            assert selected.cells_per_feature is None or selected.cells_per_feature>=features
+            assert selected.phase_radians<=budget
 
 
 def test_completed_profile_redraws_only_when_visible_data_changes(window,monkeypatch):

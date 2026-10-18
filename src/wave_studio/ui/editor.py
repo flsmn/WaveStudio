@@ -11,7 +11,7 @@ import numpy as np
 import pyqtgraph as pg
 from PySide6.QtCore import Qt,QTimer,QRectF,QStandardPaths,QByteArray,QBuffer,QIODevice
 from PySide6.QtGui import QAction,QKeySequence,QFont
-from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QCheckBox,QDoubleSpinBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog,QScrollArea)
+from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QCheckBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog,QScrollArea)
 from wave_sim2d import __version__ as engine_version
 from wave_sim2d.geometry import lens_vertices
 from wave_studio.domain.project import (Project,SourceObject,MaterialObject,WallObject,LensObject,DetectorObject)
@@ -24,9 +24,11 @@ from wave_studio.persistence.projects import save,load,physical_data,atomic_writ
 from wave_studio.persistence.exports import export_csv
 from .main_window import MainWindow as PrototypeWindow
 from .dialogs import ObjectDialog,SettingsDialog
-from .flow_layout import FlowLayout
+from .flow_layout import FlowLayout,WrappingPanel
 from wave_studio.domain.colors import FIELD_SCHEMES,INTENSITY_SCHEMES
 from .colors import color_map
+from .strings import COMPUTE_MODE_TOOLTIP,COMPUTE_MODE_TOOLTIPS
+from .numbers import NumberBox
 
 
 class MainWindow(PrototypeWindow):
@@ -123,32 +125,71 @@ class MainWindow(PrototypeWindow):
         self.plot.scene().sigMouseClicked.connect(self.canvas_click)
         measure=QWidget();ml=QVBoxLayout(measure);bar=FlowLayout()
         self.detector_combo=QComboBox();self.detector_combo.currentIndexChanged.connect(self._plot_profiles);bar.addWidget(self.detector_combo)
+        self.probe_view=QComboBox();self.probe_view.addItems(['Intensity','Field']);self.probe_view.setAccessibleName('Probe display quantity')
+        self.probe_view.setToolTip('Intensity: mean field squared over the detector window. Field: the instantaneous signed field at the probe positions.')
+        self.probe_view.currentTextChanged.connect(self._probe_view_changed)
+        quantity_group=QWidget();quantity_row=QHBoxLayout(quantity_group);quantity_row.setContentsMargins(0,0,0,0);quantity_row.setSpacing(6)
+        quantity_label=QLabel('Quantity');quantity_label.setBuddy(self.probe_view);quantity_row.addWidget(quantity_label);quantity_row.addWidget(self.probe_view);bar.addWidget(quantity_group)
         self.norm=QComboBox();self.norm.addItems(['Raw values','Shared maximum = 1']);self.norm.currentTextChanged.connect(self._plot_profiles);bar.addWidget(self.norm)
         freeze=QPushButton('Hold reference');freeze.clicked.connect(self.hold_reference);bar.addWidget(freeze)
+        freeze.setToolTip('Hold a completed intensity window together with the current field snapshot.')
         self.ref_combo=QComboBox();self.ref_combo.currentIndexChanged.connect(self._plot_profiles);bar.addWidget(self.ref_combo)
         self.profile_status=QLabel('No detector selected.');bar.addWidget(self.profile_status,1)
         ml.addLayout(bar);self.profile_plot=pg.PlotWidget();self.profile_plot.setLabel('left','Relative intensity');self.profile_plot.setLabel('bottom','Position',units='reference length');self.profile_plot.addLegend();ml.addWidget(self.profile_plot)
         self.measure_dock=QDockWidget('Measurements & references',self);self.measure_dock.setWidget(measure);self.measure_dock.setMinimumHeight(200);self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea,self.measure_dock)
         view_menu.addAction(self.dock.toggleViewAction());view_menu.addAction(self.measure_dock.toggleViewAction())
         self.mode_combo=QComboBox();self.mode_combo.addItems(['Economical','Performance']);self.mode_combo.currentTextChanged.connect(self._mode_changed);self.centralWidget().layout().itemAt(1).layout().addWidget(self.mode_combo)
+        self.mode_combo.setToolTip(COMPUTE_MODE_TOOLTIP)
+        for mode,tip in COMPUTE_MODE_TOOLTIPS.items():
+            self.mode_combo.setItemData(self.mode_combo.findText(mode),tip,Qt.ItemDataRole.ToolTipRole)
         controls=self.centralWidget().layout().itemAt(1).layout()
         controls.removeWidget(self.range_label);self.range_label.hide()
         controls.removeWidget(self.contrast)
-        self.contrast.blockSignals(True);self.contrast.setDecimals(6);self.contrast.setRange(.000001,100);self.contrast.setValue(self.project.display.contrast);self.contrast.setKeyboardTracking(False);self.contrast.blockSignals(False)
-        self.intensity_range=QDoubleSpinBox();self.intensity_range.setDecimals(6);self.intensity_range.setRange(.000001,100)
-        self.intensity_range.setSingleStep(.0001);self.intensity_range.setKeyboardTracking(False);self.intensity_range.setAccessibleName('Intensity maximum')
+        self.contrast.blockSignals(True);self.contrast.setRange(.000001,100);self.contrast.setValue(self.project.display.contrast);self.contrast.setKeyboardTracking(False);self.contrast.blockSignals(False)
+        self.intensity_range=NumberBox();self.intensity_range.setRange(.000001,100)
+        self.intensity_range.setAccessibleName('Intensity maximum')
         self.intensity_range.valueChanged.connect(self._intensity_range_changed)
-        self.color_combos={}
+        self.color_combos={};self.display_groups={}
         for name,label,schemes,range_label,range_box in (('field_scheme','Field colors',FIELD_SCHEMES,'Field range ±',self.contrast),('intensity_scheme','Intensity colors',INTENSITY_SCHEMES,'Intensity max',self.intensity_range)):
             combo=QComboBox();combo.addItems(schemes);combo.setCurrentText(getattr(self.project.display,name))
             combo.setAccessibleName(label)
             combo.setToolTip(f'{label} for both views; saved with the experiment.')
             combo.currentTextChanged.connect(lambda value,n=name:self._color_changed(n,value))
-            group=QWidget();row=QHBoxLayout(group);row.setContentsMargins(0,0,0,0);row.setSpacing(6)
-            caption=QLabel(range_label);caption.setBuddy(range_box);row.addWidget(caption);row.addWidget(range_box);row.addWidget(combo)
-            controls.addWidget(group);self.color_combos[name]=combo
+            group=QWidget();row=FlowLayout(group)
+            caption=QLabel(range_label);caption.setBuddy(range_box);colors_label=QLabel('Colors');colors_label.setBuddy(combo)
+            row.addWidget(self._control_group(caption,range_box));row.addWidget(self._control_group(colors_label,combo))
+            self.display_groups[name]=group;self.color_combos[name]=combo
+        self._organize_controls(controls,second_controls)
         self._sync_display_controls()
         self.rate_label=QLabel('0 steps/s · 0 frames/s');self.centralWidget().layout().itemAt(3).layout().addWidget(self.rate_label)
+
+    @staticmethod
+    def _control_group(*widgets):
+        group=QWidget();row=QHBoxLayout(group);row.setContentsMargins(0,0,0,0);row.setSpacing(6)
+        for widget in widgets:row.addWidget(widget);widget.show()
+        return group
+
+    def _organize_controls(self,controls,second_controls):
+        while controls.count():
+            item=controls.takeAt(0)
+            if item.widget():item.widget().hide()
+        self.control_panel=WrappingPanel();rows=QVBoxLayout(self.control_panel);rows.setContentsMargins(0,0,0,0);rows.setSpacing(8)
+        simulation=FlowLayout();simulation.addWidget(self._control_group(self.run_button,self.pause_button,self.step_button,self.reset_button))
+        label=QLabel('Compute');label.setBuddy(self.mode_combo);self.mode_combo.setAccessibleName('Compute mode')
+        simulation.addWidget(self._control_group(label,self.mode_combo));rows.addLayout(simulation)
+        views=FlowLayout();label=QLabel('Main view');label.setBuddy(self.view);self.view.setAccessibleName('Main view type')
+        views.addWidget(self._control_group(label,self.view));views.addWidget(second_controls);second_controls.show()
+        self.display_settings_button=QPushButton('Display ▸');self.display_settings_button.setCheckable(True);self.display_settings_button.setAccessibleName('Display settings')
+        self.display_settings_button.setToolTip('Set the range and colors for the visible Field and Intensity plots.')
+        self.display_settings_button.toggled.connect(self._display_settings_toggled);views.addWidget(self.display_settings_button);rows.addLayout(views)
+        self.display_settings_panel=QWidget();settings=QVBoxLayout(self.display_settings_panel);settings.setContentsMargins(12,0,0,0);settings.setSpacing(6)
+        for group in self.display_groups.values():settings.addWidget(group)
+        rows.addWidget(self.display_settings_panel);self.display_settings_panel.hide()
+        root=self.centralWidget().layout();root.takeAt(1);root.insertWidget(1,self.control_panel);controls.deleteLater()
+
+    def _display_settings_toggled(self,expanded):
+        self.display_settings_button.setText('Display ▾' if expanded else 'Display ▸')
+        self.display_settings_panel.setVisible(expanded and self.display_settings_button.isEnabled())
 
     def _apply_theme(self,theme):
         super()._apply_theme(theme)
@@ -222,7 +263,7 @@ class MainWindow(PrototypeWindow):
             self.profiles={k:v for k,v in self.profiles.items() if any(d.id==k for d in candidate.detectors)}
             if self.lifecycle.run_id:self.worker.submit('detectors',self.lifecycle.identity,self.detector_specs())
         if before.compute_mode!=candidate.compute_mode:self.worker.submit('mode',self.lifecycle.identity,candidate.compute_mode)
-        for widget,value in ((self.view,candidate.display.view),(self.theme,candidate.display.theme),(self.secondary_view,candidate.display.secondary_view),(self.mode_combo,candidate.compute_mode)):
+        for widget,value in ((self.view,candidate.display.view),(self.theme,candidate.display.theme),(self.secondary_view,candidate.display.secondary_view),(self.mode_combo,candidate.compute_mode),(self.probe_view,candidate.display.probe_view)):
             widget.blockSignals(True);widget.setCurrentText(value);widget.blockSignals(False)
         self._sync_display_controls()
         if candidate.display.secondary_visible and not before.display.secondary_visible:self.splitter.setSizes([500,500])
@@ -425,7 +466,11 @@ class MainWindow(PrototypeWindow):
         visible=self.project.display.secondary_visible
         for toggle in (self.secondary_action,self.secondary_toggle):
             toggle.blockSignals(True);toggle.setChecked(visible);toggle.blockSignals(False)
-        self.second.setVisible(visible);self.secondary_view.setEnabled(visible)
+        self.second.setVisible(visible);self.secondary_view.setEnabled(visible);self.secondary_view.setVisible(visible)
+        views={self.project.display.view}
+        if visible:views.add(self.project.display.secondary_view)
+        for name,view in (('field_scheme','Field'),('intensity_scheme','Intensity')):self.display_groups[name].setVisible(view in views)
+        self.display_settings_button.setEnabled(bool(views & {'Field','Intensity'}));self._display_settings_toggled(self.display_settings_button.isChecked())
 
     def _contrast_changed(self,value):
         if hasattr(self,'mode_combo'):self.commit(replace(self.project,display=replace(self.project.display,contrast=value)))
@@ -497,31 +542,44 @@ class MainWindow(PrototypeWindow):
 
     def _plot_profiles(self,*args):
         if not hasattr(self,'profile_plot'):return
+        field=self.project.display.probe_view=='Field'
+        self.norm.blockSignals(True);self.norm.setItemText(1,'Shared |peak| = 1' if field else 'Shared maximum = 1');self.norm.blockSignals(False)
+        column='field_values' if field else 'values'
         current=self.profiles.get(self.detector_combo.currentData())
         index=self.ref_combo.currentData();reference=self.project.references[index] if isinstance(index,int) and 0<=index<len(self.project.references) else None
         def visible_key(p):
             if p is None:return None
-            return (p['detector_id'],p['measurement_revision'],p['status'],p['elapsed'],p['duration'],p['sample_count'],tuple(map(tuple,p['positions'])),tuple(p['values']))
-        key=(self.detector_combo.currentData(),index,self.norm.currentText(),self.project.display.theme,self.project.display.text_scale,visible_key(current),visible_key(reference),bool(self.project.detectors))
+            return (p['detector_id'],p['measurement_revision'],p['status'],p['elapsed'],p['duration'],p['sample_count'],tuple(map(tuple,p['positions'])),tuple(p.get(column,[])),p.get('field_time') if field else None)
+        key=(self.project.display.probe_view,self.detector_combo.currentData(),index,self.norm.currentText(),self.project.display.theme,self.project.display.text_scale,visible_key(current),visible_key(reference),bool(self.project.detectors))
         if getattr(self,'_profile_render_key',None)==key:return
         self._profile_render_key=key
         self.profile_plot.clear()
+        self.profile_plot.setLabel('left','Field (instantaneous, relative)' if field else 'Relative intensity')
+        if field:self.profile_plot.addItem(pg.InfiniteLine(pos=0,angle=0,pen=pg.mkPen('#718096',style=Qt.PenStyle.DashLine)))
         series=[('Current',current,'#65d5bd' if self.project.display.theme=='Dark' else '#147964'),('Reference',reference,'#f2bd72' if self.project.display.theme=='Dark' else '#925700')]
         origin=current or reference
         axis=0
         if origin:
             points=np.array(origin['positions']);axis=1 if np.ptp(points[:,1])>np.ptp(points[:,0]) else 0
             self.profile_plot.setLabel('bottom','y' if axis==1 else 'x',units='reference length')
-        denominator=max([max(p['values'],default=0) for _,p,_ in series if p]+[1e-30]) if self.norm.currentText()!='Raw values' else 1
+        denominator=max([max((abs(v) for v in p.get(column,[])),default=0) for _,p,_ in series if p]+[1e-30]) if self.norm.currentText()!='Raw values' else 1
         for name,profile,color in series:
-            if profile:
+            if profile and column in profile:
                 positions=np.array(profile['positions'])
-                self.profile_plot.plot(positions[:,axis],np.array(profile['values'])/denominator,pen=pg.mkPen(color,width=2),symbol='o' if len(positions)==1 else None,name=name)
+                self.profile_plot.plot(positions[:,axis],np.array(profile[column])/denominator,pen=pg.mkPen(color,width=2),symbol='o' if len(positions)==1 else None,name=name)
                 self.profile_plot.setLabel('bottom','y' if axis==1 else 'x',units='reference length')
-        if current:self.profile_status.setText(f"{current['status'].capitalize()} · {current['elapsed']:.2f}/{current['duration']:g} time · {current['sample_count']} samples")
-        else:self.profile_status.setText('Waiting for detector data.' if self.project.detectors else 'Add a passive detector to measure intensity.')
+        if field and current and column in current:self.profile_status.setText(f"Live field · t = {current['field_time']:.3f}")
+        elif current and not field:self.profile_status.setText(f"{current['status'].capitalize()} · {current['elapsed']:.2f}/{current['duration']:g} time · {current['sample_count']} samples")
+        else:self.profile_status.setText('Waiting for field samples.' if field and self.project.detectors else 'Waiting for detector data.' if self.project.detectors else 'Add a passive detector to measure field or intensity.')
+        if field and reference and column in reference:
+            self.profile_status.setText(self.profile_status.text()+f" · Reference snapshot t = {reference['field_time']:.3f}")
+        if field and reference and column not in reference:
+            self.profile_status.setText(self.profile_status.text()+' · This saved reference contains intensity only.')
         if current and reference and current['positions']!=reference['positions']:
             self.profile_status.setText(self.profile_status.text()+' · Different sampling paths; compare coordinates.')
+
+    def _probe_view_changed(self,view):
+        self.commit(replace(self.project,display=replace(self.project.display,probe_view=view)))
 
     def hold_reference(self):
         profile=self.profiles.get(self.detector_combo.currentData())
@@ -532,9 +590,11 @@ class MainWindow(PrototypeWindow):
         index=self.ref_combo.currentData()
         profile=self.project.references[index] if reference and isinstance(index,int) and 0<=index<len(self.project.references) else None if reference else self.profiles.get(self.detector_combo.currentData())
         if not profile or profile['status']!='complete':self.message.setText('Select a completed profile or a saved reference.');return
-        path,_=QFileDialog.getSaveFileName(self,'Export relative intensity','profile.csv','CSV (*.csv)')
+        quantity=self.project.display.probe_view
+        if quantity=='Field' and 'field_values' not in profile:self.message.setText('This saved profile contains intensity only.');return
+        path,_=QFileDialog.getSaveFileName(self,'Export '+quantity.lower(),'profile.csv','CSV (*.csv)')
         if path:
-            try:export_csv(path,deepcopy(profile));self.message.setText('Profile exported.')
+            try:export_csv(path,deepcopy(profile),quantity=quantity);self.message.setText('Profile exported.')
             except (OSError,ValueError) as error:self.message.setText(str(error))
 
     def write_png(self,path):
@@ -560,7 +620,7 @@ class MainWindow(PrototypeWindow):
         scene=compile_project(project)
         self.lifecycle.reset();self.worker.submit('reset',self.lifecycle.identity)
         self.project,self.scene,self.path=project,scene,path;self.lifecycle=Lifecycle(project.id);self.frame=None;self.profiles={};self.run_project=None;self.history=History();self.revisions={};self.selected=None
-        for widget,value in ((self.view,project.display.view),(self.theme,project.display.theme),(self.secondary_view,project.display.secondary_view),(self.mode_combo,project.compute_mode)):
+        for widget,value in ((self.view,project.display.view),(self.theme,project.display.theme),(self.secondary_view,project.display.secondary_view),(self.mode_combo,project.compute_mode),(self.probe_view,project.display.probe_view)):
             widget.blockSignals(True);widget.setCurrentText(value);widget.blockSignals(False)
         self._sync_display_controls()
         if project.display.secondary_visible:self.splitter.setSizes([500,500])

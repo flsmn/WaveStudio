@@ -6,7 +6,7 @@ analysis = Analysis(
     pathex=[str(root/'build'/'wheel-runtime')],
     binaries=[], datas=[(str(p),'wave_studio/data/examples') for p in (root/'build'/'wheel-runtime'/'wave_studio'/'data'/'examples').glob('*.json')], hiddenimports=[],
     hookspath=[], hooksconfig={}, runtime_hooks=[],
-    excludes=['torchvision','torchaudio','matplotlib','cv2','IPython','tkinter','PySide6.QtWebEngineCore','PySide6.QtWebEngineWidgets','PySide6.QtQml','PySide6.QtQuick'],
+    excludes=['torchvision','torchaudio','matplotlib','scipy','cv2','IPython','tkinter','PySide6.QtWebEngineCore','PySide6.QtWebEngineWidgets','PySide6.QtQml','PySide6.QtQuick'],
     noarchive=False,
 )
 pyz = PYZ(analysis.pure)

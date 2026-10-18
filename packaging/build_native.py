@@ -9,6 +9,7 @@ import sys
 parser=argparse.ArgumentParser()
 parser.add_argument('--engine-wheel',type=Path,required=True)
 parser.add_argument('--studio-wheel',type=Path,required=True)
+parser.add_argument('--distpath',type=Path,help='Separate output folder to preserve an existing/running bundle.')
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[1]
 wheels=[p.resolve(strict=True) for p in (args.engine_wheel,args.studio_wheel)]
@@ -19,4 +20,6 @@ if stage.exists():shutil.rmtree(stage)
 stage.mkdir(parents=True)
 subprocess.run([sys.executable,'-m','pip','install','--no-deps','--target',str(stage),*[str(p) for p in wheels]],check=True)
 env={**os.environ,'PYINSTALLER_CONFIG_DIR':str(root/'.pyinstaller')}
-subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm',str(root/'packaging'/'wave-studio.spec')],cwd=root,env=env,check=True)
+command=[sys.executable,'-m','PyInstaller','--noconfirm']
+if args.distpath:command+=['--distpath',str(args.distpath.resolve())]
+subprocess.run([*command,str(root/'packaging'/'wave-studio.spec')],cwd=root,env=env,check=True)

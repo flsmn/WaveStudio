@@ -1,6 +1,6 @@
 # Development and native builds
 
-Use Python 3.12. Application `0.1.0.dev8` pins engine `0.1.0.dev4`; the distributions are independently versioned. Development uses editable installations from the two neighbouring repositories. Runtime packages use wheels, without a neighbour dependency.
+Use Python 3.12. Current application `0.1.0.dev15` pins engine `0.1.0.dev5` for signed probe field samples. The distributions are independently versioned. Development uses editable installations from the two neighbouring repositories. Runtime packages use wheels, without a neighbour dependency.
 
 Tested local dependency versions: Torch 2.5.1, NumPy 2.3.4, PySide6 6.12.0, PyQtGraph 0.14.0, PyInstaller 6.22.3, hooks 2026.8, pytest 9.1.1. They were installed in the local `.venv`; its base is the already installed Python 3.12.12 runtime. A fresh isolated wheel environment independently validated the engine's CPU path. New build environments should install PyPI dependencies directly rather than inherit Conda site packages.
 
@@ -9,7 +9,7 @@ Build wheels first:
 ```sh
 python -m build --wheel --no-isolation ../WaveSimulator2D
 python -m build --wheel --no-isolation .
-python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev4-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0.dev8-py3-none-any.whl
+python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev5-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0.dev15-py3-none-any.whl --distpath dist/ax-dev15
 ```
 
 Run this on each native platform. PyInstaller bundles the runtime and numeric engine. The script stages only the supplied wheels into generated `build/wheel-runtime/`, then invokes the spec. Example JSON files are explicitly collected. OpenCV, Matplotlib, TorchVision, TorchAudio and Qt WebEngine are excluded because the application does not use them. The current macOS bundle is ad-hoc signed for local development; public signing/notarization, distribution and updates are not decided. Windows/Linux native build/start checks remain deferred by the user. macOS was tested on arm64/macOS 27.0.1; minimum OS support has not been independently verified.
@@ -17,7 +17,7 @@ Run this on each native platform. PyInstaller bundles the runtime and numeric en
 A native bundle can run the same integration check without installed Python or either source folder:
 
 ```sh
-dist/WaveStudio.app/Contents/MacOS/WaveStudio --check-workflow /tmp/wave-studio-native-check
+dist/ax-dev15/WaveStudio.app/Contents/MacOS/WaveStudio --check-workflow /tmp/wave-studio-native-check
 ```
 
 The engine core tests stay in the engine repository; project, lifecycle, worker and file tests stay in Studio. `wave_studio.checks` exercises real Qt widgets and the actual worker with programmatic actions; it is not a claim of exhaustive human keyboard/accessibility acceptance. Full numerical T01–T04 is run only after relevant numerical changes. The reference tolerances were frozen before measurement; the retained initial report records the failed narrow border configuration.
@@ -40,7 +40,7 @@ Use the same diagnostic in both environments, without other benchmarks/builds ru
 
 ```sh
 .venv/bin/python -m wave_studio --check-performance /tmp/wave-source --performance-case two_views_performance --performance-warmup 15 --performance-seconds 30 --accessibility-for-check
-dist/WaveStudio.app/Contents/MacOS/WaveStudio --check-performance /tmp/wave-native --performance-case two_views_performance --performance-warmup 15 --performance-seconds 30 --accessibility-for-check
+dist/ax-dev15/WaveStudio.app/Contents/MacOS/WaveStudio --check-performance /tmp/wave-native --performance-case two_views_performance --performance-warmup 15 --performance-seconds 30 --accessibility-for-check
 ```
 
 The check uses the production Qt event loop and 33-ms frame poll, with no fast helper timers. It fixes the lens Balanced raster, display size and compute mode; reports distinguish frame delivery, ImageItem conversion and solver steps. Record application state, accessibility, Low Power Mode and thermal state before comparing. `--event-loop pump` reproduces the older processEvents method; `--without-run-activity` disables both macOS scheduling hints for an A/B probe in the same binary. These flags only affect the diagnostic. A completed report is not a guarantee of 20 FPS. See `PERFORMANCE_INVESTIGATION.md` for retained data and limits.

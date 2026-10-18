@@ -1,0 +1,114 @@
+{
+  "version": "0.1.0.dev8",
+  "engine_version": "0.1.0.dev4",
+  "pid": 53386,
+  "frozen": true,
+  "event_loop": "native",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "qt_binding": "6.12.0",
+  "pyqtgraph": "0.14.0",
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/WaveStudio.app/Contents/Frameworks/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/WaveStudio.app/Contents/Frameworks/wave_studio/performance.py",
+  "grid": [
+    3780,
+    2268
+  ],
+  "seconds_per_case": 20,
+  "without_activity": false,
+  "measurements": {
+    "two_views_performance": {
+      "wall_seconds": 20.000812290993053,
+      "received_frames_per_second": 15.699362377467205,
+      "steps_per_second": 15.699362377467205,
+      "process_cpu_seconds_per_second": 0.5846230557978722,
+      "timings": {
+        "worker_display_transfer_ms": {
+          "count": 628,
+          "total": 2335.7742783846334,
+          "median": 3.316646005259827,
+          "p95": 6.162324995966626,
+          "max": 21.825041971169412
+        },
+        "gui_draw_ms": {
+          "count": 314,
+          "total": 105.35171639639884,
+          "median": 0.3048960061278194,
+          "p95": 0.5288024054607374,
+          "max": 3.698415996041149
+        },
+        "gui_profiles_ms": {
+          "count": 314,
+          "total": 33.163403102662414,
+          "median": 0.08783297380432487,
+          "p95": 0.1923755247844382,
+          "max": 1.1674169800244272
+        },
+        "image_render_ms": {
+          "count": 628,
+          "total": 1926.51949217543,
+          "median": 3.02531203487888,
+          "p95": 4.516152208088897,
+          "max": 14.53225000295788
+        },
+        "worker_step_ms": {
+          "count": 314,
+          "total": 17374.93346974952,
+          "median": 53.07652099872939,
+          "p95": 74.00488740531728,
+          "max": 192.3457920202054
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 603,
+        "total": 20000.799915986136,
+        "median": 32.15937502682209,
+        "p95": 35.29814162175171,
+        "max": 129.08724998123944
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=True": 604
+      },
+      "hud": "18 steps/s \u00b7 18 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": true
+      }
+    }
+  },
+  "count_note": "Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.",
+  "case": "two_views_performance",
+  "warmup_seconds": 8,
+  "extra_python_timers": false,
+  "startup_seconds": 1.8818709169863723,
+  "passed": true,
+  "rss_peak_bytes": 847183872,
+  "window": {
+    "width": 1320,
+    "height": 842,
+    "dpr": 2.0,
+    "qt_platform": "cocoa"
+  },
+  "thread_info": {
+    "worker_qos": {
+      "status": 0,
+      "class": 33,
+      "relative_priority": 0
+    }
+  },
+  "activity_after_shutdown": {
+    "active": false,
+    "begins": 1,
+    "ends": 1,
+    "failed": false
+  },
+  "service_level_after_shutdown": "Auto",
+  "worker_stopped": true,
+  "interpretation_note": "Resumed on 18 October after an overnight gap. CUA attached before the measurement; AX reads and a screenshot occurred during the interval. Entire interval remained ApplicationActive. This probe does not show a large slowdown caused solely by observation. It is not paired with the previous-night probes for a causal speedup claim."
+}

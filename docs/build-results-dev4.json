@@ -1,0 +1,25 @@
+{
+  "studio_commit": "8b8e23e",
+  "engine_commit": "10f7ce9",
+  "version_pair": "0.1.0.dev4 / 0.1.0.dev4",
+  "app_installed_file_bytes": 1081159032,
+  "wheel_sources_match_current_source": true,
+  "tests": 59,
+  "balanced_resource_report": "balanced-resource-results.json",
+  "balanced_resource_passed": true,
+  "frozen_workflow_from_cwd": "/private/tmp",
+  "frozen_workflow_passed": true,
+  "native_balanced_check": "passed; balanced-native-results.json",
+  "wheels": [
+    {
+      "name": "wave_studio-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 45353,
+      "sha256": "1ec7912084e8a431aa7192a080179551aec45157eef0912b5cd527bf2effc2dc"
+    },
+    {
+      "name": "wave_simulator_2d-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 36026,
+      "sha256": "ff6acad32f4077adbfa2f34ad916573e6f6c0bfeab4a6f444bc42a8ab5576a19"
+    }
+  ]
+}

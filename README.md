@@ -48,6 +48,7 @@ Die Referenzprüfung setzt eine installierte Engine voraus und verwendet keinen 
 - [API-/Lebenszyklusvertrag](docs/CONTRACT.md)
 - [Lokale Abnahme](docs/ACCEPTANCE.md)
 - [Konfigurierbare Budgets und Balanced auf dem Mac](docs/BALANCED_MAC_ACCEPTANCE.md)
+- [Paket-/Messlauf-FPS: Untersuchung und verbleibende Grenzen](docs/PERFORMANCE_INVESTIGATION.md)
 - [PRD](PRD.md), [Projektplan](PROJECT_PLAN.md), [Development Plan](DEVELOPMENT_PLAN.md)
 
 Numerische Verfahren gehören in `../WaveSimulator2D/`; Editor, Laufsteuerung, Dateien und Darstellung in dieses Repository. Git-Versionierung und Commits erfolgen getrennt.

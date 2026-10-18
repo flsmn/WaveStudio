@@ -1,0 +1,207 @@
+{
+  "version": "0.1.0.dev4",
+  "engine_version": "0.1.0.dev4",
+  "frozen": false,
+  "event_loop": "native",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "qt_binding": "6.12.0",
+  "pyqtgraph": "0.14.0",
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveSimulator2D/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/src/wave_studio/performance.py",
+  "grid": [
+    3780,
+    2268
+  ],
+  "seconds_per_case": 10,
+  "measurements": {
+    "one_view_economical": {
+      "wall_seconds": 10.005394332983997,
+      "received_frames_per_second": 18.98975629312699,
+      "steps_per_second": 18.98975629312699,
+      "process_cpu_seconds_per_second": 1.068204374990634,
+      "timings": {
+        "worker_display_transfer_ms": {
+          "count": 190,
+          "total": 673.1089548557065,
+          "median": 3.153916506562382,
+          "p95": 6.040556271909734,
+          "max": 34.78041698690504
+        },
+        "gui_draw_ms": {
+          "count": 190,
+          "total": 38.316041289363056,
+          "median": 0.20106250303797424,
+          "p95": 0.26974342763423914,
+          "max": 0.3534170100465417
+        },
+        "gui_profiles_ms": {
+          "count": 190,
+          "total": 16.285213583614677,
+          "median": 0.08122899453155696,
+          "p95": 0.1137520564952865,
+          "max": 0.2105409512296319
+        },
+        "image_render_ms": {
+          "count": 190,
+          "total": 741.0890796454623,
+          "median": 3.7127285031601787,
+          "p95": 4.936693707713856,
+          "max": 6.577832973562181
+        },
+        "worker_step_ms": {
+          "count": 190,
+          "total": 9209.879543283023,
+          "median": 46.12762498436496,
+          "p95": 55.15271844633387,
+          "max": 280.6628750404343
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 554,
+        "total": 10005.385625001509,
+        "median": 11.072145513026044,
+        "p95": 41.85603771184106,
+        "max": 174.88529201364145
+      },
+      "application_state_samples": {
+        "ApplicationActive": 198
+      },
+      "hud": "20 steps/s \u00b7 20 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps"
+    },
+    "two_views_economical": {
+      "wall_seconds": 10.008661708037835,
+      "received_frames_per_second": 18.983556997177086,
+      "steps_per_second": 18.983556997177086,
+      "process_cpu_seconds_per_second": 0.7099464650996816,
+      "timings": {
+        "worker_display_transfer_ms": {
+          "count": 380,
+          "total": 1092.195706849452,
+          "median": 2.5277289969380945,
+          "p95": 4.5146586635382855,
+          "max": 14.489207998849452
+        },
+        "gui_draw_ms": {
+          "count": 190,
+          "total": 50.354788603726774,
+          "median": 0.2398539800196886,
+          "p95": 0.39658535388298316,
+          "max": 0.8899170206859708
+        },
+        "gui_profiles_ms": {
+          "count": 190,
+          "total": 15.384250786155462,
+          "median": 0.075479008955881,
+          "p95": 0.13474388688337055,
+          "max": 0.26175001403316855
+        },
+        "image_render_ms": {
+          "count": 380,
+          "total": 1577.9552870662883,
+          "median": 3.6887704918626696,
+          "p95": 6.1221493990160525,
+          "max": 8.054708014242351
+        },
+        "worker_step_ms": {
+          "count": 189,
+          "total": 8738.431947887875,
+          "median": 45.08162499405444,
+          "p95": 55.38708301028236,
+          "max": 99.94091599946842
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 702,
+        "total": 10008.651833049953,
+        "median": 10.704208514653146,
+        "p95": 32.17727739538532,
+        "max": 48.90950000844896
+      },
+      "application_state_samples": {
+        "ApplicationActive": 201
+      },
+      "hud": "20 steps/s \u00b7 20 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps"
+    },
+    "two_views_performance": {
+      "wall_seconds": 10.035468458023388,
+      "received_frames_per_second": 20.12860693498572,
+      "steps_per_second": 20.12860693498572,
+      "process_cpu_seconds_per_second": 0.47897534829647126,
+      "timings": {
+        "worker_display_transfer_ms": {
+          "count": 404,
+          "total": 825.5721682216972,
+          "median": 1.975416496861726,
+          "p95": 2.6302580285118893,
+          "max": 4.8187089851126075
+        },
+        "gui_draw_ms": {
+          "count": 202,
+          "total": 37.21233730902895,
+          "median": 0.18733300385065377,
+          "p95": 0.22734166122972965,
+          "max": 0.2876669750548899
+        },
+        "gui_profiles_ms": {
+          "count": 202,
+          "total": 11.475835868623108,
+          "median": 0.05895798676647246,
+          "p95": 0.07436461455654353,
+          "max": 0.08599995635449886
+        },
+        "image_render_ms": {
+          "count": 404,
+          "total": 1132.5646522454917,
+          "median": 2.5592919846531004,
+          "p95": 2.947648207191378,
+          "max": 93.64737500436604
+        },
+        "worker_step_ms": {
+          "count": 201,
+          "total": 9054.752286581788,
+          "median": 44.04862498631701,
+          "p95": 51.46720801712945,
+          "max": 123.4690000419505
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 858,
+        "total": 10028.34374998929,
+        "median": 10.287666984368116,
+        "p95": 22.601208015112206,
+        "max": 109.88829197594896
+      },
+      "application_state_samples": {
+        "ApplicationActive": 201
+      },
+      "hud": "21 steps/s \u00b7 21 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps"
+    }
+  },
+  "count_note": "Received latest frames and ImageItem conversions are distinct from compositor scanout FPS.",
+  "passed": true,
+  "rss_peak_bytes": 822476800,
+  "window": {
+    "width": 1320,
+    "height": 842,
+    "dpr": 2.0,
+    "qt_platform": "cocoa"
+  },
+  "worker_stopped": true
+}

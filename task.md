@@ -1,6 +1,6 @@
 # Wave Studio – Fortschritt
 
-Stand: 18. Oktober 2026. **Studio / Engine 0.1.0.dev4**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
+Stand: 18. Oktober 2026. **Studio 0.1.0.dev8 / Engine 0.1.0.dev4**, Apple M1 / 8 GiB, macOS 27.0.1 arm64. Maßgeblich bleiben DEVELOPMENT_PLAN.md, PRD.md und PROJECT_PLAN.md.
 
 Der Nutzer hat Windows und Linux ausdrücklich auf später verschoben. Dieser Tracker trennt die lokale Mac-Abnahme von einem stabilen plattformübergreifenden Release. Frühere Zwischenstände und Ausgangsentscheidungen stehen in `docs/DEVELOPMENT_HISTORY.md`.
 
@@ -70,6 +70,12 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 
 ## Paket-/Messlauf-FPS untersuchen (18. Oktober 2026)
 
-- [ ] Quellen und Paket mit identischer Balanced-Szene, Fenstergröße und beiden Rechenmodi vergleichen; Solver-/Transfer-/Renderzeiten und App-Aktivität protokollieren.
-- [ ] Ursache der nativen 5–8-FPS-Beobachtung reproduzieren und beheben; ursprüngliche Messdaten erhalten.
-- [ ] Regressionen, finales natives Paket und Ressourcen/Bedienbarkeit nachprüfen; größere Änderungen und Abschlussnachweise committen.
+- [x] Gemeinsamer Diagnose-Einstieg für Quellen und Paket: Balanced, 1320×860/DPR2, echter 33-ms-Qt-Abfragetakt ohne schnelle Hilfstimer, getrennte Solver-/Transfer-/Renderzeiten sowie Aktivitäts-, QoS-, Stromspar-/Temperaturzustand. Frühere Hilfstimer-Proben ausdrücklich als explorativ markiert.
+- [x] Fehler der FPS-Anzeige behoben: Initialisierung und Pausenzeit aus dem Messfenster ausgeschlossen, Neustart bei Fortsetzen, doppelte Ansichts-Snapshots nicht gezählt; „Measuring rate…“ bis ein gültiges Intervall vorliegt.
+- [x] Vergleich bei fest aufgebauten Ansichten und aktivierter Accessibility: natives Paket ohne/mit Scheduling-Hinweisen 15,45 / 16,25 Frames/s; historische Pump-Schleife 15,45/s. Beobachtetes natives Paket beim Fortsetzen der Arbeit 15,70/s, HUD 16–18/s. Stromsparmodus an, Temperaturstatus nominal. Der etwa 5-%-Unterschied ist kein belegter Faktor-zwei-Gewinn und kein Nachweis für App Nap als Hauptursache. Rohdaten und verworfene Proben bleiben erhalten.
+- [x] macOS-Arbeit mit NSProcessInfo-Aktivität und High-Worker-QoS gekennzeichnet; Pause, Reset, Fehler und Schließen räumen auf und stellen Auto wieder her. Idle-Systemschlaf bleibt erlaubt; keine globalen Energieeinstellungen geändert.
+- [x] **66 Tests bestanden** (16,24 s), pip-Abhängigkeiten konsistent. Finales dev8-Paket aus exakten Wheels; vollständiger Paketablauf aus `/private/tmp` bestanden. Normales natives Fenster: Messbeginn/Resume „Measuring rate…“, pausiert null Raten und Step 560→561 bestätigt.
+- [x] Ressourcen-Nachlauf dokumentiert: RSS 949,8 MiB, MPS-Treiber separat 1117,1 MiB, sechs Pausen maximal 99,39 ms, Reset 21,52 ms, aktives Schließen 129,41 ms und anschließend null MPS-Tensorbelegung.
+- [ ] **GUI-Zeitkriterium im dev8-Nachlauf nicht bestanden:** einmalig 500,86 ms im ersten Ansichtsintervall bei unverändertem Grenzwert 250 ms. Zwei spätere Intervalle 129,22/138,56 ms. Fehlbericht erhalten; kein bestandener Gesamt-Ressourcennachweis für dev8 behauptet.
+- [ ] **Gesamte historische Differenz 5–8 gegenüber 18–20 weiterhin nicht eindeutig erklärt.** Bestätigt sind die falsche alte HUD-Zeitbasis und nicht vergleichbare Messkontexte. Quellenlauf ebenfalls 12,68/s im Mittel mit kurzem HUD 6/s und 1024-ms-Abfrageunterbrechung. Eine dauerhafte Paketbremse oder alleinige Ursache App Nap/Accessibility ist nicht nachgewiesen. Die neue Diagnose erlaubt eine belastbare Wiederaufnahme bei reproduzierbarem Befund; 18–20 FPS im normalen Paket werden nicht als erreicht abgenommen.
+- [x] Größere Änderungen committet: Diagnose `a954c8b`, Scheduling `40587b4`, Ratenkorrektur `b1c4b6c`, feste Vergleichskonfiguration `10e1d50`. Quellen, Paket und offene Befunde: `docs/PERFORMANCE_INVESTIGATION.md`; Abschlussnachweise im nachfolgenden Dokumentations-Commit.

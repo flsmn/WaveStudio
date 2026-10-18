@@ -35,6 +35,10 @@ Implementation commits: Studio `8b8e23e`, Engine `10f7ce9`.
 
 ## Native package
 
-The final dev4 package was rebuilt from the exact matching wheels; hashes/source comparison are in `build-results.json`. Its frozen workflow from `/private/tmp` passes and imports both packages inside the bundle (`native-results.json`).
+The final dev4 package was rebuilt from the exact matching wheels; hashes/source comparison are in `build-results-dev4.json`. Its frozen workflow from `/private/tmp` passes and imports both packages inside the bundle (`native-results-dev4.json`).
 
 Native UI checks also pass (`balanced-native-results.json`): 512-MiB rejection, explicit 768-MiB admission, editing the axis budget to 8192/back to 4096, retained Balanced preset and MPS device, Run/Performance/second view, Pause, Step 543→544, Resume to 709, native Save/PNG and Reset to Ready/0 with Step disabled. The PNG records actual MPS, engine dev4 and a full paused image of 2268 × 3780 cells. The saved native project contains both resource budgets. During native automation the HUD showed about 5–8 frames/s, lower than the separate controlled resource run. This is retained as an observed limitation, without inferring a specific cause or guaranteeing either rate. Budget changes improve admission, not a fixed frame-rate promise. High Quality has configurable admission but remains untested on this Mac. Windows/Linux remain deferred. The earlier AX scene-list bridge limitation is unrelated and remains open.
+
+## Later FPS investigation
+
+The 18–20 rates above belong to the dev4 processEvents/10-ms-heartbeat resource test. They are not a matched steady-state native-package comparison. The dev8 investigation corrects the rate display and records production-loop measurements and their limits in [PERFORMANCE_INVESTIGATION.md](PERFORMANCE_INVESTIGATION.md); it does not certify a sustained 20 FPS or assign the entire old gap to a proven single cause. Historical dev4 resource/optical scope remains unchanged.

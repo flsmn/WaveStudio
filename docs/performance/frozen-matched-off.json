@@ -1,0 +1,114 @@
+{
+  "version": "0.1.0.dev8",
+  "engine_version": "0.1.0.dev4",
+  "pid": 51150,
+  "frozen": true,
+  "event_loop": "native",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "qt_binding": "6.12.0",
+  "pyqtgraph": "0.14.0",
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/WaveStudio.app/Contents/Frameworks/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/WaveStudio.app/Contents/Frameworks/wave_studio/performance.py",
+  "grid": [
+    3780,
+    2268
+  ],
+  "seconds_per_case": 15,
+  "without_activity": true,
+  "measurements": {
+    "two_views_performance": {
+      "wall_seconds": 15.013676374976058,
+      "received_frames_per_second": 15.452577650247239,
+      "steps_per_second": 15.519183588394856,
+      "process_cpu_seconds_per_second": 0.6527182786711445,
+      "timings": {
+        "worker_display_transfer_ms": {
+          "count": 465,
+          "total": 2153.0043289531022,
+          "median": 3.5621249699033797,
+          "p95": 7.005133177153752,
+          "max": 219.83370801899582
+        },
+        "gui_draw_ms": {
+          "count": 232,
+          "total": 88.01499917171896,
+          "median": 0.34956252784468234,
+          "p95": 0.5587999825365839,
+          "max": 1.8577079754322767
+        },
+        "gui_profiles_ms": {
+          "count": 232,
+          "total": 25.075578247196972,
+          "median": 0.09285449050366879,
+          "p95": 0.18767120491247613,
+          "max": 0.9622080251574516
+        },
+        "image_render_ms": {
+          "count": 462,
+          "total": 1611.3752467208542,
+          "median": 3.436583501752466,
+          "p95": 4.367885418469086,
+          "max": 11.120458017103374
+        },
+        "worker_step_ms": {
+          "count": 232,
+          "total": 12581.402415235061,
+          "median": 50.98216648912057,
+          "p95": 69.60546057671309,
+          "max": 165.29591602738947
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 462,
+        "total": 15012.668500014115,
+        "median": 32.15112499310635,
+        "p95": 33.735777786932886,
+        "max": 160.80241702729836
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=False": 463
+      },
+      "hud": "17 steps/s \u00b7 17 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": true
+      }
+    }
+  },
+  "count_note": "Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.",
+  "case": "two_views_performance",
+  "warmup_seconds": 5,
+  "extra_python_timers": false,
+  "startup_seconds": 2.2731850420241244,
+  "passed": true,
+  "rss_peak_bytes": 903135232,
+  "window": {
+    "width": 1320,
+    "height": 842,
+    "dpr": 2.0,
+    "qt_platform": "cocoa"
+  },
+  "thread_info": {
+    "worker_qos": {
+      "status": 0,
+      "class": 21,
+      "relative_priority": 0
+    }
+  },
+  "activity_after_shutdown": {
+    "active": false,
+    "begins": 0,
+    "ends": 0,
+    "failed": false
+  },
+  "service_level_after_shutdown": "Auto",
+  "worker_stopped": true,
+  "interpretation_note": "Matched fixed-layout foreground probe; no concurrent builds/tests."
+}

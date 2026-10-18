@@ -1,0 +1,115 @@
+{
+  "version": "0.1.0.dev8",
+  "engine_version": "0.1.0.dev4",
+  "pid": 51228,
+  "frozen": false,
+  "event_loop": "native",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "qt_binding": "6.12.0",
+  "pyqtgraph": "0.14.0",
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveSimulator2D/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/src/wave_studio/performance.py",
+  "grid": [
+    3780,
+    2268
+  ],
+  "seconds_per_case": 15,
+  "without_activity": false,
+  "measurements": {
+    "two_views_performance": {
+      "wall_seconds": 15.146894208039157,
+      "received_frames_per_second": 12.675865914353368,
+      "steps_per_second": 13.071986724176911,
+      "process_cpu_seconds_per_second": 0.6379035112605325,
+      "timings": {
+        "image_render_ms": {
+          "count": 386,
+          "total": 1662.5253774691373,
+          "median": 3.807937988312915,
+          "p95": 8.00803123274818,
+          "max": 15.907290973700583
+        },
+        "worker_display_transfer_ms": {
+          "count": 398,
+          "total": 2454.6551291714422,
+          "median": 4.305062524508685,
+          "p95": 14.168737444560966,
+          "max": 84.4450420117937
+        },
+        "gui_draw_ms": {
+          "count": 192,
+          "total": 89.08257831353694,
+          "median": 0.3624585224315524,
+          "p95": 0.888035597745329,
+          "max": 4.527250013779849
+        },
+        "gui_profiles_ms": {
+          "count": 192,
+          "total": 30.744160583708435,
+          "median": 0.1428960240446031,
+          "p95": 0.2339123602723702,
+          "max": 1.2107910006307065
+        },
+        "worker_step_ms": {
+          "count": 198,
+          "total": 12332.679335959256,
+          "median": 54.93433299125172,
+          "p95": 101.97415804723265,
+          "max": 279.924749978818
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 381,
+        "total": 15146.875208010897,
+        "median": 32.41104201879352,
+        "p95": 74.39970900304615,
+        "max": 1023.7105829874054
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=True": 366,
+        "ApplicationInactive; accessibility=True; run_activity=True": 16
+      },
+      "hud": "10 steps/s \u00b7 6 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": true
+      }
+    }
+  },
+  "count_note": "Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.",
+  "case": "two_views_performance",
+  "warmup_seconds": 5,
+  "extra_python_timers": false,
+  "startup_seconds": 2.3496693749912083,
+  "passed": true,
+  "rss_peak_bytes": 769261568,
+  "window": {
+    "width": 1320,
+    "height": 842,
+    "dpr": 2.0,
+    "qt_platform": "cocoa"
+  },
+  "thread_info": {
+    "worker_qos": {
+      "status": 0,
+      "class": 33,
+      "relative_priority": 0
+    }
+  },
+  "activity_after_shutdown": {
+    "active": false,
+    "begins": 1,
+    "ends": 1,
+    "failed": false
+  },
+  "service_level_after_shutdown": "Auto",
+  "worker_stopped": true,
+  "interpretation_note": "Same configuration as frozen matched-on, but some ApplicationInactive samples and a 1024-ms poll gap occurred. The final one-second HUD is 6 frames/s while the full interval averages 12.68; this is evidence that instantaneous UI observations cannot be compared to whole-interval averages. No packaging penalty or sustained 20-fps guarantee follows."
+}

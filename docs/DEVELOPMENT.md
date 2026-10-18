@@ -1,6 +1,6 @@
 # Development and native builds
 
-Use Python 3.12. Application and engine are independently versioned at `0.1.0.dev4`; the application pins that exact engine distribution. Development uses editable installations from the two neighbouring repositories. Runtime packages use wheels, without a neighbour dependency.
+Use Python 3.12. Application `0.1.0.dev8` pins engine `0.1.0.dev4`; the distributions are independently versioned. Development uses editable installations from the two neighbouring repositories. Runtime packages use wheels, without a neighbour dependency.
 
 Tested local dependency versions: Torch 2.5.1, NumPy 2.3.4, PySide6 6.12.0, PyQtGraph 0.14.0, PyInstaller 6.22.3, hooks 2026.8, pytest 9.1.1. They were installed in the local `.venv`; its base is the already installed Python 3.12.12 runtime. A fresh isolated wheel environment independently validated the engine's CPU path. New build environments should install PyPI dependencies directly rather than inherit Conda site packages.
 
@@ -9,7 +9,7 @@ Build wheels first:
 ```sh
 python -m build --wheel --no-isolation ../WaveSimulator2D
 python -m build --wheel --no-isolation .
-python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev4-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0.dev4-py3-none-any.whl
+python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev4-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0.dev8-py3-none-any.whl
 ```
 
 Run this on each native platform. PyInstaller bundles the runtime and numeric engine. The script stages only the supplied wheels into generated `build/wheel-runtime/`, then invokes the spec. Example JSON files are explicitly collected. OpenCV, Matplotlib, TorchVision, TorchAudio and Qt WebEngine are excluded because the application does not use them. The current macOS bundle is ad-hoc signed for local development; public signing/notarization, distribution and updates are not decided. Windows/Linux native build/start checks remain deferred by the user. macOS was tested on arm64/macOS 27.0.1; minimum OS support has not been independently verified.
@@ -33,3 +33,16 @@ Resource admission is project-configurable: `settings.buffer_limit_mib` defaults
 Balanced follow-up: `scripts/check_balanced_resources.py` exercises actual MPS editor/worker interaction under `docs/BALANCED_MAC_PLAN.md`. It records RSS, separate overlapping MPS allocations, GUI heartbeat, rates, repeated Pause/Resume, exact Step, Reset/release and active shutdown. The original dev3 physical/512² reports remain historical evidence; higher admission limits alone do not certify optical quality.
 
 Large live field/intensity frames are bilinearly resampled on the worker device to at most 1024 cells per axis before the CPU transfer. Paused/Step frames remain full resolution and read-only; `Frame.preview` and PNG metadata expose the distinction. ImageItem display downsampling remains independent of numerical sampling. Changes in frame shape restore the full physical image rectangle. Reset/shutdown release unused MPS cache. These changes address the retained initial Balanced GUI-gap failures; thresholds in BALANCED_MAC_PLAN.md remain unchanged.
+
+## Comparing source and native performance
+
+Use the same diagnostic in both environments, without other benchmarks/builds running:
+
+```sh
+.venv/bin/python -m wave_studio --check-performance /tmp/wave-source --performance-case two_views_performance --performance-warmup 15 --performance-seconds 30 --accessibility-for-check
+dist/WaveStudio.app/Contents/MacOS/WaveStudio --check-performance /tmp/wave-native --performance-case two_views_performance --performance-warmup 15 --performance-seconds 30 --accessibility-for-check
+```
+
+The check uses the production Qt event loop and 33-ms frame poll, with no fast helper timers. It fixes the lens Balanced raster, display size and compute mode; reports distinguish frame delivery, ImageItem conversion and solver steps. Record application state, accessibility, Low Power Mode and thermal state before comparing. `--event-loop pump` reproduces the older processEvents method; `--without-run-activity` disables both macOS scheduling hints for an A/B probe in the same binary. These flags only affect the diagnostic. A completed report is not a guarantee of 20 FPS. See `PERFORMANCE_INVESTIGATION.md` for retained data and limits.
+
+On macOS, requested computation holds a user-initiated NSProcessInfo activity allowing idle system sleep and selects High QThread service level when available. Pause, Reset, failure and shutdown release the activity and restore Auto. No global power setting is changed. Other platforms use the existing worker behavior. The FPS meter excludes initialization, paused intervals and duplicate step snapshots; after Run/Resume it waits for a full advancing measurement interval.

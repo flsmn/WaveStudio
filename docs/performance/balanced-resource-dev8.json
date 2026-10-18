@@ -1,0 +1,110 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "Apple M1 / 8 GiB",
+  "studio": "0.1.0.dev8",
+  "engine": "0.1.0.dev4",
+  "device": "mps",
+  "criteria": "docs/BALANCED_MAC_PLAN.md",
+  "measurements": {
+    "one_view_economical": {
+      "rss_peak_bytes": 995966976,
+      "mps_current_bytes": 248686848,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.000061333004851,
+      "displayed_frames_per_second": 16.699897574510107,
+      "steps_per_second": 17.19989450787867,
+      "process_cpu_seconds_per_second": 1.094305488295618,
+      "gui_heartbeat_max_gap_ms": 500.8643330074847
+    },
+    "paused": {
+      "rss_peak_bytes": 995966976,
+      "mps_current_bytes": 248681728,
+      "mps_driver_bytes": 1171390464,
+      "wall_seconds": 1.0010667080059648,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "process_cpu_seconds_per_second": 0.1228289773464991,
+      "gui_heartbeat_max_gap_ms": 70.2145830146037
+    },
+    "two_views_economical": {
+      "rss_peak_bytes": 995966976,
+      "mps_current_bytes": 248725248,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.000866000016686,
+      "displayed_frames_per_second": 17.098519268202843,
+      "steps_per_second": 17.098519268202843,
+      "process_cpu_seconds_per_second": 0.49505172851948404,
+      "gui_heartbeat_max_gap_ms": 129.2167499777861
+    },
+    "two_views_performance": {
+      "rss_peak_bytes": 995966976,
+      "mps_current_bytes": 248725248,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.000952625006903,
+      "displayed_frames_per_second": 16.398437843803585,
+      "steps_per_second": 16.398437843803585,
+      "process_cpu_seconds_per_second": 0.5895145413705959,
+      "gui_heartbeat_max_gap_ms": 138.55899998452514
+    }
+  },
+  "pause_samples_ms": [
+    72.33275001635775,
+    96.11454198602587,
+    99.3905839859508,
+    79.26254201447591,
+    81.63129194872454,
+    84.34245904209092
+  ],
+  "note": "Process RSS and MPS allocations overlap on unified memory; do not add them. Resource/interaction acceptance only; no new focus certification.",
+  "system_swap_before": "vm.swapusage: total = 6144.00M  used = 4846.69M  free = 1297.31M  (encrypted)",
+  "baseline": {
+    "rss_peak_bytes": 314474496,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 393216
+  },
+  "grid": [
+    3780,
+    2268
+  ],
+  "dx": 0.021164021164021163,
+  "estimated_buffer_bytes": 617258880,
+  "buffer_limit_mib": 768,
+  "max_axis_cells": 4096,
+  "preparation_seconds": 0.6696825420367531,
+  "resource_json_roundtrip": true,
+  "run_handler_ms": 0.5124169983901083,
+  "first_frame_seconds": 1.289004834019579,
+  "live_display_shape": [
+    614,
+    1024
+  ],
+  "live_preview_marked": true,
+  "paused_display_shape": [
+    2268,
+    3780
+  ],
+  "paused_full_detail": true,
+  "paused_steps_stable": true,
+  "exact_step": true,
+  "resume_handler_ms": 1.7667919746600091,
+  "run_grid_measurements_preserved": true,
+  "paused_scene_screenshot": "docs/performance/balanced-paused-dev8.png",
+  "reset_handler_ms": 21.502749994397163,
+  "reset_release_ms": 21.522541996091604,
+  "after_reset": {
+    "rss_peak_bytes": 995966976,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 72482816
+  },
+  "reset_stopped": true,
+  "active_shutdown_ms": 129.41254198085517,
+  "worker_stopped": true,
+  "system_swap_after": "vm.swapusage: total = 6144.00M  used = 4806.69M  free = 1337.31M  (encrypted)",
+  "passed": false,
+  "terminal_memory": {
+    "rss_peak_bytes": 995966976,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 72482816
+  },
+  "interpretation_note": "Legacy processEvents resource/interaction runner, not the production-loop FPS comparison. No concurrent tests/builds. Overall acceptance failed because the first one-view interval had a 500.86-ms heartbeat gap (limit250); all six Pause samples, memory limits, exact Step, Reset/release and active shutdown pass. Kept as failed, without relaxing limits or rerunning to select a passing sample."
+}

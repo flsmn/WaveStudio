@@ -75,7 +75,9 @@ class SettingsDialog(QDialog):
         layout=QVBoxLayout(self);form=QFormLayout();form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows);self.boxes={};self._setting_preset=False
         self.quality=QComboBox();self.quality.addItems(['Custom','Preview','Balanced','High Quality']);self.quality.setCurrentText(project.settings.quality);form.addRow('Quality',self.quality)
         for name,label in [('width','Domain width'),('height','Domain height'),('dx','Grid spacing'),('courant','Time step / grid spacing'),('border_width','Damped border width'),('border_rate','Border damping rate')]:
-            box=QDoubleSpinBox();box.setDecimals(12);box.setRange(.000001 if name in ('dx','courant') else 0,100);box.setValue(getattr(project.settings,name));box.setKeyboardTracking(False);self.boxes[name]=box;form.addRow(label,box)
+            box=QDoubleSpinBox();box.setDecimals(12)
+            box.setRange(.000001 if name in ('dx','courant') else 0,10000 if name in ('width','height') else 100)
+            box.setValue(getattr(project.settings,name));box.setKeyboardTracking(False);self.boxes[name]=box;form.addRow(label,box)
         self.device=QComboBox();self.device.addItems(['cpu','mps','auto']);self.device.setCurrentText(project.settings.device)
         import torch
         self.device.model().item(1).setEnabled(torch.backends.mps.is_available())

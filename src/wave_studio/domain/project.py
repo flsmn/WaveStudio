@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field, replace
 import math
 from uuid import uuid4
+from .colors import FIELD_SCHEMES,INTENSITY_SCHEMES
 
 
 def identifier():
@@ -60,6 +61,8 @@ class DisplaySettings:
     secondary_view: str = 'Intensity'
     secondary_visible: bool = False
     text_scale: float = 1.0
+    field_scheme: str = 'Classic'
+    intensity_scheme: str = 'Classic'
 
 
 @dataclass(frozen=True)
@@ -118,6 +121,8 @@ class Project:
         if self.display.text_scale not in (1.,1.25,1.5):raise ValueError('Text size must be 100%, 125% or 150%.')
         number(self.display.contrast,'Display range',True)
         number(self.display.intensity_range,'Intensity display range',True)
+        if self.display.field_scheme not in FIELD_SCHEMES or self.display.intensity_scheme not in INTENSITY_SCHEMES:
+            raise ValueError('Unsupported field or intensity color scheme.')
         if self.compute_mode not in ('Economical','Performance'): raise ValueError('Unknown compute mode.')
         return self
 

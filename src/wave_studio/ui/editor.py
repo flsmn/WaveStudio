@@ -11,7 +11,7 @@ import numpy as np
 import pyqtgraph as pg
 from PySide6.QtCore import Qt,QTimer,QRectF,QStandardPaths,QByteArray,QBuffer,QIODevice
 from PySide6.QtGui import QAction,QKeySequence,QFont
-from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog,QScrollArea)
+from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QCheckBox,QDoubleSpinBox,QTreeWidget,QTreeWidgetItem,QDockWidget,QSplitter,QFileDialog,QMessageBox,QDialog,QScrollArea)
 from wave_sim2d import __version__ as engine_version
 from wave_sim2d.geometry import lens_vertices
 from wave_studio.domain.project import (Project,SourceObject,MaterialObject,WallObject,LensObject,DetectorObject)
@@ -25,6 +25,8 @@ from wave_studio.persistence.exports import export_csv
 from .main_window import MainWindow as PrototypeWindow
 from .dialogs import ObjectDialog,SettingsDialog
 from .flow_layout import FlowLayout
+from wave_studio.domain.colors import FIELD_SCHEMES,INTENSITY_SCHEMES
+from .colors import color_map
 
 
 class MainWindow(PrototypeWindow):
@@ -111,8 +113,12 @@ class MainWindow(PrototypeWindow):
         self.second_image=pg.ImageItem(axisOrder='row-major',autoDownsample=True);self.second.addItem(self.second_image)
         self.second_scale=pg.ColorBarItem(values=(-1,1),colorMap=self._field_map(),interactive=False);self.second_scale.setImageItem(self.second_image,insert_in=self.second.getPlotItem())
         self.splitter.addWidget(self.second);self.second.hide();canvas.layout().insertWidget(1,self.splitter,1)
-        self.secondary_view=QComboBox();self.secondary_view.addItems(['Intensity','Field','Material']);self.secondary_view.currentTextChanged.connect(self._views_changed);self.secondary_view.hide()
-        self.centralWidget().layout().itemAt(1).layout().addWidget(self.secondary_view)
+        self.secondary_view=QComboBox();self.secondary_view.addItems(['Intensity','Field','Material']);self.secondary_view.currentTextChanged.connect(self._views_changed)
+        self.secondary_view.setAccessibleName('Second view type')
+        self.secondary_toggle=QCheckBox('Second view');self.secondary_toggle.toggled.connect(self._second_view)
+        second_controls=QWidget();second_row=QHBoxLayout(second_controls);second_row.setContentsMargins(0,0,0,0);second_row.setSpacing(6)
+        second_row.addWidget(self.secondary_toggle);second_row.addWidget(self.secondary_view)
+        self.centralWidget().layout().itemAt(1).layout().addWidget(second_controls)
         self.plot.removeItem(self.source_marker)
         self.plot.scene().sigMouseClicked.connect(self.canvas_click)
         measure=QWidget();ml=QVBoxLayout(measure);bar=FlowLayout()
@@ -125,7 +131,23 @@ class MainWindow(PrototypeWindow):
         self.measure_dock=QDockWidget('Measurements & references',self);self.measure_dock.setWidget(measure);self.measure_dock.setMinimumHeight(200);self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea,self.measure_dock)
         view_menu.addAction(self.dock.toggleViewAction());view_menu.addAction(self.measure_dock.toggleViewAction())
         self.mode_combo=QComboBox();self.mode_combo.addItems(['Economical','Performance']);self.mode_combo.currentTextChanged.connect(self._mode_changed);self.centralWidget().layout().itemAt(1).layout().addWidget(self.mode_combo)
-        self.contrast.blockSignals(True);self.contrast.setDecimals(6);self.contrast.setRange(.000001,100);self.contrast.setValue(self.project.display.contrast);self.contrast.blockSignals(False)
+        controls=self.centralWidget().layout().itemAt(1).layout()
+        controls.removeWidget(self.range_label);self.range_label.hide()
+        controls.removeWidget(self.contrast)
+        self.contrast.blockSignals(True);self.contrast.setDecimals(6);self.contrast.setRange(.000001,100);self.contrast.setValue(self.project.display.contrast);self.contrast.setKeyboardTracking(False);self.contrast.blockSignals(False)
+        self.intensity_range=QDoubleSpinBox();self.intensity_range.setDecimals(6);self.intensity_range.setRange(.000001,100)
+        self.intensity_range.setSingleStep(.0001);self.intensity_range.setKeyboardTracking(False);self.intensity_range.setAccessibleName('Intensity maximum')
+        self.intensity_range.valueChanged.connect(self._intensity_range_changed)
+        self.color_combos={}
+        for name,label,schemes,range_label,range_box in (('field_scheme','Field colors',FIELD_SCHEMES,'Field range ±',self.contrast),('intensity_scheme','Intensity colors',INTENSITY_SCHEMES,'Intensity max',self.intensity_range)):
+            combo=QComboBox();combo.addItems(schemes);combo.setCurrentText(getattr(self.project.display,name))
+            combo.setAccessibleName(label)
+            combo.setToolTip(f'{label} for both views; saved with the experiment.')
+            combo.currentTextChanged.connect(lambda value,n=name:self._color_changed(n,value))
+            group=QWidget();row=QHBoxLayout(group);row.setContentsMargins(0,0,0,0);row.setSpacing(6)
+            caption=QLabel(range_label);caption.setBuddy(range_box);row.addWidget(caption);row.addWidget(range_box);row.addWidget(combo)
+            controls.addWidget(group);self.color_combos[name]=combo
+        self._sync_display_controls()
         self.rate_label=QLabel('0 steps/s · 0 frames/s');self.centralWidget().layout().itemAt(3).layout().addWidget(self.rate_label)
 
     def _apply_theme(self,theme):
@@ -155,7 +177,6 @@ class MainWindow(PrototypeWindow):
         self.run_button.setEnabled(not running);self.pause_button.setEnabled(running);self.step_button.setEnabled(self.lifecycle.can_step)
         self.state_label.setText(self.lifecycle.state.value)
         if not running:self._rates.reset();self.rate_label.setText('0 steps/s · 0 frames/s')
-        self.range_label.setText('Max' if self.project.display.view=='Intensity' else 'Range ±')
         self.settings_button.setEnabled(not running)
         self.undo_action.setEnabled(bool(self.history.undo_stack));self.redo_action.setEnabled(bool(self.history.redo_stack))
         self.setWindowTitle(('• ' if self.lifecycle.dirty else '')+'Wave Studio — '+self.project.name)
@@ -203,9 +224,7 @@ class MainWindow(PrototypeWindow):
         if before.compute_mode!=candidate.compute_mode:self.worker.submit('mode',self.lifecycle.identity,candidate.compute_mode)
         for widget,value in ((self.view,candidate.display.view),(self.theme,candidate.display.theme),(self.secondary_view,candidate.display.secondary_view),(self.mode_combo,candidate.compute_mode)):
             widget.blockSignals(True);widget.setCurrentText(value);widget.blockSignals(False)
-        self.contrast.blockSignals(True);self.contrast.setValue(candidate.display.intensity_range if candidate.display.view=='Intensity' else candidate.display.contrast);self.contrast.blockSignals(False)
-        self.secondary_action.blockSignals(True);self.secondary_action.setChecked(candidate.display.secondary_visible);self.secondary_action.blockSignals(False)
-        self.second.setVisible(candidate.display.secondary_visible);self.secondary_view.setVisible(candidate.display.secondary_visible)
+        self._sync_display_controls()
         if candidate.display.secondary_visible and not before.display.secondary_visible:self.splitter.setSizes([500,500])
         self._apply_theme(candidate.display.theme)
         if kind=='display':self._draw();self._plot_profiles()
@@ -370,16 +389,20 @@ class MainWindow(PrototypeWindow):
         panes=[(self.project.display.view,self.image,self.scale,self.plot)]
         if self.second.isVisible():panes.append((self.secondary_view.currentText(),self.second_image,self.second_scale,self.second))
         for view,image,scale,plot in panes:
+            scheme=None
             if view=='Material':data=self.scene.refractive_index;levels=(1,max(2,float(data.max())));color=pg.ColorMap([0,1],['#162331','#6cdec8']);label='Refractive index'
             elif view=='Intensity':
-                data=self.frame.intensity if self.frame is not None else None;levels=(0,self.project.display.intensity_range);color=pg.ColorMap([0,1],['#101925','#f0ca78']);label='Live mean field² (relative)'
-            else:data=self.frame.field if self.frame is not None else None;levels=(-self.project.display.contrast,self.project.display.contrast);color=self._field_map();label='Field (relative)'
+                scheme=self.project.display.intensity_scheme
+                data=self.frame.intensity if self.frame is not None else None;levels=(0,self.project.display.intensity_range);color=color_map(view,scheme);label='Live mean field² (relative)'
+            else:
+                scheme=self.project.display.field_scheme
+                data=self.frame.field if self.frame is not None else None;levels=(-self.project.display.contrast,self.project.display.contrast);color=color_map(view,scheme);label='Field (relative)'
             if data is None:
                 if self._empty_image is None or self._empty_image.shape!=self.scene.grid.shape:self._empty_image=np.zeros(self.scene.grid.shape,dtype=np.float32)
                 data=self._empty_image
             g=self.scene.grid
             if self.frame is not None and self.frame.preview and view!='Material':label+=' (live preview)'
-            configuration=(view,levels,g.nx,g.ny,g.width,g.height,data.shape,label)
+            configuration=(view,scheme,levels,g.nx,g.ny,g.width,g.height,data.shape,label)
             changed=self._image_configs.get(id(image))!=configuration
             if changed:
                 scale.setColorMap(color);scale.setLevels(levels);scale.getAxis('left').setLabel(label);scale.axis.setWidth(75)
@@ -391,8 +414,24 @@ class MainWindow(PrototypeWindow):
     def _view_changed(self,view):
         self.commit(replace(self.project,display=replace(self.project.display,view=view)))
 
+    def _color_changed(self,name,value):
+        self.commit(replace(self.project,display=replace(self.project.display,**{name:value})))
+
+    def _sync_display_controls(self):
+        for name,combo in self.color_combos.items():
+            combo.blockSignals(True);combo.setCurrentText(getattr(self.project.display,name));combo.blockSignals(False)
+        for box,value in ((self.contrast,self.project.display.contrast),(self.intensity_range,self.project.display.intensity_range)):
+            box.blockSignals(True);box.setValue(value);box.blockSignals(False)
+        visible=self.project.display.secondary_visible
+        for toggle in (self.secondary_action,self.secondary_toggle):
+            toggle.blockSignals(True);toggle.setChecked(visible);toggle.blockSignals(False)
+        self.second.setVisible(visible);self.secondary_view.setEnabled(visible)
+
     def _contrast_changed(self,value):
-        if hasattr(self,'mode_combo'):self.commit(replace(self.project,display=replace(self.project.display,**{('intensity_range' if self.project.display.view=='Intensity' else 'contrast'):value})))
+        if hasattr(self,'mode_combo'):self.commit(replace(self.project,display=replace(self.project.display,contrast=value)))
+
+    def _intensity_range_changed(self,value):
+        self.commit(replace(self.project,display=replace(self.project.display,intensity_range=value)))
 
     def _theme_changed(self,theme):
         if hasattr(self,'mode_combo'):self.commit(replace(self.project,display=replace(self.project.display,theme=theme)))
@@ -523,9 +562,7 @@ class MainWindow(PrototypeWindow):
         self.project,self.scene,self.path=project,scene,path;self.lifecycle=Lifecycle(project.id);self.frame=None;self.profiles={};self.run_project=None;self.history=History();self.revisions={};self.selected=None
         for widget,value in ((self.view,project.display.view),(self.theme,project.display.theme),(self.secondary_view,project.display.secondary_view),(self.mode_combo,project.compute_mode)):
             widget.blockSignals(True);widget.setCurrentText(value);widget.blockSignals(False)
-        self.contrast.blockSignals(True);self.contrast.setValue(project.display.intensity_range if project.display.view=='Intensity' else project.display.contrast);self.contrast.blockSignals(False)
-        self.secondary_action.blockSignals(True);self.secondary_action.setChecked(project.display.secondary_visible);self.secondary_action.blockSignals(False)
-        self.second.setVisible(project.display.secondary_visible);self.secondary_view.setVisible(project.display.secondary_visible)
+        self._sync_display_controls()
         if project.display.secondary_visible:self.splitter.setSizes([500,500])
         self._apply_theme(project.display.theme);self.lifecycle.dirty=False
         self._rebuild_scene();self._refresh_controls();self.message.setText('Experiment ready. Press Run to start.');self.time_label.setText('t = 0.000 · 0 steps')

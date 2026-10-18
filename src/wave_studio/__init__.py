@@ -1,2 +1,2 @@
 """Wave Studio desktop application."""
-__version__ = '0.1.0.dev8'
+__version__ = '0.1.0.dev14'

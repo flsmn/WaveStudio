@@ -87,3 +87,10 @@ Vorab eingefrorenes Protokoll: `docs/MAC_ACCEPTANCE_PLAN.md`, Commit `13e33d1`. 
 - [x] Bericht und maschinenlesbare Gegenprüfung: `../WaveSimulator2D/docs/TOLERANCE_REVIEW.md`, `tolerance-review-results.json`; erneut gemessene dev4-Eingangsdaten separat erhalten. Solver, aktive Grenzwerte und Presets unverändert.
 - [ ] Quantitative Physikabnahme: versionierte strengere Ziele, passende unabhängige Referenzen und eine dritte gezielte Rasterstufe für die unklaren Spalt-/Linsenfälle; beobachtete Konvergenz sowie Zeit-/Rand-/Messunsicherheit prüfen. Vorgeschlagene Ziele von 2 % Positions-/Amplitudenabweichung und ≤1 % numerischer Fokusunsicherheit sind noch nicht validiert oder aktiviert.
 - [ ] Grenzwerte zentralisieren und kohärente Phasenanforderung aus der Messaufgabe ableiten. Bestehende High-Quality-/Balanced-Bezeichnungen und Ressourcenfreigaben sind keine quantitative Genauigkeitszusage; Balanced-/High-Quality-Fokusnachweise bleiben offen.
+
+## Fehlermaße und ursprüngliche Engine vergleichen (18. Oktober 2026)
+
+- [x] Tatsächliche Fehlerformeln, Referenznenner und Messverfahren dokumentiert: `../WaveSimulator2D/docs/ERROR_METRICS.md`. Absolute Winkel-/Wandabweichung, relative Referenzabweichung und Zweirasterdifferenz klar unterschieden.
+- [x] Reproduzierbarer CPU-Vergleich mit dem ersten PyTorch-Fork `40f6c78`: Geschwindigkeitsskalenfehler rund 44 % gegenüber 0,32–0,47 % aktuell. Nach analytischer Zeitkalibrierung stimmen homogene quellenfreie Felder nach 180 Schritten mit maximal 0,000127 % relativer L2-Abweichung überein. Dies ist kein allgemeiner Physikfehlervergleich. Skript und Rohdaten im Engine-Repository erhalten.
+- [x] Herkunft zur früheren CuPy-Fassung im Code geprüft; kein nativer CuPy/CUDA-Lauf auf diesem Mac behauptet. Solver und aktive Grenzwerte unverändert.
+- [ ] Vollständiger Alt/Neu-Vergleich für Quellen, Dämpfung und Spalt/Linse fehlt. T02-Winkelreferenz muss für strengere quantitative Abnahme den tatsächlich gemessenen Einfallswinkel berücksichtigen: 1,037592° statt 0,645968° Abweichung bei den vorhandenen Daten; keine rückwirkende Änderung des v1-Berichts.

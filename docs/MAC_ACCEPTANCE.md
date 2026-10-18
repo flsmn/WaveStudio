@@ -1,5 +1,7 @@
 # Mac acceptance — dev3
 
+**Grenzwertprüfung vom 18. Oktober:** Die historischen T01–T04-/Preset-PASS-Werte beruhen auf v1-Prototypgrenzen. Insbesondere 15 % für den Spalt und 20 % für die Linse reichen nicht als quantitative Genauigkeitsfreigabe. Referenzunsicherheit und numerischer Fehler sind noch nicht getrennt; siehe [Grenzwertprüfung](../../WaveSimulator2D/docs/TOLERANCE_REVIEW.md). Bestehende Rohdaten und Grenzwerte bleiben erhalten.
+
 Scope: Apple M1 / 8 GiB, macOS 27.0.1 arm64. Windows/Linux are deferred by the user. Criteria were frozen before runs in `MAC_ACCEPTANCE_PLAN.md` (commit `13e33d1`). This is a local development acceptance, separate from public distribution and a cross-platform stable release.
 
 ## Quality and numerical evidence

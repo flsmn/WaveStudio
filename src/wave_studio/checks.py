@@ -15,7 +15,6 @@ from wave_studio.examples import example
 from wave_studio.domain.project import Project,DetectorObject,MaterialObject
 from wave_studio.ui.dialogs import SettingsDialog
 from wave_studio.simulation.compiler import compile_project
-from wave_studio.domain.resolution import pixel_dimensions
 from wave_studio.persistence.projects import save,load,encode,decode
 from wave_studio.persistence.exports import export_csv
 from wave_studio.simulation.lifecycle import State
@@ -41,18 +40,21 @@ def run_workflow(output_directory):
         app.processEvents()
         assert hasattr(window,'control_panel') and not window.secondary_view.isVisible()
         dialog=SettingsDialog(Project(),lambda p:p.validate(),window)
+        dialog.show();app.processEvents()
         try:
-            assert 'dx' not in dialog.boxes and 'courant' not in dialog.boxes
-            dialog.boxes['width'].setValue(1920);dialog.boxes['height'].setValue(1080);dialog.apply()
-            pixel_project=dialog.result_project;assert pixel_project is not None,dialog.error.text()
-            assert pixel_dimensions(pixel_project.settings)==(1920,1080)
-            pixel_scene=compile_project(pixel_project)
-            assert pixel_scene.grid.shape==(1080,1920) and pixel_scene.grid.dt==.5*pixel_scene.grid.dx
+            assert 'dx' in dialog.boxes and 'courant' in dialog.boxes
+            assert dialog.boxes['width'].value()==dialog.project.settings.width
+            assert not dialog.advanced_settings.isVisible()
+            dialog.advanced_toggle.click();app.processEvents()
+            assert dialog.boxes['dx'].isVisible() and dialog.boxes['courant'].isVisible()
+            dialog.boxes['dx'].setValue(.25);dialog.boxes['courant'].setValue(.4);dialog.apply()
+            restored_project=dialog.result_project;assert restored_project is not None,dialog.error.text()
+            assert restored_project.settings.dx==.25 and restored_project.settings.courant==.4
+            assert restored_project.settings.width==dialog.project.settings.width
+            save(output/'physical-domain.wave.json',restored_project)
+            assert load(output/'physical-domain.wave.json')==restored_project
             assert dialog.boxes['border_rate'].text()=='2'
             dialog.boxes['border_rate'].setValue(.5);assert dialog.boxes['border_rate'].text()=='0.5'
-            save(output/'full-hd.wave.json',pixel_project)
-            assert pixel_dimensions(load(output/'full-hd.wave.json').settings)==(1920,1080)
-            del pixel_scene
         finally:dialog.close()
         # Same three walls and illumination as numerical T03, created as editable model objects.
         p=example('Double slit')
@@ -117,7 +119,7 @@ def run_workflow(output_directory):
         window.theme.setCurrentText('Dark');app.processEvents();window.grab().save(str(output/'editor-dark.png'))
         for name in ('Refraction','Biconvex lens'):
             window.replace_project(example(name));app.processEvents()
-        results={'passed':True,'frozen':bool(getattr(sys,'frozen',False)),'engine_location':wave_sim2d.__file__,'application_location':__file__,'checks':['exact Full HD pixel input and roundtrip','automatic spacing and time step','compact English numbers','organized toolbar and conditional second view','completed finite-window profile','reference freeze','signed live probe field','field reference timestamp freeze','field CSV export','same-run quantity switch','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','PNG embedded origin','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
+        results={'passed':True,'frozen':bool(getattr(sys,'frozen',False)),'engine_location':wave_sim2d.__file__,'application_location':__file__,'checks':['physical domain dimensions and roundtrip','editable advanced grid spacing and time-step ratio','compact English numbers','organized toolbar and conditional second view','completed finite-window profile','reference freeze','signed live probe field','field reference timestamp freeze','field CSV export','same-run quantity switch','same-run resume','exact single step','detector-only revision','other detector preserved','invalid edit preserved run','live intensity and second view','PNG embedded origin','CSV raw values','reset preserves reference','physical undo/redo stays stopped','file roundtrip including reference','recovery roundtrip','three examples compile','dark/light layout'],'reference_run_id':reference['metadata']['run_id']}
     finally:
         window.lifecycle.dirty=False;window.close();app.processEvents()
     (output/'workflow-results.json').write_text(json.dumps(results,indent=2)+'\n')

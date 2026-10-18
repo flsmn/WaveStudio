@@ -56,11 +56,11 @@ def test_paused_rates_remain_zero_after_acknowledgement(window):
 def test_settings_keep_exact_preset_and_reject_without_project_change(window):
     w=window;p=example('Double slit');d=SettingsDialog(p,compile_project,w)
     d.quality.setCurrentText('High Quality');d.apply()
-    assert round(d.result_project.settings.width/d.result_project.settings.dx)==1920
-    d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('Balanced');d.boxes['width'].setValue(1000)
+    assert d.result_project.settings.dx==estimate(p,'High Quality').dx
+    d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('Balanced');d.boxes['dx'].setValue(.25)
     assert d.quality.currentText()=='Custom'
-    p=example('Biconvex lens');d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('High Quality');d.boxes['buffer_limit_mib'].setValue(1);d.apply()
-    assert d.result_project is None and '1 MiB' in d.error.text()
+    p=example('Biconvex lens');d=SettingsDialog(p,compile_project,w);d.quality.setCurrentText('High Quality');d.apply()
+    assert d.result_project is None and '512 MiB' in d.error.text()
 
 
 def test_two_views_preserve_units_and_camera_on_display_change(window):

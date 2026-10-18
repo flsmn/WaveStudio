@@ -1,0 +1,24 @@
+{
+  "application_version": "0.1.0.dev16",
+  "engine_version": "0.1.0.dev5",
+  "app_path": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/ax-dev16/WaveStudio.app",
+  "native_workflow_passed": true,
+  "native_workflow_checks": 24,
+  "codesign_deep_strict_passed": true,
+  "source_gui_tests_passed": 90,
+  "staged_gui_tests_passed": 88,
+  "engine_selected_tests_passed": 15,
+  "wheel_source_and_bundled_code_match": true,
+  "bundled_module_counts": {
+    "wave_studio": 28,
+    "wave_sim2d": 6
+  },
+  "palettes_present": true,
+  "sha256": {
+    "WaveStudio/dist/wave_studio-0.1.0.dev16-py3-none-any.whl": "6a2570f3e959ea30c33cc53e2811c4080c2d57150a3b1b54ffbbe5ab0ed09076",
+    "WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev5-py3-none-any.whl": "2b3cc80cfc94b72208fbeb6f1367216777293359882ccf1f30d20588cc754b9f",
+    "WaveStudio/dist/ax-dev16/WaveStudio.app/Contents/MacOS/WaveStudio": "05197b0b308fdeccba6d5a8ed18aab4ec57c4aa9a18fbba24d27c2eb8b8e4151"
+  },
+  "build_context": "Working tree includes pre-existing macOS scene-outline accessibility changes excluded from feature commit; committed source is separately tested.",
+  "withdrawn_dev15_app_and_wheel_removed": true
+}

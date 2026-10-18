@@ -1,17 +1,13 @@
-# Pixel resolution presets
+# Quality presets
 
-Width and Height are exact simulation pixel counts. Grid spacing and the time step are automatic; no manual spacing or Courant-ratio controls are exposed.
+Domain width and height use the existing physical project units. They are not pixel counts. Grid spacing and Time step / grid spacing are editable under Advanced settings. Manual spacing selects Custom; quality changes preserve geometry.
 
-| Preset | Longer axis | Square | 16:9 |
-| --- | ---: | ---: | ---: |
-| Preview | 512 | 512 × 512 | 512 × 288 |
-| Balanced | 1,024 | 1,024 × 1,024 | 1,024 × 576 |
-| High Quality | 1,920 | 1,920 × 1,920 | 1,920 × 1,080 |
+| Preset | Minimum longer-axis cells | Minimum cells / shortest wavelength | Minimum cells / smallest feature | Maximum predicted phase drift |
+| --- | ---: | ---: | ---: | ---: |
+| Preview | 512 | 10 | 2 | π |
+| Balanced | 1,024 | 12 | 4 | π/2 |
+| High Quality | 1,920 | 20 | 6 | π/4 |
 
-Presets preserve the current aspect ratio up to integer rounding. Editing either pixel count selects Custom. They are resolution templates, not optical accuracy guarantees; the GUI reports wavelength and feature sampling separately. Resource budgets can reject the requested resolution without silently reducing it.
+The selector meets all these requirements while retaining square cells, exact physical dimensions and wall alignment. Actual resolution and cells per wavelength can be higher. Resource budgets can reject a grid; no silent coarsening occurs. Existing saved Custom grids remain unchanged. Historical physical acceptance reports describe their recorded grids, not measurements of the revised resolution floors.
 
-For the existing physical domain W × H and requested nx × ny, square spacing is dx = max(W/nx, H/ny), and the new physical extent is nx·dx × ny·dx. This covers the existing scene without cropping object coordinates. The Courant ratio is 0.5; the engine derives dt from dx and wave speed. Existing project files retain their stored grids until resolution is changed.
-
-The internal legacy physical-grid quality selector remains available for historical numerical regression checks. Its wavelength, feature and phase criteria are separate from these GUI pixel templates. Historical physical acceptance reports do not certify a newly chosen pixel grid.
-
-Compute device, compute mode, border damping and resource budgets are in the collapsed Advanced settings section.
+Compute device, compute mode, border damping and resource budgets also remain in the collapsed Advanced settings section.

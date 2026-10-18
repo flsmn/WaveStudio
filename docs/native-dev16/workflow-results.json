@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "frozen": true,
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/ax-dev16/WaveStudio.app/Contents/Frameworks/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/ax-dev16/WaveStudio.app/Contents/Frameworks/wave_studio/checks.py",
+  "checks": [
+    "physical domain dimensions and roundtrip",
+    "editable advanced grid spacing and time-step ratio",
+    "compact English numbers",
+    "organized toolbar and conditional second view",
+    "completed finite-window profile",
+    "reference freeze",
+    "signed live probe field",
+    "field reference timestamp freeze",
+    "field CSV export",
+    "same-run quantity switch",
+    "same-run resume",
+    "exact single step",
+    "detector-only revision",
+    "other detector preserved",
+    "invalid edit preserved run",
+    "live intensity and second view",
+    "PNG embedded origin",
+    "CSV raw values",
+    "reset preserves reference",
+    "physical undo/redo stays stopped",
+    "file roundtrip including reference",
+    "recovery roundtrip",
+    "three examples compile",
+    "dark/light layout"
+  ],
+  "reference_run_id": "dccaa564-3235-4022-af7c-dc3ed01adf13"
+}

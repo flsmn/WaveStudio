@@ -1,4 +1,6 @@
-# Wave Studio 0.1.0.dev15
+# Wave Studio 0.1.0.dev15 (withdrawn)
+
+This build was withdrawn because it reintroduced a reverted pixel-dimension GUI. Use dev16, which restores physical domain dimensions and editable grid spacing/time-step ratio. The dev15 build artifacts have been removed; the description below is historical.
 
 - Exact pixel Width/Height, automatic square grid spacing and stable time step; Preview/Balanced/High Quality templates use 512/1024/1920 pixels on the longer axis.
 - Compact English numeric inputs with adaptive steps below one.

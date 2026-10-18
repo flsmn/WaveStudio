@@ -1,6 +1,6 @@
 # Wave Studio
 
-Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev15**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
+Lokale Desktop-Anwendung für skalare 2D-Wellenexperimente. Entwicklungsstand **0.1.0.dev16**, Python 3.12, PySide6, PyQtGraph und separat paketierte PyTorch-Engine. Die Oberfläche ist Englisch.
 
 Implementiert sind freier Aufbau mit Quellen, Materialien, Polygonen, Wänden und bikonvexen Linsen, Undo/Redo, Run/Pause/Step/Reset, passive Detektoren mit endlichen Messfenstern, Referenzvergleich, zwei Ansichten, Abstand/Winkel, sichere Projektdateien, Wiederherstellung sowie PNG/CSV. Drei bearbeitbare Beispiele liegen unter `examples/` und im File-Menü.
 
@@ -10,7 +10,7 @@ Der aktuelle Mac (Apple M1, 8 GB) ist die lokale Prüfplattform. Windows/Linux f
 
 ## Start auf diesem Mac
 
-Das gebaute Anwendungspaket liegt unter `dist/ax-dev15/WaveStudio.app`. Es enthält seine Python-Laufzeit und die fest gebaute Engine. Alternativ aus der eingerichteten Entwicklungsumgebung:
+Das gebaute Anwendungspaket liegt unter `dist/ax-dev16/WaveStudio.app`. Es enthält seine Python-Laufzeit und die fest gebaute Engine. Alternativ aus der eingerichteten Entwicklungsumgebung:
 
 ```sh
 cd WaveStudio
@@ -44,7 +44,7 @@ Die Referenzprüfung setzt eine installierte Engine voraus und verwendet keinen 
 
 ## Dokumentation
 
-- [Änderungen und Build dev15](docs/CHANGES-dev15.md)
+- [Änderungen und Build dev16](docs/CHANGES-dev16.md)
 
 - [Fortschritt und offene Abnahmen](task.md)
 - [Bedienung und Modellgrenzen](docs/USER_GUIDE.md)

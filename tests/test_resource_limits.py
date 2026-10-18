@@ -60,8 +60,8 @@ def test_dialog_rechecks_budgets_and_preserves_preset():
         d.boxes['buffer_limit_mib'].setValue(768)
         assert d.quality.currentText()=='Balanced'
         d.apply();candidate=d.result_project
-        assert candidate.settings.quality=='Custom' and candidate.settings.buffer_limit_mib==768
-        assert round(candidate.settings.width/candidate.settings.dx)==1024
+        assert candidate.settings.quality=='Balanced' and candidate.settings.buffer_limit_mib==768
+        assert candidate.settings.dx==estimate(p,'Balanced').dx
     finally:d.close()
 
 

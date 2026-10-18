@@ -8,15 +8,14 @@ from PySide6.QtWidgets import QApplication
 from wave_studio.domain.project import Project
 from wave_studio.persistence.projects import encode,decode
 from wave_studio.ui.dialogs import SettingsDialog
-from wave_studio.domain.resolution import pixel_dimensions
 
 
-@pytest.mark.parametrize('width,height,dx',[(150,125,.125),(10000,16,1)])
+@pytest.mark.parametrize('width,height,dx',[(150,125,1),(10000,10000,100)])
 def test_large_dimensions_apply_roundtrip_and_reopen(width,height,dx):
     app=QApplication.instance() or QApplication([])
     project=Project()
-    project=replace(project,settings=replace(project.settings,quality='Custom',width=width*dx,height=height*dx,dx=dx,max_axis_cells=16384),
-                    objects=(replace(project.objects[0],start=(width*dx/2,height*dx/2)),))
+    project=replace(project,settings=replace(project.settings,quality='Custom',dx=dx),
+                    objects=(replace(project.objects[0],start=(width/2,height/2)),))
     dialog=SettingsDialog(project,lambda p:p.validate())
     try:
         dialog.boxes['width'].setValue(width)
@@ -24,7 +23,7 @@ def test_large_dimensions_apply_roundtrip_and_reopen(width,height,dx):
         dialog.apply()
         assert dialog.result_project is not None,dialog.error.text()
         restored=decode(encode(dialog.result_project))
-        assert pixel_dimensions(restored.settings)==(width,height)
+        assert (restored.settings.width,restored.settings.height)==(width,height)
         reopened=SettingsDialog(restored,lambda p:p.validate())
         try:
             assert reopened.boxes['width'].value()==width
@@ -43,8 +42,8 @@ def test_large_domain_still_obeys_resource_limits():
     project=replace(project,settings=replace(project.settings,quality='Custom',dx=.125))
     dialog=SettingsDialog(project,lambda p:p.validate())
     try:
-        dialog.boxes['width'].setValue(10000)
-        dialog.boxes['height'].setValue(10000)
+        dialog.boxes['width'].setValue(1000)
+        dialog.boxes['height'].setValue(1000)
         dialog.apply()
         assert dialog.result_project is None
         assert 'configured limits' in dialog.error.text()

@@ -1,6 +1,6 @@
 # Application checks and selected evidence
 
-Application source is `0.1.0.dev16`, paired with engine `0.1.0.dev5`. Regression tests, native workflow checks, numerical validation, performance measurements and human accessibility acceptance have different scopes. Their outcomes must not be conflated. Current open work is maintained in [ROADMAP.md](../docs/ROADMAP.md).
+Application source is `0.1.0`, paired with engine `0.1.0.dev5`. Regression tests, native workflow checks, numerical validation, performance measurements and human accessibility acceptance have different scopes. Their outcomes must not be conflated. Current open work is maintained in [ROADMAP.md](../docs/ROADMAP.md).
 
 ## Run checks
 

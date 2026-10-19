@@ -28,7 +28,9 @@ def main(argv=None):
     from PySide6.QtCore import QTimer
     from .ui.editor import MainWindow
     app = QApplication.instance() or QApplication(sys.argv[:1])
+    from . import __version__
     app.setApplicationName('Wave Studio')
+    app.setApplicationVersion(__version__)
     app.setOrganizationName('Wave Studio')
     app.setStyle('Fusion')
     window = MainWindow()

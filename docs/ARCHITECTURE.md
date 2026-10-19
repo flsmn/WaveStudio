@@ -1,6 +1,6 @@
 # Architecture and development boundaries
 
-Wave Studio (`0.1.0.dev16`) is a Qt desktop workbench using the independently versioned WaveSimulator2D engine (`0.1.0.dev5`). [Requirements](REQUIREMENTS.md) define product scope; [ROADMAP.md](ROADMAP.md) is the single list of open work. [CONTRACT.md](CONTRACT.md) defines identities and lifecycle behavior.
+Wave Studio (`0.1.0`) is a Qt desktop workbench using the independently versioned WaveSimulator2D engine (`0.1.0.dev5`). [Requirements](REQUIREMENTS.md) define product scope; [ROADMAP.md](ROADMAP.md) is the single list of open work. [CONTRACT.md](CONTRACT.md) defines identities and lifecycle behavior.
 
 ## Components
 
@@ -30,7 +30,7 @@ Project resource checks run before raster allocation. Limits are admission rules
 
 Projects store geometry, settings, detectors and references, not resumable fields. Invalid files must not replace an active project. Saves/exports use temporary siblings and atomic replacement. The [development guide](DEVELOPMENT.md) documents bounds and build commands.
 
-The desktop bundle excludes SciPy, OpenCV and Matplotlib; these are optional engine development/example dependencies. Current macOS builds are local arm64 candidates. Distribution, minimum OS, licensing and clean-machine acceptance remain open in the [roadmap](ROADMAP.md).
+The desktop bundle excludes SciPy, OpenCV and Matplotlib; these are optional engine development/example dependencies. Version 0.1 publishes an experimental arm64 ZIP on GitHub. Minimum-OS acceptance, Developer ID signing, licensing and clean-machine acceptance remain open in the [roadmap](ROADMAP.md).
 
 ## Checks and evidence
 

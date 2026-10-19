@@ -10,9 +10,9 @@ Wave Studio provides the editor, simulation controls, visualization and project 
 
 ## Project status
 
-The current source version is **0.1.0.dev16**, paired with **WaveSimulator2D 0.1.0.dev5**. This is an experimental application under active development, with local validation on an Apple M1 Mac with 8 GiB of memory. Windows and Linux packaging and acceptance are pending.
+The current source version is **0.1.0**, paired with **WaveSimulator2D 0.1.0.dev5**. This is an experimental application under active development, with local validation on an Apple M1 Mac with 8 GiB of memory. Windows and Linux packaging and acceptance are pending.
 
-The repository contains source code, examples, tests and retained validation reports. Local application bundles under `dist/` are ignored by Git and are not included when cloning. A generally supported, signed and notarized desktop release has not been established. Numerical quality presets are resolution suggestions, not accuracy certificates for arbitrary experiments.
+The first macOS release is available from [GitHub Releases](https://github.com/flsmn/WaveStudio/releases/tag/v0.1.0). It is an experimental Apple Silicon build, ad-hoc signed and not notarized. Windows/Linux and Intel Mac packages are not provided. Numerical quality presets are resolution suggestions, not accuracy certificates for arbitrary experiments.
 
 ## Features
 
@@ -23,6 +23,12 @@ The repository contains source code, examples, tests and retained validation rep
 - **Reference comparisons:** retain up to four completed measurements with their scene and run metadata, and compare profiles on a shared raw or normalized scale.
 - **Project files and exports:** validated, versioned `.wave.json` files, periodic recovery, PNG snapshots with metadata, and CSV profiles with raw values and measurement provenance.
 - **Editable examples:** double slit, refraction and a biconvex lens, available from the File menu and as [packaged project files](src/wave_studio/data/examples/).
+
+## Download for macOS
+
+Download [WaveStudio-0.1.0-macos-arm64.zip](https://github.com/flsmn/WaveStudio/releases/download/v0.1.0/WaveStudio-0.1.0-macos-arm64.zip), extract it and move `WaveStudio.app` to Applications. Python and the engine are included; a separate Python installation is not needed.
+
+This build targets Apple Silicon (arm64). Its bundled libraries require **macOS 26 or newer** based on their declared binary targets; it has been tested locally on macOS 27.0.1, not on every eligible OS or a separate clean Mac. The app is ad-hoc signed, without Developer ID notarization, so Gatekeeper may block first launch. Release notes include installation details, known limitations and SHA-256 checksums.
 
 ## Install and run from source
 
@@ -147,12 +153,12 @@ Build on the target operating system, using the matching engine and application 
 ```sh
 python -m build --wheel --no-isolation ../WaveSimulator2D
 python -m build --wheel --no-isolation .
-python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev5-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0.dev16-py3-none-any.whl --distpath dist/ax-dev16
+python packaging/build_native.py --engine-wheel ../WaveSimulator2D/dist/wave_simulator_2d-0.1.0.dev5-py3-none-any.whl --studio-wheel dist/wave_studio-0.1.0-py3-none-any.whl --distpath dist/release-0.1.0
 ```
 
-PyInstaller bundles Python and the numerical runtime from the supplied wheels. The resulting application does not require the source repositories or a user-installed Python. On the current Mac the candidate path is `dist/ax-dev16/WaveStudio.app`; `dist/WaveStudio.app` is an older historical build. These are local artifacts, not downloads supplied by this repository.
+PyInstaller bundles Python and the numerical runtime from the supplied wheels. The resulting application does not require the source repositories or a user-installed Python. The release build path is `dist/release-0.1.0/WaveStudio.app`; `dist/WaveStudio.app` is an older historical build. The published ZIP is built from this release path; intermediate `dist/` folders remain local and ignored.
 
-Current macOS bundles are arm64 and ad-hoc signed for local development. A supported minimum OS, clean-machine acceptance, public signing/notarization and distribution updates remain open. Windows and Linux native builds are pending. See [development and builds](docs/DEVELOPMENT.md) and [macOS distribution status](docs/MAC_DISTRIBUTION.md) before distributing a bundle.
+The macOS release is arm64 and ad-hoc signed, without notarization. Clean-machine/minimum-OS acceptance, native accessibility completion and public signing remain open. Updates use manual download/replacement; Windows and Linux native builds are pending. See [development and builds](docs/DEVELOPMENT.md) and [macOS distribution status](docs/MAC_DISTRIBUTION.md) before distributing a bundle.
 
 ## Documentation and contributing
 

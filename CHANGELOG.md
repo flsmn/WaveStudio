@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 19 October 2026
+
+- First experimental macOS Apple Silicon release with a self-contained ZIP, versioned app metadata and SHA-256 checksums.
+- Uses engine `0.1.0.dev5`; no numerical stencil or accuracy-policy change.
+- Ad-hoc signed, not notarized; native accessibility, quantitative accuracy and independent clean-Mac acceptance remain open.
+
+### Source preparation
 
 - Consolidated requirements, architecture and open work into `docs/REQUIREMENTS.md`, `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`.
 - Moved selected historical evidence into `validation/results/` with provenance; removed redundant intermediate artifacts from the checkout.

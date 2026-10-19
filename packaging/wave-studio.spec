@@ -1,6 +1,8 @@
 # Native onedir application. Build separately on each target operating system.
 from pathlib import Path
+import tomllib
 root = Path(SPECPATH).parent
+app_version = tomllib.loads((root/'pyproject.toml').read_text())['project']['version']
 analysis = Analysis(
     [str(root/'scripts'/'run_app.py')],
     pathex=[str(root/'build'/'wheel-runtime')],
@@ -13,4 +15,9 @@ pyz = PYZ(analysis.pure)
 exe = EXE(pyz,analysis.scripts,[],exclude_binaries=True,name='WaveStudio',debug=False,bootloader_ignore_signals=False,strip=False,upx=False,console=False)
 collection = COLLECT(exe,analysis.binaries,analysis.datas,strip=False,upx=False,name='WaveStudio')
 if __import__('sys').platform == 'darwin':
-    app = BUNDLE(collection,name='WaveStudio.app',icon=None,bundle_identifier='org.wavestudio.app')
+    app = BUNDLE(
+        collection,name='WaveStudio.app',icon=None,bundle_identifier='org.wavestudio.app',
+        version=app_version,
+        info_plist={'CFBundleShortVersionString':app_version,'CFBundleVersion':app_version,
+                    'LSMinimumSystemVersion':'26.0','NSHighResolutionCapable':True},
+    )

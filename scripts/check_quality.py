@@ -50,7 +50,7 @@ def main():
     ap.add_argument('--policy',type=Path,default=Path(__file__).resolve().parents[2]/'WaveSimulator2D/validation/mac-presets-v1.json')
     args=ap.parse_args();limits=load_mac_limits(args.policy)
     torch.set_num_threads(1)
-    output=Path('docs/quality-'+args.case+'-results.json')
+    output=Path('local-results/quality-'+args.case+'-results.json');output.parent.mkdir(parents=True,exist_ok=True)
     project=example('Double slit' if args.case=='slit' else 'Biconvex lens')
     report={'platform':platform.platform(),'device':args.device,'cases':[],'presets':[asdict(estimate(project,n)) for n in PRESETS],'tolerances':limits,'acceptance_scope':'historical v1 demonstration; no quantitative certification'}
     def save():output.write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')

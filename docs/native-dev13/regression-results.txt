@@ -1,4 +1,0 @@
-Command: .venv/bin/python -m pytest tests ../WaveSimulator2D/tests -q
-76 passed in 11.88s
-Qt6.12.0 offscreen; not native accessibility evidence.
-Two prototype-only list-recreation tests removed with the rejected workaround; one history/selection regression retained.

@@ -24,7 +24,7 @@ Every frame carries `{project_id,scene_revision,run_id,generation,time,steps}`. 
 
 Step is intentionally disabled in Ready, including immediately after Reset. This settles B02's open choice: only manual Run initializes a new state; Pause then enables Step.
 
-Planned JSON envelope: `{"format":"wave-studio","version":1,"project":{...},"references":[...]}`. There are no persistent live wave fields. Reference datasets freeze physical scene content (not just revision), engine version, actual backend/dtype, grid/dt, run duration, detector geometry and spatial axis, settling/window times, sample count, sampling and averaging method, and measured values. References are independent of subsequent edits/reset. Unsupported or damaged files are fully rejected before project replacement. Persistence, finite-window measurements and reference export are implemented in S06/E08/S07–S09; see DEVELOPMENT.md for limits and metadata conventions.
+JSON envelope: `{"format":"wave-studio","version":1,"project":{...}}`; references are stored inside `project.references`. There are no persistent live wave fields. Reference datasets freeze physical scene content (not just revision), engine version, actual backend/dtype, grid/dt, run duration, detector geometry and spatial axis, settling/window times, sample count, sampling and averaging method, and measured values. References are independent of subsequent edits/reset. Unsupported or damaged files are fully rejected before project replacement. Persistence, finite-window measurements and reference export are implemented in S06/E08/S07–S09; see DEVELOPMENT.md for limits and metadata conventions.
 
 ## Configurable resource admission (dev4)
 

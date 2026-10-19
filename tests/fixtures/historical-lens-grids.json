@@ -1,0 +1,22 @@
+{
+  "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/quality-lens-results.json",
+  "passed": true,
+  "cases": [
+    {
+      "name": "Preview",
+      "grid": [
+        2845,
+        1707
+      ],
+      "dx": 0.028119507908611598
+    },
+    {
+      "name": "Custom convergence",
+      "grid": [
+        3200,
+        1920
+      ],
+      "dx": 0.025
+    }
+  ]
+}

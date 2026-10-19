@@ -4,7 +4,7 @@
 
 Wave Studio provides the editor, simulation controls, visualization and project files. Its numerical solver is developed separately in [WaveSimulator2D](https://github.com/flsmn/WaveSimulator2D), using PyTorch. The desktop interface uses PySide6 and PyQtGraph and is available in English.
 
-![Wave Studio editor with two synchronized views and a detector reference profile](docs/workflow-artifacts/editor-dark.png)
+![Wave Studio editor with two synchronized views and a detector reference profile](docs/images/editor-dark.png)
 
 *Development screenshot; the current interface includes additional probe and display controls.*
 
@@ -22,7 +22,7 @@ The repository contains source code, examples, tests and retained validation rep
 - **Passive detectors:** point and line probes with configurable settling times and finite measurement windows. Switch between mean field-square intensity and instantaneous signed field samples.
 - **Reference comparisons:** retain up to four completed measurements with their scene and run metadata, and compare profiles on a shared raw or normalized scale.
 - **Project files and exports:** validated, versioned `.wave.json` files, periodic recovery, PNG snapshots with metadata, and CSV profiles with raw values and measurement provenance.
-- **Editable examples:** double slit, refraction and a biconvex lens, available from the File menu and in [`examples/`](examples/).
+- **Editable examples:** double slit, refraction and a biconvex lens, available from the File menu and as [packaged project files](src/wave_studio/data/examples/).
 
 ## Install and run from source
 
@@ -95,7 +95,7 @@ Preview, Balanced and High Quality presets account for wavelength, selected geom
 
 The default admission limits are **512 MiB of estimated numerical buffers** and **4096 cells per axis**. Limits are configurable and saved per project; runtime, rendering and backend allocator overhead are additional. Raising a budget does not establish that a grid will fit or run interactively. Oversized scenes are rejected before raster allocation.
 
-Large live field/intensity images are resampled to at most 1024 cells per axis for display; Pause and Step restore full-resolution frames. Solver updates and detector integration retain the full numerical grid. Economical mode caps numerical steps at 240/s, while display delivery is capped at 30 snapshots/s. Actual rates depend on the scene and hardware; solver steps and display frames measure different work. See [resource acceptance](docs/BALANCED_MAC_ACCEPTANCE.md) and [performance findings](docs/PERFORMANCE_INVESTIGATION.md).
+Large live field/intensity images are resampled to at most 1024 cells per axis for display; Pause and Step restore full-resolution frames. Solver updates and detector integration retain the full numerical grid. Economical mode caps numerical steps at 240/s, while display delivery is capped at 30 snapshots/s. Actual rates depend on the scene and hardware; solver steps and display frames measure different work. See [resource acceptance](validation/README.md) and [performance findings](docs/PERFORMANCE_INVESTIGATION.md).
 
 ## Development and validation
 
@@ -119,7 +119,7 @@ The engine's physical reference runner is separate:
 python ../WaveSimulator2D/validation/run_references.py --output /tmp/wave-physical-results.json
 ```
 
-Hardware-specific checks live in [`scripts/`](scripts/), including backend, resource, quality and macOS bundle audits. Read their corresponding plans before interpreting results. Numerical reference checks can take substantially longer than regression tests, and some independent qualification runners intentionally return a failure status for unresolved criteria.
+Hardware-specific checks live in [`scripts/`](scripts), including backend, resource, quality and macOS bundle audits. Read their corresponding plans before interpreting results. Numerical reference checks can take substantially longer than regression tests, and some independent qualification runners intentionally return a failure status for unresolved criteria.
 
 ### Repository layout
 
@@ -131,11 +131,11 @@ WaveStudio/
 │   ├── persistence/     # Validated project files and exports
 │   ├── ui/              # Qt editor, dialogs and visualization
 │   └── data/examples/   # Examples included in the installed package
-├── examples/            # Editable project files
 ├── tests/               # Application regression tests
 ├── scripts/             # Hardware and acceptance diagnostics
 ├── packaging/           # Native bundle builder and PyInstaller spec
-└── docs/                # Guides, contracts, plans and recorded results
+├── validation/          # Frozen plans and selected historical evidence
+└── docs/                # Current guides, requirements and roadmap
 ```
 
 Numerical solver changes belong in WaveSimulator2D. Editor, orchestration, persistence and display changes belong here. The repositories have independent Git histories and package versions.
@@ -160,13 +160,14 @@ Current macOS bundles are arm64 and ad-hoc signed for local development. A suppo
 | --- | --- |
 | Using the editor and interpreting the model | [User guide](docs/USER_GUIDE.md) |
 | Probe quantities, references and CSV | [Probe display](docs/PROBE_DISPLAY.md) |
-| Setup, packaging and implementation details | [Development guide](docs/DEVELOPMENT.md) |
-| Engine/application lifecycle and data contract | [Contract](docs/CONTRACT.md) |
-| Acceptance evidence and remaining work | [Acceptance](docs/ACCEPTANCE.md), [task tracker](task.md) |
+| Setup and packaging | [Development guide](docs/DEVELOPMENT.md) |
+| Architecture and lifecycle | [Architecture](docs/ARCHITECTURE.md), [contract](docs/CONTRACT.md) |
+| Current open work | [Roadmap](docs/ROADMAP.md) |
+| Checks, frozen plans and selected evidence | [Validation index](validation/README.md) |
+| Requirements and completed changes | [Requirements](docs/REQUIREMENTS.md), [changelog](CHANGELOG.md) |
 | Mac accessibility findings | [Accessibility follow-up](docs/MAC_ACCESSIBILITY_FOLLOWUP.md) |
-| Product requirements and roadmap | [PRD](PRD.md), [project plan](PROJECT_PLAN.md), [development plan](DEVELOPMENT_PLAN.md) |
 
-Some planning documents and historical reports are in German. Reports record the specific build, hardware and scope tested; they should not be read as blanket support or accuracy claims.
+The requirements and some numerical studies are in German. Packaged examples under `src/wave_studio/data/examples/` are the single source of truth. New diagnostics write to ignored `local-results/`; only selected evidence is versioned. Reports record the specific build, hardware and scope tested; they should not be read as blanket support or accuracy claims.
 
 For bug reports, include the application and engine versions, OS, hardware, backend, grid settings, reproduction steps and a minimal `.wave.json` project where possible. For numerical issues, include measurement windows and convergence observations. Run relevant regression tests before proposing a change and keep engine changes in its separate repository.
 

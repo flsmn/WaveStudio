@@ -1,0 +1,101 @@
+{
+  "note": "Selected historical evidence, moved byte-for-byte. Versions, paths and hashes inside reports describe the original run. Omitted intermediate runs remain in Git history.",
+  "reports": [
+    {
+      "path": "results/backend-results.json",
+      "original_path": "docs/backend-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/backend-results.json",
+      "sha256": "48aeb5af593f68efc4ea98c9ad47d75a7deb5ad0a1da5b7310b4a31cd2848e1f"
+    },
+    {
+      "path": "results/native-dev13/accessibility-results.json",
+      "original_path": "docs/native-dev13/accessibility-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/native-dev13/accessibility-results.json",
+      "sha256": "efb2377a9b0cb905f6dae855cc8d5eab463348085c31c438ced78590d1ff477b"
+    },
+    {
+      "path": "results/native-dev13/mac-distribution-audit.json",
+      "original_path": "docs/native-dev13/mac-distribution-audit.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/native-dev13/mac-distribution-audit.json",
+      "sha256": "eb2b8091477d2c3b729433e341680ea475e969a866cb4b46afa1cd130512922a"
+    },
+    {
+      "path": "results/native-dev13/qt68-crash-summary.json",
+      "original_path": "docs/native-dev13/qt68-crash-summary.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/native-dev13/qt68-crash-summary.json",
+      "sha256": "741af03c8a6f12b1e113264e0c3ecc6486f5e0b948df25700f0cc4ccbe2d7a25"
+    },
+    {
+      "path": "results/native-dev16/build-results.json",
+      "original_path": "docs/native-dev16/build-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/native-dev16/build-results.json",
+      "sha256": "9691c8110107eaf29a751faeabc2b61743f0482bf1f208b1ee3aa23eb56fe618"
+    },
+    {
+      "path": "results/native-dev16/workflow-results.json",
+      "original_path": "docs/native-dev16/workflow-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/native-dev16/workflow-results.json",
+      "sha256": "1cc36ea197fad5072ebbe8d22c3f3a817c7b305a76271ee717d3dea9108309c4"
+    },
+    {
+      "path": "results/performance/balanced-resource-dev8.json",
+      "original_path": "docs/performance/balanced-resource-dev8.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/balanced-resource-dev8.json",
+      "sha256": "4be5e63597fb829979d265efb028272f673fd4f23b0e401cbb4ee21451607bae"
+    },
+    {
+      "path": "results/performance/dev11-native-quiet/performance-results.json",
+      "original_path": "docs/performance/dev11-native-quiet/performance-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/dev11-native-quiet/performance-results.json",
+      "sha256": "8208f65d41e90646e70a484f18565d314081fd22d95ba3bc30bde484879c2e54"
+    },
+    {
+      "path": "results/performance/dev11-resources-quiet/resource-results.json",
+      "original_path": "docs/performance/dev11-resources-quiet/resource-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/dev11-resources-quiet/resource-results.json",
+      "sha256": "b53498d835b6ad22dcf32c97e21310e6db89bbf8494075ee972e14deb88670e8"
+    },
+    {
+      "path": "results/performance/frozen-matched-off.json",
+      "original_path": "docs/performance/frozen-matched-off.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/frozen-matched-off.json",
+      "sha256": "5fd598e6a193b0d66350ec6d78db6afac32fe7ab9c468765566dcec61bf8460c"
+    },
+    {
+      "path": "results/performance/frozen-matched-on.json",
+      "original_path": "docs/performance/frozen-matched-on.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/frozen-matched-on.json",
+      "sha256": "293306e9e64d197bd0090eeb7cf131193c96d43113e8a90f70e210ef85b3a2f9"
+    },
+    {
+      "path": "results/performance/frozen-matched-pump.json",
+      "original_path": "docs/performance/frozen-matched-pump.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/frozen-matched-pump.json",
+      "sha256": "ce99299bb6b2ba1cc30d04348acf19def94e08cbb78812324c8b916b02ce731d"
+    },
+    {
+      "path": "results/performance/source-fixed-layout.json",
+      "original_path": "docs/performance/source-fixed-layout.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/performance/source-fixed-layout.json",
+      "sha256": "2716952a2eaccb8e59a49106bb80e63199fe2583d5a0490bd79711005225395b"
+    },
+    {
+      "path": "results/quality-lens-results.json",
+      "original_path": "docs/quality-lens-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/quality-lens-results.json",
+      "sha256": "00f8c5656f7b4693c78f3fbde78739cc211afdaad147202892d4de8c2470aba9"
+    },
+    {
+      "path": "results/quality-slit-results.json",
+      "original_path": "docs/quality-slit-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/quality-slit-results.json",
+      "sha256": "b41f8440e380c241fe3f7ecf8e4ffce91a4f00a8e2f1f4597f795cbc2b5f5741"
+    },
+    {
+      "path": "results/resource-results.json",
+      "original_path": "docs/resource-results.json",
+      "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/resource-results.json",
+      "sha256": "152f711117d111d941d96daccf8e9d257e1334e696946f892954255222bc7d55"
+    }
+  ]
+}

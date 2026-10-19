@@ -37,4 +37,4 @@ for name,p in [('64-wavelength rotated-thin-structure',long),('Refraction',examp
   r['status']='passed' if all(v['prediction_relative_error']<=.001 and v['speed_relative_error']<=.02 for v in r['modes']) else 'failed'
   report['cases'].append(r)
 report['passed']=all(r['status']!='failed' for r in report['cases'])
-Path('docs/quality-preflight-results.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2));raise SystemExit(0 if report['passed'] else 1)
+output=Path('local-results/quality-preflight-results.json');output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2));raise SystemExit(0 if report['passed'] else 1)

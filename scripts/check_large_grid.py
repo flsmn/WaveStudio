@@ -26,4 +26,4 @@ try:
  while time.monotonic()-start<.4:app.processEvents();time.sleep(.002)
  r['paused_steps_stable']=w.frame.steps==r['steps_at_pause'];r['passed']=r['paused_steps_stable']
 finally:w.lifecycle.dirty=False;w.close();app.processEvents()
-Path('docs/large-grid-results.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(r,indent=2))
+output=Path('local-results/large-grid-results.json');output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(r,indent=2))

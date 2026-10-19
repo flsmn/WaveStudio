@@ -42,6 +42,6 @@ for backend in ('cpu','mps'):
     if backend=='mps':
         report['backends'][backend]['mps_allocated_bytes']=torch.mps.current_allocated_memory()
         report['backends'][backend]['memory_note']='Unified memory: MPS allocation is reported separately and must not be added to RSS.'
-Path('docs/backend-results.json').write_text(json.dumps(report,indent=2)+'\n')
+output=Path('local-results/backend-results.json');output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))
 raise SystemExit(0 if all(b.get('passed',True) for b in report['backends'].values()) else 1)

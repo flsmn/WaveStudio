@@ -1,0 +1,30 @@
+{
+  "source": "https://github.com/flsmn/WaveStudio/blob/ed9d5f6d0a71a50028c9a98017a2171cdfc3e6b0/docs/quality-slit-results.json",
+  "passed": true,
+  "cases": [
+    {
+      "name": "Preview",
+      "grid": [
+        369,
+        328
+      ],
+      "dx": 0.1951219512195122
+    },
+    {
+      "name": "Balanced",
+      "grid": [
+        576,
+        512
+      ],
+      "dx": 0.125
+    },
+    {
+      "name": "High Quality",
+      "grid": [
+        864,
+        768
+      ],
+      "dx": 0.08333333333333333
+    }
+  ]
+}

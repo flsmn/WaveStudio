@@ -65,4 +65,4 @@ try:
 finally:
     w.lifecycle.dirty=False;w.close();app.processEvents()
 report['passed']=all(report[k]['passed'] for k in ('cpu','mps') if k in report)
-Path('docs/resource-results.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2));raise SystemExit(0 if report['passed'] else 1)
+output=Path('local-results/resource-results.json');output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2));raise SystemExit(0 if report['passed'] else 1)

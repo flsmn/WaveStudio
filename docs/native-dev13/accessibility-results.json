@@ -1,0 +1,33 @@
+{
+  "version_pair": "0.1.0.dev13 / 0.1.0.dev4",
+  "qt": "6.12.0",
+  "bundle": "dist/ax-dev13/WaveStudio.app",
+  "method": "Native CUA mouse, modal fields and standard keyboard shortcuts; German keyboard layout",
+  "human_voiceover_review": false,
+  "physical_property_change": {
+    "amplitudes": [
+      1.0,
+      1.1,
+      1.0,
+      1.1
+    ],
+    "actions": [
+      "Edit amplitude to 1,1",
+      "native Command-Z",
+      "native Command-Shift-Z"
+    ],
+    "outline_and_row_preserved": true,
+    "row_focus_preserved": true,
+    "simulation_steps": 0,
+    "passed": true
+  },
+  "structural_add": {
+    "name": "AX added",
+    "app_remained_running": true,
+    "properties_updated": true,
+    "outline_in_ax_snapshot": false,
+    "passed": false
+  },
+  "full_accessibility_accepted": false,
+  "own_unsaved_test_changes_discarded": true
+}

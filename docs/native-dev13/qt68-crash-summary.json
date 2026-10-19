@@ -1,0 +1,65 @@
+{
+  "comparison": "Studio dev13 / engine dev4, isolated Qt6.8.3, simple in-place rows, Add after native AX query",
+  "crash_report": "WaveStudio-2026-10-18-150806.ips",
+  "exception": {
+    "codes": "0x0000000000000001, 0x01004109f81f0e68",
+    "rawCodes": [
+      1,
+      72129105111223912
+    ],
+    "type": "EXC_BAD_ACCESS",
+    "signal": "SIGSEGV",
+    "subtype": "KERN_INVALID_ADDRESS at 0x01004109f81f0e68 -> 0x00004109f81f0e68 (possible pointer authentication failure)"
+  },
+  "termination": {
+    "flags": 0,
+    "code": 11,
+    "namespace": "SIGNAL",
+    "indicator": "Segmentation fault: 11",
+    "byProc": "exc handler",
+    "byPid": 63478
+  },
+  "frames": [
+    {
+      "symbol": "objc_lookUpImpOrForward",
+      "image": "libobjc.A.dylib"
+    },
+    {
+      "symbol": "_objc_msgSend_uncached",
+      "image": "libobjcMsgSend.dylib"
+    },
+    {
+      "symbol": "objc_object::sidetable_release(bool, bool)",
+      "image": "libobjc.A.dylib"
+    },
+    {
+      "symbol": "__RELEASE_OBJECTS_IN_THE_ARRAY__",
+      "image": "CoreFoundation"
+    },
+    {
+      "symbol": "-[__NSArrayM dealloc]",
+      "image": "CoreFoundation"
+    },
+    {
+      "symbol": null,
+      "image": "libqcocoa.dylib"
+    },
+    {
+      "symbol": "__RELEASE_OBJECTS_IN_THE_ARRAY__",
+      "image": "CoreFoundation"
+    },
+    {
+      "symbol": "-[__NSArrayM dealloc]",
+      "image": "CoreFoundation"
+    },
+    {
+      "symbol": "AutoreleasePoolPage::releaseUntil(objc_object**)",
+      "image": "libobjc.A.dylib"
+    },
+    {
+      "symbol": "objc_autoreleasePoolPop",
+      "image": "libobjc.A.dylib"
+    }
+  ],
+  "accepted": false
+}

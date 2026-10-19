@@ -1,0 +1,239 @@
+{
+  "version": "0.1.0.dev11",
+  "engine_version": "0.1.0.dev4",
+  "pid": 59753,
+  "frozen": true,
+  "event_loop": "native",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "qt_binding": "6.12.0",
+  "pyqtgraph": "0.14.0",
+  "engine_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/ax-dev11/WaveStudio.app/Contents/Frameworks/wave_sim2d/__init__.py",
+  "application_location": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/dist/ax-dev11/WaveStudio.app/Contents/Frameworks/wave_studio/performance.py",
+  "grid": [
+    3780,
+    2268
+  ],
+  "seconds_per_case": 30,
+  "without_activity": false,
+  "measurements": {
+    "one_view_economical": {
+      "wall_seconds": 30.01533216703683,
+      "received_frames_per_second": 26.086667828380698,
+      "steps_per_second": 26.086667828380698,
+      "process_cpu_seconds_per_second": 0.6654168572531826,
+      "timings": {
+        "image_render_ms": {
+          "count": 783,
+          "total": 1377.8230210300535,
+          "median": 1.7440420342609286,
+          "p95": 2.0268292108085006,
+          "max": 2.698333002626896
+        },
+        "worker_display_transfer_ms": {
+          "count": 783,
+          "total": 1536.5558770718053,
+          "median": 1.5530840028077364,
+          "p95": 5.957225296879186,
+          "max": 9.78733302326873
+        },
+        "gui_draw_ms": {
+          "count": 783,
+          "total": 112.04407934565097,
+          "median": 0.1433329889550805,
+          "p95": 0.18098753644153476,
+          "max": 0.35612500505521894
+        },
+        "gui_profiles_ms": {
+          "count": 783,
+          "total": 48.90253336634487,
+          "median": 0.06341602420434356,
+          "p95": 0.08350389543920754,
+          "max": 0.10395899880677462
+        },
+        "worker_step_ms": {
+          "count": 782,
+          "total": 28088.337883295026,
+          "median": 35.41508349007927,
+          "p95": 40.66030065005179,
+          "max": 52.19633301021531
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 938,
+        "total": 30014.891542028636,
+        "median": 32.00389599078335,
+        "p95": 33.0439750890946,
+        "max": 36.807167052756995
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=True": 939
+      },
+      "hud": "26 steps/s \u00b7 26 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": false
+      }
+    },
+    "two_views_economical": {
+      "wall_seconds": 30.023202250013128,
+      "received_frames_per_second": 25.44698575581377,
+      "steps_per_second": 25.44698575581377,
+      "process_cpu_seconds_per_second": 0.5314708560108049,
+      "timings": {
+        "image_render_ms": {
+          "count": 1530,
+          "total": 3194.8654613806866,
+          "median": 2.051541523542255,
+          "p95": 2.457156201126054,
+          "max": 5.133415979798883
+        },
+        "worker_display_transfer_ms": {
+          "count": 1528,
+          "total": 2394.7227472090162,
+          "median": 1.4544795267283916,
+          "p95": 2.1486858604475843,
+          "max": 20.912209001835436
+        },
+        "gui_draw_ms": {
+          "count": 764,
+          "total": 136.90914044855163,
+          "median": 0.1806459913495928,
+          "p95": 0.2192545362049714,
+          "max": 0.32116699730977416
+        },
+        "gui_profiles_ms": {
+          "count": 764,
+          "total": 49.54083083430305,
+          "median": 0.06654151366092265,
+          "p95": 0.08495168585795909,
+          "max": 0.11462497059255838
+        },
+        "worker_step_ms": {
+          "count": 764,
+          "total": 27324.392926413566,
+          "median": 35.44831249746494,
+          "p95": 38.41967314656358,
+          "max": 68.1347920326516
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 934,
+        "total": 30023.188333027065,
+        "median": 31.941208493662998,
+        "p95": 32.95645404141396,
+        "max": 76.38854201650247
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=True": 935
+      },
+      "hud": "26 steps/s \u00b7 26 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": false
+      }
+    },
+    "two_views_performance": {
+      "wall_seconds": 30.015416500042193,
+      "received_frames_per_second": 25.520218918132397,
+      "steps_per_second": 25.520218918132397,
+      "process_cpu_seconds_per_second": 0.5325494983545384,
+      "timings": {
+        "gui_draw_ms": {
+          "count": 766,
+          "total": 136.77528384141624,
+          "median": 0.17920800019055605,
+          "p95": 0.21588572417385876,
+          "max": 0.419542018789798
+        },
+        "gui_profiles_ms": {
+          "count": 766,
+          "total": 47.74016514420509,
+          "median": 0.0638750207144767,
+          "p95": 0.0797500106273219,
+          "max": 0.09525002678856254
+        },
+        "worker_step_ms": {
+          "count": 766,
+          "total": 27322.585785062984,
+          "median": 35.49733347608708,
+          "p95": 38.27920825278852,
+          "max": 46.51679104426876
+        },
+        "image_render_ms": {
+          "count": 1532,
+          "total": 3225.5623798118904,
+          "median": 2.0698750158771873,
+          "p95": 2.4719394074054435,
+          "max": 3.8954579504206777
+        },
+        "worker_display_transfer_ms": {
+          "count": 1531,
+          "total": 2399.9298912240192,
+          "median": 1.4690420357510448,
+          "p95": 2.2001040051691234,
+          "max": 4.031207994557917
+        }
+      },
+      "heartbeat_gap_ms": {
+        "count": 938,
+        "total": 30015.406500024255,
+        "median": 31.93437500158325,
+        "p95": 32.98714371048845,
+        "max": 33.802749996539205
+      },
+      "application_state_samples": {
+        "ApplicationActive; accessibility=True; run_activity=True": 939
+      },
+      "hud": "25 steps/s \u00b7 25 frames/s",
+      "frame_shape": [
+        614,
+        1024
+      ],
+      "backend": "mps",
+      "power_state": {
+        "thermal_state": 0,
+        "low_power_mode": false
+      }
+    }
+  },
+  "count_note": "Received latest frames and ImageItem conversions are distinct from compositor scanout FPS. Gaps refer to the production 33-ms poll; no helper Python timers.",
+  "case": "all",
+  "warmup_seconds": 15,
+  "extra_python_timers": false,
+  "startup_seconds": 2.220967792032752,
+  "passed": true,
+  "rss_peak_bytes": 858767360,
+  "window": {
+    "width": 1320,
+    "height": 842,
+    "dpr": 2.0,
+    "qt_platform": "cocoa"
+  },
+  "thread_info": {
+    "worker_qos": {
+      "status": 0,
+      "class": 33,
+      "relative_priority": 0
+    }
+  },
+  "activity_after_shutdown": {
+    "active": false,
+    "begins": 1,
+    "ends": 1,
+    "failed": false
+  },
+  "service_level_after_shutdown": "Auto",
+  "worker_stopped": true
+}

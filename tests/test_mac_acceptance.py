@@ -224,6 +224,39 @@ def test_scene_updates_preserve_outline_rows_and_keyboard_focus(window):
     assert w.tree.topLevelItem(0) is row and w.tree.topLevelItemCount()==1
 
 
+def test_scene_edits_do_not_repolish_the_native_outline(window,monkeypatch):
+    w=window;source=w.project.objects[0];w.select_object(source.id)
+    row=w.tree.topLevelItem(0);calls=[];apply=w._apply_theme
+    def record(theme):
+        calls.append(theme);apply(theme)
+    monkeypatch.setattr(w,'_apply_theme',record)
+    assert w.commit(replace(w.project,objects=(replace(source,amplitude=1.1),)))
+    w.undo();w.redo()
+    assert calls==[] and w.tree.topLevelItem(0) is row
+    assert w.commit(replace(w.project,display=replace(w.project.display,contrast=.5)))
+    assert calls==[]
+    assert w.commit(replace(w.project,display=replace(w.project.display,text_scale=1.5)))
+    assert calls==[w.project.display.theme]
+    theme='Light' if w.project.display.theme=='Dark' else 'Dark'
+    assert w.commit(replace(w.project,display=replace(w.project.display,theme=theme)))
+    assert calls[-1]==theme and len(calls)==2
+
+
+def test_scene_rename_add_remove_history_preserves_selection_and_stopped_state(window):
+    w=window;original=w.project.objects[0];w.select_object(original.id)
+    extra=SourceObject(name='Added source');w.selected=extra.id
+    assert w.commit(replace(w.project,objects=w.project.objects+(extra,)))
+    assert w.tree.topLevelItemCount()==2 and w.selected==extra.id
+    assert w.commit(replace(w.project,objects=(original,replace(extra,name='Renamed source'))))
+    assert w.tree.topLevelItem(1).text(0)=='Renamed source'
+    w.undo();assert w.tree.topLevelItem(1).text(0)=='Added source'
+    w.undo();assert w.tree.topLevelItemCount()==1 and w.selected is None
+    w.redo();assert w.tree.topLevelItemCount()==2
+    w.selected=extra.id;w._rebuild_scene();w.delete_selected()
+    assert w.tree.topLevelItemCount()==1 and w.selected is None
+    assert not w.lifecycle.can_step
+
+
 def test_presets_avoid_half_open_wall_ties_and_warn_for_custom(window):
     from wave_studio.domain.quality import wall_cell_ties
     p=example('Double slit');assert wall_cell_ties(p,.2)

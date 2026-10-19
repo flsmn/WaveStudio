@@ -11,6 +11,15 @@ from wave_sim2d.geometry import prepare_scene
 from wave_sim2d.wave_simulation import WaveSimulator2D
 
 
+def load_mac_limits(path):
+    """Read the shared, unchanged v1 policy instead of duplicating thresholds."""
+    profile=json.loads(path.read_text())
+    limits=json.loads((path.parent/profile['extends']).read_text())
+    for name,values in profile['overrides'].items():
+        limits[name].update(values)
+    return limits
+
+
 def demodulate(scene,positions,settle,window,device):
     sim=WaveSimulator2D.from_scene(scene,device=device)
     xy=positions/scene.grid.dx-.5;base=np.floor(xy).astype(int);frac=xy-base
@@ -37,11 +46,13 @@ def demodulate(scene,positions,settle,window,device):
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--case',choices=['slit','lens'],required=True);ap.add_argument('--device',default='mps');args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--case',choices=['slit','lens'],required=True);ap.add_argument('--device',default='mps')
+    ap.add_argument('--policy',type=Path,default=Path(__file__).resolve().parents[2]/'WaveSimulator2D/validation/mac-presets-v1.json')
+    args=ap.parse_args();limits=load_mac_limits(args.policy)
     torch.set_num_threads(1)
     output=Path('docs/quality-'+args.case+'-results.json')
     project=example('Double slit' if args.case=='slit' else 'Biconvex lens')
-    report={'platform':platform.platform(),'device':args.device,'cases':[],'presets':[asdict(estimate(project,n)) for n in PRESETS]}
+    report={'platform':platform.platform(),'device':args.device,'cases':[],'presets':[asdict(estimate(project,n)) for n in PRESETS],'tolerances':limits,'acceptance_scope':'historical v1 demonstration; no quantitative certification'}
     def save():output.write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
     choices=[(n,estimate(project,n).dx) for n in PRESETS if estimate(project,n).supported]
@@ -59,7 +70,8 @@ def main():
             measured=float(yy[minima[0]]-32) if minima else None
             offsets=np.linspace(.01,10,10001);difference=np.sqrt(22**2+(offsets+3)**2)-np.sqrt(22**2+(offsets-3)**2);ref=float(offsets[np.argmin(abs(difference-1))])
             error=abs(measured/ref-1) if measured is not None else 1e9;asym=float(np.max(abs(power-power[::-1]))/power.max())
-            r={'name':name,'dx':dx,'grid':[scene.grid.nx,scene.grid.ny],'first_minimum':measured,'reference':ref,'relative_error':error,'asymmetry':asym,'wall_max':wall,'passed':error<=.15 and asym<=.03 and wall<=1e-7}
+            bound=limits['T03']
+            r={'name':name,'dx':dx,'grid':[scene.grid.nx,scene.grid.ny],'first_minimum':measured,'reference':ref,'relative_error':error,'asymmetry':asym,'wall_max':wall,'passed':error<=bound['first_minimum_position_relative_error'] and asym<=bound['symmetry_relative_error'] and wall<=bound['wall_field_max']}
         else:
             n=1.5;radius=24;aperture=16;thickness=2*(radius-math.sqrt(radius**2-(aperture/2)**2));f=1/((n-1)*(2/radius-(n-1)*thickness/(n*radius**2)));bfl=f*(1-(n-1)*thickness/(n*radius));rear=30+thickness/2
             xx=np.linspace(rear+.6*bfl,rear+1.4*bfl,321);pos=np.column_stack((xx,np.full_like(xx,24)))
@@ -69,11 +81,12 @@ def main():
             background=replace(background,sources=scene.sources)
             base,_=demodulate(background,pos,80,16,args.device)
             power=abs(z)**2;peak=int(np.argmax(power));distance=float(xx[peak]-rear);error=abs(distance/bfl-1);gain=float(power[peak]/abs(base[peak])**2)
-            r={'name':name,'dx':dx,'grid':[scene.grid.nx,scene.grid.ny],'focus_x':float(xx[peak]),'back_focal_reference':bfl,'relative_error':error,'gain':gain,'passed':error<=.2 and gain>=1.5}
+            bound=limits['T04']
+            r={'name':name,'dx':dx,'grid':[scene.grid.nx,scene.grid.ny],'focus_x':float(xx[peak]),'back_focal_reference':bfl,'relative_error':error,'gain':gain,'passed':error<=bound['focus_position_relative_error'] and gain>=bound['minimum_focus_gain']}
         r['seconds']=time.monotonic()-began;report['cases'].append(r);save();print(json.dumps(r),flush=True)
     if args.case=='lens':
         report['focus_shift']=abs(report['cases'][0]['focus_x']-report['cases'][1]['focus_x'])/bfl
-    report['passed']=all(r['passed'] for r in report['cases']) and report.get('focus_shift',0)<=.05;save()
+    report['passed']=all(r['passed'] for r in report['cases']) and report.get('focus_shift',0)<=limits['T04']['grid_focus_shift_relative_error'];save()
     return 0 if report['passed'] else 1
 
 if __name__=='__main__':raise SystemExit(main())

@@ -1,27 +1,37 @@
 # Wave Studio – Development Plan für beide Repositories
 
-**Zielversion:** 0.1 · **Dokumentversion:** 1.1 · **Stand:** 16. Oktober 2026  
-**Grundlagen:** [PRD](PRD.md), Dokumentversion 1.3, und [Projektplan](PROJECT_PLAN.md).  
-**Status:** Umsetzungsplan. Die Repository- und Workspace-Struktur aus B01 ist eingerichtet; B01 bleibt bis zur Einrichtung der Entwicklungsumgebung teilweise offen. Die weiteren Arbeitspakete sind offen. Anwendungscode, Engine-Paketierung und numerische Laufzeitvalidierung stehen weiterhin aus.
+**Zielversion:** 0.1 · **Dokumentversion:** 1.3 · **Stand:** 18. Oktober 2026
+
+**Grundlagen:** [PRD](PRD.md), Dokumentversion 1.3, und [Projektplan](PROJECT_PLAN.md).
+
+**Status:** Funktionsfähige lokale Mac-Entwicklungsversion **Studio 0.1.0.dev13 / Engine 0.1.0.dev4**. Der Funktionsumfang S01–S13 ist implementiert; quantitative Physikfreigabe, einzelne GUI-Reaktionszeiten, Zugänglichkeit und die abschließende Mac-Auslieferung bleiben offen. **Windows und Linux sind auf Nutzerwunsch vorerst zurückgestellt.** Ihre Anforderungen bleiben für eine spätere plattformübergreifende Freigabe erhalten und blockieren die aktuelle Mac-Arbeit nicht.
+
+Dieser Plan beschreibt den Leistungsumfang und den aktuellen Status je Arbeitspaket. Die Arbeitsschritte umfassen auch bereits erledigte Umsetzung; die Abschlusskriterien in Abschnitten 4–9 sind Soll-Kriterien. Statuszeilen und Nachweise bestimmen den erreichten Umfang. Die priorisierte Mac-Restarbeit steht in Abschnitt 3.4, der detaillierte Fortschritt in [task.md](task.md). Historische Ergebnisse bleiben an ihren Versionsstand gebunden. Die aktuellen Prüfungen und die noch offenen Kriterien sind unten separat von den historischen Berichten ausgewiesen.
 
 ## 1. Ziel, Verbindlichkeit und Ausgangslage
 
-Dieser Plan zerlegt den vereinbarten Umfang in ausführbare Arbeitspakete für **WaveSimulator2D** und **WaveStudio**. Er legt Reihenfolge, Übergaben zwischen den Repositories, notwendige Entscheidungen und überprüfbare Abschlusskriterien fest. Die Produktanforderungen F01–F18 und Q01–Q06 aus dem PRD bleiben maßgeblich; dieser Plan konkretisiert ihre Umsetzung. Neue Dateinamen, Modulaufteilungen und Schnittstellennamen sind Entwürfe, sofern sie nicht ausdrücklich als vorhanden bezeichnet werden.
+Dieser Plan zerlegt den vereinbarten Umfang in Arbeitspakete für **WaveSimulator2D** und **WaveStudio**. Er legt Übergaben zwischen den Repositories, notwendige Entscheidungen und überprüfbare Abschlusskriterien fest. Die Produktanforderungen F01–F18 und Q01–Q06 aus dem PRD bleiben maßgeblich; für die aktuelle Arbeit gilt der ausdrücklich vereinbarte Mac-Schwerpunkt. Der ursprüngliche Ablauf M0–M4 dient der Zuordnung bereits umgesetzter Funktionen; die nächste Arbeit richtet sich nach Abschnitt 3.4.
 
-Der erste vollständige Nutzungsablauf lautet: **Doppelspalt frei aufbauen → manuell starten → Feld und Intensität betrachten → Detektorprofil messen → Referenz festhalten → PNG/CSV exportieren → Projekt speichern und wieder öffnen.** Danach werden die übrigen Funktionen von Version 0.1 vervollständigt.
+Der zentrale Nutzungsablauf **Doppelspalt frei aufbauen → manuell starten → Feld und Intensität betrachten → Detektorprofil messen → Referenz festhalten → PNG/CSV exportieren → Projekt speichern und wieder öffnen** ist implementiert und im tatsächlichen Qt-/Worker-/Paketablauf geprüft. Linse, zweite Ansicht und Geometriemessung sind ebenfalls vorhanden.
 
 ### 1.1 Lokal geprüfter Stand
 
-| Bereich | Ausgangslage am 16. Oktober 2026 | Konsequenz für die Entwicklung |
+| Bereich | Nachgewiesener Stand am 18. Oktober 2026 | Grenze / nächste Arbeit |
 | --- | --- | --- |
-| `WaveStudio` | Eigenständiges, neu initialisiertes Git-Repository unter `WaveStudioApp/WaveStudio/` mit den drei Planungsdokumenten; noch kein Anwendungscode und keine Commits. | Entwicklungsumgebung in B01 und Anwendungspaket in S01 einrichten. |
-| `WaveSimulator2D` | Bestehender Engine-Fork nach `WaveStudioApp/WaveSimulator2D/` verschoben; HEAD `5620234f539b1be3974f4dca122c16f272845271` bleibt erhalten. | Bestehenden Kern weiterentwickeln, nicht neu in der Anwendung implementieren. |
-| Lokaler Engine-Arbeitsstand | Git meldet gelöschte, bisher versionierte Python-Cachedateien. | Vor Implementierung als bestehende Änderungen erfassen; nicht ungeprüft zurücksetzen oder mit fachlichen Änderungen vermischen. |
-| Engine-Paketierung | `requirements.txt` vorhanden, noch keine `pyproject.toml`. | Installierbares, separat versioniertes Engine-Paket zuerst herstellen. |
-| Numerik | PyTorch-Kern, Punkt-/Linienquellen, Index- und Dämpfungsfelder sowie Polygon-/Rechteckobjekte vorhanden. | Korrekturen und physikalische Validierung vor größerem Editor-Ausbau. |
-| Bestehende Tests | Unter anderem `test_comprehensive.py`, `test_pytorch_port.py`; der feste lokale Importpfad wurde beim Verschieben durch den tatsächlichen Skriptordner ersetzt. | Brauchbare Prüfungen übernehmen und ihre portable Ausführung validieren; keine pauschale Übernahme alter Genauigkeits- oder Geschwindigkeitsbehauptungen. |
+| Anwendung | Studio dev13: freier Editor, Laufsteuerung, Messung/Referenzen, Dateien/Exporte, Linse, zwei Ansichten, Qualitäts-/Rechenmodi und Hilfe. | Vollständige Release-Abnahme offen; [Mac-Bediennachweise](docs/MAC_ACCEPTANCE.md). |
+| Engine | Engine dev4: kalibrierter Neunpunkt-Stencil, additive Quellen, Material-/Wandraster, zeitbezogene Dämpfung, passive Messung und CPU/MPS. | T01–T04 bestehen historische v1-Demonstrationsgrenzen; quantitative Abnahme offen ([Grenzwertprüfung](../WaveSimulator2D/docs/TOLERANCE_REVIEW.md)). |
+| Integration / Paket | Python 3.12, getrennte Repositories, Editable-Entwicklung und feste Engine-Wheels; `dist/ax-dev13/WaveStudio.app` enthält seine Laufzeit. Dev13-Paketablauf aus `/private/tmp` bestanden; historisches dev8 unter `dist/WaveStudio.app` erhalten. | Sauberer fremder Mac, Mindestbetriebssystem und öffentliche Auslieferung offen ([Build](docs/native-dev13/build-results.json), [Paketablauf](docs/native-dev13/workflow-results.json)). |
+| Letzter Teststand | 76 Kern-/Qt-/Referenztests bestanden (11,88 s); weitere unabhängige Physikreferenzen und native AX-Korrekturen implementiert. | Aktuelle Regression; native AX- und Paketnachweise separat, kein Ersatz für menschliche Abnahme. |
+| Ressourcen | 512²-Budgets historisch auf CPU/MPS bestanden. Balanced-Linse auf MPS zugelassen; dev8-Paketvergleiche etwa 15–16 Frames/s. | Dev8-Gesamtnachlauf `passed=false`: GUI-Unterbrechung 500,86 ms bei Grenze 250 ms; kein 18–20-FPS-Versprechen ([Untersuchung](docs/PERFORMANCE_INVESTIGATION.md)). |
 
-Die Bestandsprüfung für diesen Plan war statisch. Die anschließende Strukturänderung betrifft Ordner, Workspace-Konfiguration, Dokumentation und den Importpfad eines vorhandenen Testskripts; numerischer Code wurde dabei nicht geändert. Engine und GUI wurden dabei nicht ausgeführt. Historische Angaben im Engine-README ersetzen die Nachweise dieses Plans nicht.
+Quellstand vor dieser Dokumentaktualisierung: Studio `148619c`, Engine `053195f`. Das geprüfte dev8-Bundle ist laut Buildbericht den Code-Ständen Studio `10e1d50` / Engine `10f7ce9` zugeordnet; spätere Dokumentations-/Diagnoseänderungen sind kein neuer Bundle-Nachweis. Die Ausgangslage vom 16./17. Oktober bleibt in Git und [DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md) nachvollziehbar.
+
+### 1.1a Fortschritt der Mac-Restarbeit
+
+- **MAC-01:** Historische Grenzen zentralisiert, T02-Winkel mit gemessenem Einfall erneut ausgewertet. Unabhängige Hankel-Quellenreferenz und Lippmann-Schwinger-Linsenreferenz mit eigenen Kalibrierungen umgesetzt. Definierter Punktfall besteht; Linie verfehlt Fenster-/Randkriterien, Linsenreferenz verfehlt noch die komplexe Rasterkonvergenz. Kein quantitativer Preset-Gesamtpass; [Methoden, Rohberichte und nächste Schritte](../WaveSimulator2D/docs/QUANTITATIVE_PROGRESS.md). Die 2-%-/0,5-%-Pilotkriterien gelten nur für die versionierten neuen Teilprotokolle; v1-Grenzen unverändert.
+- **MAC-02:** dev11-Paket mit echtem 33-ms-Abfragetakt im ruhigen Lauf etwa 25–26 Frames/s, Stromsparmodus aus. Kein direkt vergleichbarer Geschwindigkeitsgewinn gegenüber dev8 mit Stromsparmodus an. Uninstrumentierter dev11-Ressourcenlauf scheitert mit 252,316 ms an unverändert 250 ms. Ereignis-/GC-Spur ergänzt, Ursache noch offen; [Untersuchung](docs/PERFORMANCE_INVESTIGATION.md#mac-02-follow-up--dev11-18-october-2026).
+- **MAC-03:** Unnötiges Neuanwenden des Styles bei physikalischen Änderungen entfernt. Zusätzlicher Listenersatz in dev10–12 genügt nativ nicht und wird nach einem Qt-6.8-Vergleichsabsturz in dev13 entfernt. Dev13 bestätigt den korrigierten Eigenschafts-/Undo-/Redo-Weg nativ, aber Add verliert weiter das AX-Outline. Strukturelle/Style-Wechsel und menschliche VoiceOver-Abnahme bleiben offen; [Nachprüfung](docs/MAC_ACCESSIBILITY_FOLLOWUP.md).
+- **MAC-04:** [Mac-Auslieferung](docs/MAC_DISTRIBUTION.md) vorbereitet. Statische dev8-Inventur: nur arm64, höchste deklarierte macOS-Mindestversion 26.0 in Qt-Bindings. Das ist noch keine Laufabnahme auf macOS 26. Lizenzunterlagen, Verteilungsentscheidung und sauberer Fremd-Mac bleiben offen.
 
 ### 1.2 Feste Leitplanken
 
@@ -29,12 +39,12 @@ Die Bestandsprüfung für diesen Plan war statisch. Die anschließende Struktur�
 - Physikalische Änderungen nur vor dem Start oder nach Pause. Danach bleibt die Anwendung angehalten; ausschließlich **manueller Run** initialisiert und startet den geänderten Versuch. Step bleibt bis dahin gesperrt.
 - Darstellung und passive Detektoren dürfen während eines Laufs geändert werden. Nur der betroffene Detektor beginnt bei einer gültig übernommenen Messänderung neu.
 - Geometrie bleibt in festen Projektreferenzeinheiten erhalten. Qualitätsstufe, Rechenmodus und sichtbarer Ausschnitt sind getrennte Einstellungen.
-- CPU ist auf allen drei Betriebssystemen erforderlich. MPS wird auf M1 geprüft; CUDA wird nur nach tatsächlich möglichem Hardwaretest angeboten.
+- Aktuelle Mac-Basis: CPU und auf Apple M1 geprüftes MPS. CPU auf Windows/Linux bleibt spätere Anforderung; CUDA wird ohne NVIDIA-Hardwaretest nicht angeboten und ist keine Pflicht für 0.1.
 - Die Anwendung arbeitet offline und wird mit ihrer Laufzeit ausgeliefert. Releases verwenden ein fest versioniertes Engine-Paket.
 - Die Oberfläche einschließlich Beispielen und Hilfen ist Englisch. Dieses Entwicklungsdokument bleibt Deutsch.
 - Der Prüfungsumfang bleibt bei T01–T09 aus dem PRD: vier physikalische Referenzen, zwei Bedienabläufe und kurze Ressourcen-, Backend- und Paketprüfungen.
 
-Es gibt keinen zugesagten Termin. Belastbare Aufwände für M2–M4 werden nach M0/M1 geschätzt. Die Reihenfolge ist verbindlicher als eine heute ungesicherte Zeitangabe.
+Es gibt keinen zugesagten Termin. Eine belastbare Aufwandsschätzung für die verbleibende Mac-Arbeit fehlt; sie wird anhand der offenen Physik-/GUI-Befunde aktualisiert (MAC-04). Bereits implementierte M2–M4-Funktionen werden nicht erneut als künftiger Ausbau geplant.
 
 ## 2. Zuständigkeiten und technische Übergaben
 
@@ -49,11 +59,11 @@ Es gibt keinen zugesagten Termin. Belastbare Aufwände für M2–M4 werden nach 
 | Messung | Numerisches Sampling und Mittelung auf Basis der Simulationszeit, möglichst auf dem Rechengerät | Detektorkonfiguration, Messrevisionen, Status, Referenzverwaltung, Vergleich und Export |
 | Darstellung | Numerische Daten und Metadaten; bestehende Beispielvisualisierung getrennt halten | PySide6/PyQtGraph, Felder, Diagramme, Overlays, Farben und Ansichten |
 | Dateien | Paket-/API-Version, technische Referenzkonfigurationen und numerische Nachweise | Projektformat, Wiederherstellung, PNG/CSV, Benutzerbeispiele und Anwendungspakete |
-| Freigabe | Engine-Wheel, Änderungsnotizen und passender numerischer Prüfbericht | Feste Engine-Abhängigkeit, Integrationsnachweise und drei native Anwendungspakete |
+| Freigabe | Engine-Wheel, Änderungsnotizen und passender numerischer Prüfbericht | Feste Engine-Abhängigkeit und Integrationsnachweise; aktuell Mac-Paket, Windows/Linux später |
 
 Die Anwendung darf numerische Fehler nicht durch eigene Solver-Sonderfälle verdecken. Umgekehrt kennt die Engine weder Qt-Widgets noch das WaveStudio-Projektformat. Die fachliche Definition der Messung liegt in WaveStudio; die dafür benötigten numerischen Operationen liegen in der Engine. So bleibt die Auswertung ohne GUI prüfbar und wird nicht vom Renderer abhängig.
 
-### 2.2 Geplante Struktur
+### 2.2 Vorhandene Struktur
 
 ```text
 WaveStudioApp/                         # Arbeitsbereich, kein drittes Git-Repository
@@ -61,38 +71,42 @@ WaveStudioApp/                         # Arbeitsbereich, kein drittes Git-Reposi
 ├── WaveStudioApp.code-workspace       # Zwei relative Repository-Pfade
 ├── WaveSimulator2D/                   # Repository 1: Simulations-Engine
 │   ├── .git/
-│   ├── pyproject.toml                 # Geplant in E01
+│   ├── pyproject.toml                 # Engine 0.1.0.dev4
 │   ├── wave_sim2d/                    # Bestehendes Importpaket zunächst erhalten
 │   │   ├── wave_simulation.py
+│   │   ├── config.py / geometry.py / dispersion.py / measurements.py
 │   │   └── scene_objects/
-│   ├── tests/                        # Geplant: portable Kernprüfungen und T01–T04
-│   └── docs/                         # Geplant: Modell, API, Nachweise
+│   ├── tests/                        # Portable Kernprüfungen
+│   ├── validation/                   # T01–T04, Toleranzen und Alt/Neu-Vergleich
+│   └── docs/                         # Modell, physikalische Nachweise und Grenzwertprüfung
 └── WaveStudio/                        # Repository 2: Desktop-Anwendung
     ├── .git/
     ├── README.md
     ├── PRD.md
     ├── PROJECT_PLAN.md
     ├── DEVELOPMENT_PLAN.md
-    ├── pyproject.toml                 # Geplant in S01
-    ├── src/wave_studio/               # Geplant
+    ├── task.md                       # Detaillierter Fortschritt und offene Mac-Aufgaben
+    ├── pyproject.toml                 # Studio dev13, feste Abhängigkeit auf Engine dev4
+    ├── src/wave_studio/
     │   ├── app.py
     │   ├── domain/                    # Projekt, Geometrie, Einheiten, Validierung
     │   ├── simulation/                # Scene Compiler, Adapter, Worker, Laufsteuerung
-    │   ├── analysis/                  # Messkonfiguration, Resultate, Referenzvergleich
     │   ├── persistence/               # Projektformat, Wiederherstellung, Exporte
     │   └── ui/                        # Fenster, Editor, Eigenschaften, Ansichten, Plots
-    ├── examples/                      # Geplant: drei bearbeitbare Projektdateien
-    ├── tests/                         # Geplant: kleine Kernprüfungen aus T05/T06
-    └── docs/                          # Geplant: Verträge, Entscheidungen, Abnahme, Builds
+    ├── examples/                      # Drei bearbeitbare Projektdateien, auch als Paketdaten
+    ├── packaging/                     # Wheel-basierter nativer Build
+    ├── scripts/                       # Qualitäts-, Backend- und Ressourcenprüfungen
+    ├── tests/                         # Kern-/Qt-Regressionen aus T05/T06
+    └── docs/                          # Verträge, Entscheidungen, Abnahme, Builds und Rohdaten
 ```
 
-Vorhanden sind die beiden Repository-Ordner, die gemeinsame Workspace-Datei, READMEs, Planungsdokumente und der bisherige Engine-Code. Als geplant markierte Dateien und Verzeichnisse werden erst mit den jeweiligen Arbeitspaketen angelegt. `WaveStudioApp/` ist der gemeinsame Arbeitsbereich; Git-Versionierung erfolgt getrennt in seinen beiden Repository-Unterordnern.
+Die Übersicht zeigt die wesentlichen vorhandenen Teile. Messoperationen liegen in der Engine; Messkonfiguration/Referenzen in Studio-Domäne, Worker und UI. Ein separates `analysis/`-Paket wurde dafür nicht benötigt. `WaveStudioApp/` ist der gemeinsame Arbeitsbereich; Git-Versionierung erfolgt getrennt in seinen beiden Repository-Unterordnern.
 
 Ein umfassender Umbau der Engine-Verzeichnisstruktur ist keine Voraussetzung. Vorhandene Beispiele bleiben getrennt nutzbar; jede notwendige API-Änderung wird mit einer kurzen Umstellungsnotiz erklärt.
 
 ### 2.3 Minimaler Vertrag zwischen Engine und Anwendung
 
-B02 dokumentiert diesen Vertrag; E02–E06 ergänzen die numerischen Details. Die folgenden Namen beschreiben Aufgaben, noch keine festgeschriebene Python-Signatur.
+B02 ist in [CONTRACT.md](docs/CONTRACT.md), die numerische Bedeutung in [MODEL.md](../WaveSimulator2D/docs/MODEL.md) dokumentiert. Die folgenden Namen beschreiben die Aufgaben; konkrete API-Signaturen ergeben sich aus der Implementierung.
 
 | Operation/Daten | Erforderliche Bedeutung |
 | --- | --- |
@@ -113,7 +127,7 @@ Ergebnis-Snapshots erhalten mindestens `scene_revision`, `run_id`, Simulationsze
 | Pause, danach Run ohne physikalische Änderung | Derselbe Lauf setzt mit unveränderter Zeitbasis und Lauf-ID fort. |
 | Gültige physikalische Änderung, auch Undo/Redo | `scene_revision` erhöhen, bisherigen Lauf als überholt markieren, angehalten bleiben; Step sperren. Konservativ bleibt auch nach Zurücknehmen einer Änderung ein neuer manueller Run erforderlich. |
 | Run nach physikalischer Änderung | Alte Übergabedaten verwerfen, aktuelle Szene neu übersetzen und neuen Lauf mit frischen Feldern/Messungen beginnen. |
-| Step | Nur im pausierten, zum Aufbau passenden Lauf genau einen Schritt ausführen. Nach Reset ist Step nur verfügbar, wenn ein gültiger initialisierter Zustand vorliegt; diese Anzeige wird in B02 eindeutig festgelegt. |
+| Step | Nur im initialisierten pausierten, zum Aufbau passenden Lauf genau einen Schritt ausführen. Reset gibt den numerischen Zustand frei und sperrt Step bis zum nächsten Run → Pause. |
 | Reset | Lauf nicht automatisch fortsetzen; Felder und aktuelle Messungen löschen, Referenzen erhalten. Ausstehende Daten des alten Zustands dürfen nicht wieder erscheinen. |
 | Gültige Detektoränderung | Nur Messrevision und aktuelle Messung dieses Detektors ändern; Feld, Simulationszeit, Lauf-ID, andere Detektoren und Referenzen erhalten. |
 | Farbskala, Helligkeit oder Ausschnitt | Keine Änderung an Physik oder Messung. Gespeicherte Anzeigeänderungen können den Projekt-Speicherstatus ändern. |
@@ -121,7 +135,7 @@ Ergebnis-Snapshots erhalten mindestens `scene_revision`, `run_id`, Simulationsze
 | Nicht fortsetzbarer Simulationsfehler | Lauf stoppen, Szene erhalten, Ursache anzeigen; erst nach Behebung und Nutzeraktion neu beginnen. |
 | Projektwechsel/Beenden | Worker kontrolliert anhalten, alte Datenübernahme sperren und bisherigen numerischen Zustand freigeben. Eine neue Projektdatei vor dem Austausch vollständig validieren. |
 
-Projekt-Speicherstatus, physikalische Revision und Messrevision werden separat geführt. B02 entscheidet zusätzlich, wie Reset die Ergebnisidentität erneuert oder invalidiert, damit verspätete Daten auch ohne Szenenänderung sicher verworfen werden.
+Projekt-Speicherstatus, physikalische Revision und Messrevision werden separat geführt. Reset erneuert die Generation und verwirft verspätete Daten auch ohne Szenenänderung; der Vertrag und die Regressionen decken das ab.
 
 ## 3. Reihenfolge, Abhängigkeiten und Meilensteine
 
@@ -129,7 +143,7 @@ Projekt-Speicherstatus, physikalische Revision und Messrevision werden separat g
 
 ### 3.1 Abhängigkeitsübersicht
 
-Die Tabelle nennt harte Voraussetzungen für den Abschluss bzw. die fachliche Umsetzung eines Pakets. Entwürfe und einfache Oberflächenattrappen dürfen vorher entstehen, erfüllen aber noch kein Abschlusskriterium.
+Die Tabelle erhält die ursprünglichen fachlichen Abhängigkeiten. Die Mac-Implementierung ist bereits durchgängig vorhanden. Windows-/Linux-Anteile von B03/B05 bleiben zurückgestellt; quantitative E07-/S12-Freigabe und Mac-Restarbeit sind in Abschnitt 3.4 aufgeführt.
 
 | ID | Arbeitspaket | Repository | Phase | Voraussetzungen |
 | --- | --- | --- | --- | --- |
@@ -161,7 +175,7 @@ Die Tabelle nennt harte Voraussetzungen für den Abschluss bzw. die fachliche Um
 | E09 | Engine-Stabilisierung und versioniertes Release | Engine | M4 | E08, S12 |
 | B05 | Gemeinsame Release-Abnahme und Auslieferung | Beide | M4 | E09, S13, B04 |
 
-### 3.2 Geplante Entwicklungslinien
+### 3.2 Ursprüngliche Entwicklungslinien und heutige Einordnung
 
 ```mermaid
 flowchart TD
@@ -181,33 +195,52 @@ flowchart TD
     Umfang --> Release["E09 / B05 / M4: validiertes Release-Paar"]
 ```
 
-Die Grafik fasst die Reihenfolge zusammen; die Paket-Tabelle ist für einzelne Voraussetzungen maßgeblich. Ein einfacher GUI- und Build-Versuch kann bereits während M0 laufen. Umfangreiche Editorarbeit beginnt erst nach E07 und B03. E08 kann nach E07 neben M2 vorbereitet werden. S10 und S11 sind nach B04 voneinander unabhängig. Native Erstbuilds werden begonnen, sobald S01/S03 ausreichend integrierbar sind; B03 sammelt anschließend alle Nachweise.
+Die Grafik erhält den ursprünglichen Aufbaupfad. Der lokale Ausbau wurde nach den v1-Demonstrationsreferenzen und dem Mac-Prototyp fortgesetzt; Windows/Linux wurden ausdrücklich verschoben. Die spätere Grenzwertprüfung zeigt offene quantitative Nachweise. Deshalb bedeutet das Vorhandensein aller Funktionsblöcke keine abgeschlossene M4-Freigabe.
 
-Die voraussichtlich blockierenden Abschnitte sind numerische Skalierung/Quellen/Rasterisierung, der physikalische Nachweis, reaktionsfähige Laufsteuerung, frühe Paketierung sowie die korrekte Mess- und Ergebniszuordnung. Ein terminlicher kritischer Pfad wird erst nach der Schätzung in B03 berechnet.
+Die derzeit blockierenden Mac-Befunde betreffen quantitative Physik, einzelne GUI-Unterbrechungen und Zugänglichkeit. Technische Arbeit kann in diesen Bereichen unabhängig vorankommen; die gemeinsame Freigabe benötigt ihre passenden Abschlussnachweise und die Auslieferungsentscheidungen.
 
 ### 3.3 Abschluss der Meilensteine
 
-| Meilenstein | Erforderliches Ergebnis | Freigabe für den nächsten Abschnitt |
+| Meilenstein | Aktueller Stand | Verbleibende Einschränkung |
 | --- | --- | --- |
-| M0a | B01, B02 und E01–E06 abgeschlossen; kleine Kernprüfungen, Modellvertrag und bekannte Grenzen dokumentiert. | Numerischen Gesamtversuch in E07 abnehmen. |
-| M0b | T01–T04 ohne GUI mit begründeten Referenzen und zuvor festgelegten Toleranzen bestanden. Ein fester Linsenaufbau ist enthalten. | Physikalische Grundlage für den Editor liegt vor. |
-| M1 | S01–S04 und B03 abgeschlossen: bedienbarer Punktquellenlauf, erste native Pakete auf drei Systemen, dokumentierte CPU-/MPS- und Ressourcenmessungen, festgelegte Budgets. | M2–M4 schätzen und Editor ausbauen. |
-| M2 | S05/S06 abgeschlossen: freier Aufbau mit Quellen, Materialien und Wänden; Undo/Redo, aktuelles Raster, sichere Dateien und Wiederherstellung. | Messung und Export integrieren. |
-| M3 | E08, S07–S09 und B04 abgeschlossen: eigener Doppelspalt vollständig ohne Code, Referenzvergleich, PNG/CSV und erneutes Öffnen einschließlich Referenz. | Restumfang für Version 0.1 vervollständigen. |
-| M4 | S10–S13, E09/B05 abgeschlossen; alle F-/Q-Anforderungen und T01–T09 im vereinbarten Umfang nachgewiesen. | Version 0.1 mit festem Engine-Stand ausliefern. |
+| M0a | B01/B02/E01–E06 implementiert; Umgebung, Verträge und Kernprüfungen vorhanden. | Quantitative Reichweite wird unter E07/S12 weiter geprüft. |
+| M0b | T01–T04 ausführbar und gegen eingefrorene v1-Demonstrationsgrenzen bestanden. | Begründete quantitative Fehlerbilanz/Referenzen offen (MAC-01). |
+| M1 | Mac-Prototyp, Paket, CPU/MPS und lokale 512²-Budgets nachgewiesen. | Dev8-/dev11-GUI-Nachlauf fehlgeschlagen (MAC-02); Windows/Linux und schwächere Hardware zurückgestellt. |
+| M2 | Freier Editor, Undo/Redo, sichere Dateien und Wiederherstellung implementiert/geprüft. | Native AX-/Command-Z-Korrekturen in Arbeit; vollständige Bedien-/VoiceOver-Abnahme offen (MAC-03). |
+| M3 | Detektoren, Referenzen, PNG/CSV und vollständiger Doppelspalt-Paketablauf nachgewiesen. | Finale Zuordnung zum späteren Release-Stand unter MAC-05. |
+| M4 | S10–S13-Funktionen vorhanden; lokale Mac-Entwicklungsversion verfügbar. | S12/S13-Freigabe und E09/B05 offen; MAC-01–06. Plattformübergreifender Abschluss zurückgestellt. |
 
-Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plausible GUI ersetzt. Bei fehlender Plattformhardware wird die betreffende Paketabnahme als offen geführt; daraus folgt keine stillschweigende Reduktion auf weniger Betriebssysteme.
+Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plausible GUI ersetzt. Windows/Linux bleiben als spätere Anforderungen sichtbar; die ausdrückliche Verschiebung erlaubt die separate Arbeit an einer Mac-Freigabe.
+
+### 3.4 Priorisierte offene Aufgaben für die Mac-Version
+
+P1 = zuerst für belastbare Ergebnisse und Bedienbarkeit, P2 = Abschlussvorbereitung, P3 = finale Freigabe/Auslieferung nach den erforderlichen Vorarbeiten. Die IDs MAC-01–06 werden auch in [task.md](task.md) verwendet. Sie ordnen bestehende Arbeit, ohne zusätzliche Produktfunktionen oder einen Veröffentlichungstermin zu versprechen.
+
+| Priorität / ID | Aufgabe und Zuordnung | Konkretes Abschlusskriterium / Abhängigkeit |
+| --- | --- | --- |
+| **P1 · MAC-01** | **Quantitative Physik und Qualitätsstufen absichern** — E07/S10/S12, O02/O04, T01–T04/Q04. Neue versionierte Grenzwerte aus einer Fehlerbilanz begründen; passende unabhängige Quellen-/Spalt-/Linsenreferenzen, dritte gezielte Rasterstufe für unklare Spalt-/Linsenfälle, getrennte Zeit-/Rand-/Fenster-/Geometrie- und Auswertungsunsicherheit prüfen. T02 mit tatsächlich gemessenem Einfallswinkel auswerten; Grenzen zentralisieren und Phasenanforderung aus der Messaufgabe ableiten. Balanced-/High-Quality-Fokus gesondert prüfen. | Referenzen, Unsicherheiten, zulässige Parameter und tatsächlich geprüfte Presets sind vor Freigabe nachvollziehbar dokumentiert. Vorschläge von 2 % bzw. ≤1 % Fokusunsicherheit sind noch keine allgemeinen Produktanforderungen oder bestandenen Preset-Ziele. Begrenzte neue Quellen-/Linsen-Teilprotokolle verwenden diese explizit als Pilotkriterien; [Fortschritt](../WaveSimulator2D/docs/QUANTITATIVE_PROGRESS.md). Ressourcenablehnung/ungetestete Raster bleiben so gekennzeichnet; v1-Berichte unverändert erhalten. Ausgangspunkt: [Grenzwertprüfung](../WaveSimulator2D/docs/TOLERANCE_REVIEW.md), [Fehlermaße](../WaveSimulator2D/docs/ERROR_METRICS.md). |
+| **P1 · MAC-02** | **GUI-Unterbrechungen eingrenzen und beheben** — S03/S12/B03, T05/T07/Q02–Q03. Dev8-Befund 500,86 ms bei 250-ms-Grenze untersuchen; produktiven Qt-Abfragetakt und vergleichbare Start-/Aktivitäts-/Stromsparzustände erfassen. | Gezielter Nachweis für die Korrektur und betroffene Ressourcen-/Bedienprüfung am passenden Paket; unveränderte Budgets, Fehlerberichte erhalten. 512² und große Balanced-Linse getrennt bewerten; kein pauschales 18–20-FPS-Ziel. Die gesamte historische FPS-Differenz bleibt ungeklärt, soweit sie nicht reproduzierbar belegt wird. Ausgangspunkt: [Performance-Untersuchung](docs/PERFORMANCE_INVESTIGATION.md). |
+| **P2 · MAC-03** | **Zugänglichkeit und native Tastaturbedienung abschließen** — S05/S13, T05/T06/F16. Verbleibenden AX-Verlust nach strukturellen/Style-Wechseln untersuchen, VoiceOver-/Fokusverhalten und native Command-Z-/Redo-Wege prüfen; verbleibende menschliche Bedienabnahme am finalen Kandidaten dokumentieren. | Nachweisbare Bedienbarkeit im vereinbarten Umfang, einschließlich Themes und skalierter Schrift; Qt-, agentenbediente native und menschliche Prüfungen getrennt ausweisen. Sichtbare Liste/Qt-Fokus allein gelten nicht als AX-Abnahme. Ausgangspunkt: [Mac-Abnahme](docs/MAC_ACCEPTANCE.md). |
+| **P2 · MAC-04** | **Mac-Auslieferungsumfang und Restaufwand festlegen** — B03/B05, O03/O07. Mindest-macOS/Architektur und verfügbare fremde Mac-Testinstallation bestimmen; Verteilung, erforderliche Signierung/Notarisierung und Aktualisierungsweg klären. Abhängigkeiten/Lizenzhinweise prüfen und Restaufwand samt Voraussetzungen schätzen. | Dokumentierte Mac-Matrix, Auslieferungsentscheidungen und Aufwandsspannen. Aktuell nur M1/8 GiB, macOS 27.0.1 arm64 geprüft. Manueller Paketaustausch ist zulässig; automatischer Updater keine Pflicht. Kann unabhängig vorbereitet werden, belastbare Schätzung nach Eingrenzung von MAC-01/02. |
+| **P3 · MAC-05** | **Finales Versionspaar und gemeinsame Mac-Abnahme erstellen** — E09/B04/B05/S13. Finale Engine und Studio eindeutig versionieren, exakte Wheels/Hashes und Commits zuordnen; betroffene T01–T08 auf diesem Stand prüfen und F01–F18/Q01–Q06 mit Nachweisen, Grenzen oder zurückgestellten Plattformteilen verknüpfen. Hilfe, Preset-Aussagen, Änderungs-/Release-Notizen und Installationshinweise abgleichen. | Nach MAC-01–04: vollständige Mac-Abnahmeübersicht ohne offene Abweichung gegen den beanspruchten Umfang; keine neue Freigabe aus alten dev3/dev4-Berichten ableiten. Keine pauschale Wiederholung aller Prüfungen für unveränderte Bereiche. |
+| **P3 · MAC-06** | **Mac-Paket auf sauberer Installation abnehmen und zur Verteilung vorbereiten** — B05/T09/Q01. Aus dem finalen Versionspaar bauen, gegebenenfalls für öffentliche Verteilung signieren/notarisieren, auf fremdem sauberem Mac ohne Nutzer-Python und ohne Netzwerk Kernablauf prüfen. | Nach MAC-04/05: tatsächlich ausgeliefertes Artefakt mit Hash, OS/Hardware, Start/Run/Pause, Speichern/Laden, PNG/CSV und Installationshinweisen dokumentiert. Öffentliche Veröffentlichung erst nach geklärtem Verteilungsumfang. |
+
+**Zurückgestellt:** Windows-/Linux-Builds, native Offline-Abnahmen, dortige CPU-/schwächere Hardware und Plattformmatrix. CUDA bleibt ohne NVIDIA-Nachweis außerhalb der Unterstützung. Diese Punkte sind keine Voraussetzung für die aktuelle Mac-Restarbeit.
+
+**Ergänzende Untersuchung:** Der vollständige Vergleich zur alten Engine für Quellen, Dämpfung, Spalt und Linse bleibt offen. Der vorhandene kalibrierte quellenfreie Vergleich belegt keine allgemeine Genauigkeit. Ein umfassender Alt/Neu-Vergleich ist keine eigenständige PRD-Pflicht und ersetzt MAC-01 nicht. Kalibrierte Energie-/Prozessmessung ist ebenfalls offen; vorhandene systemweite GPU-Zähler sind entsprechend begrenzt, zusätzliche privilegierte Messungen sind nicht eingeplant.
 
 ## 4. M0a – Arbeitsbasis und numerischer Kern
 
 ### B01 – Arbeitsbasis und Repository-Setup
+
+**Aktueller Status (18.10.2026):** **Abgeschlossen für die lokale Entwicklungsbasis.** Python 3.12, zwei Repositories, Editable-Installation und Build-Anleitung vorhanden; [Entwicklungsanleitung](docs/DEVELOPMENT.md).
 
 **Verantwortung:** Beide Repositories. **Voraussetzungen:** Keine. **Bezug:** Technische Rahmenbedingungen im PRD.
 
 **Arbeitsschritte:**
 
 - Bereits erledigt: Engine einschließlich Git-Verlauf und lokalen Änderungen nach `WaveStudioApp/WaveSimulator2D/` verschieben; `WaveStudioApp/WaveStudio/` als eigenes Git-Repository initialisieren und die Planungsdokumente dorthin übernehmen.
-- Die angelegte `WaveStudioApp.code-workspace` öffnet beide Repositories über relative Pfade. Noch offen: dokumentierte Python-Entwicklungsumgebung einrichten und unterstützte Python-Version nach Kompatibilität des tatsächlichen Stacks festlegen.
+- Die vorhandene `WaveStudioApp.code-workspace` öffnet beide Repositories über relative Pfade. Python 3.12 und die Editable-Entwicklungsumgebung sind in README und Entwicklungsanleitung dokumentiert.
 - Ignorierregeln für Umgebungen, Python-Caches, Build-Ausgaben und lokale Messartefakte anlegen. Bereinigung bereits versionierter Caches als eigene nachvollziehbare Änderung behandeln.
 - Kurze Entwicklungsanleitung und Orte für Entscheidungen, Prüfberichte und die Zuordnung beider Repository-Stände festlegen.
 
@@ -215,11 +248,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [x] Beide Repositories lassen sich unabhängig versionieren; bestehende fremde Änderungen bleiben nachvollziehbar.
-- [ ] Ein neuer Entwickler findet Umgebung, Startpunkte und die Reihenfolge E01 → editierbare Integration ohne versteckte lokale Importpfade.
-- [ ] Anforderungen und geplanter Umfang sind den beiden Repositories eindeutig zugeordnet.
+- Beide Repositories lassen sich unabhängig versionieren; bestehende fremde Änderungen bleiben nachvollziehbar.
+- Ein neuer Entwickler findet Umgebung, Startpunkte und die Reihenfolge E01 → editierbare Integration ohne versteckte lokale Importpfade.
+- Anforderungen und geplanter Umfang sind den beiden Repositories eindeutig zugeordnet.
 
 ### E01 – Installierbare Engine und portable Prüfungen
+
+**Aktueller Status (18.10.2026):** **Abgeschlossen für die lokale Paketintegration.** Engine-Wheel und isolierter CPU-/Detektorpfad geprüft; feste Engine-Abhängigkeit im Mac-Bundle. Finale Freigabe unter E09/MAC-05.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** B01.
 
@@ -234,11 +269,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Import und ein kleiner CPU-Lauf funktionieren aus einer sauberen Umgebung außerhalb des Quellordners.
-- [ ] Änderungen im Engine-Quellcode werden bei editierbarer Installation in Studio sichtbar; für den Wheel-Test ist der Nachbarquellordner nicht nötig.
-- [ ] Das Kernpaket importiert keine optionalen GUI-Beispielmodule beim normalen Solver-Import.
+- Import und ein kleiner CPU-Lauf funktionieren aus einer sauberen Umgebung außerhalb des Quellordners.
+- Änderungen im Engine-Quellcode werden bei editierbarer Installation in Studio sichtbar; für den Wheel-Test ist der Nachbarquellordner nicht nötig.
+- Das Kernpaket importiert keine optionalen GUI-Beispielmodule beim normalen Solver-Import.
 
 ### B02 – Daten-, API- und Lebenszyklusvertrag
+
+**Aktueller Status (18.10.2026):** **Abgeschlossen.** [CONTRACT.md](docs/CONTRACT.md) und [MODEL.md](../WaveSimulator2D/docs/MODEL.md) definieren Einheiten, Puffer und Lebenszyklus; Reset erneuert die Generation und sperrt Step bis Run → Pause.
 
 **Verantwortung:** Engine-API in WaveSimulator2D, Projekt-/Laufvertrag in WaveStudio. **Voraussetzungen:** B01. **Bezug:** F07–F15, Q05–Q06.
 
@@ -253,11 +290,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Für jeden zentralen Bedienvorgang ist festgelegt, welche Identitäten, Daten und Zustände sich ändern.
-- [ ] Ein altes Frame oder Profil lässt sich anhand des Vertrags eindeutig verwerfen; Reset ist ausdrücklich abgedeckt.
-- [ ] Engine und Anwendung benötigen keine wechselseitigen internen Importe. Numerische Details sind als noch durch E02–E06 zu füllende Entscheidungen kenntlich.
+- Für jeden zentralen Bedienvorgang ist festgelegt, welche Identitäten, Daten und Zustände sich ändern.
+- Ein altes Frame oder Profil lässt sich anhand des Vertrags eindeutig verwerfen; Reset ist ausdrücklich abgedeckt.
+- Engine und Anwendung benötigen keine wechselseitigen internen Importe. Numerische Details aus E02–E06 sind im Modellvertrag beschrieben; offene Genauigkeitsnachweise bleiben kenntlich.
 
 ### E02 – Skalierung, Stabilität und zulässiger Parameterbereich
+
+**Aktueller Status (18.10.2026):** **Implementiert und in den dokumentierten Referenzfällen geprüft.** c0=1, Stabilitäts-/Eingabeprüfung und Dispersionsabschätzung vorhanden. Quantitative Reichweite/Phasenanforderung unter MAC-01 offen.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** B02. **Bezug:** F03, F06, Q04; O01/O02.
 
@@ -273,11 +312,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Eine Quellenwellenlänge hat eine eindeutige numerische Bedeutung; Änderungen skalieren die Geometrie nicht mit.
-- [ ] Unzulässige Zeitschritte und ungültige Werte werden vor dem Lauf erkannt, nicht still auf andere Werte begrenzt.
-- [ ] Voraussetzungen und Grenzen der Genauigkeitsaussagen sind dokumentiert; die Laufzeitbestätigung folgt in E07.
+- Eine Quellenwellenlänge hat eine eindeutige numerische Bedeutung; Änderungen skalieren die Geometrie nicht mit.
+- Unzulässige Zeitschritte und ungültige Werte werden vor dem Lauf erkannt, nicht still auf andere Werte begrenzt.
+- Voraussetzungen und Grenzen der Genauigkeitsaussagen sind dokumentiert; die Laufzeitbestätigung folgt in E07.
 
 ### E03 – Einheitliches Gerät, Initialisierung und vollständiger Reset
+
+**Aktueller Status (18.10.2026):** **Implementiert und lokal auf CPU/MPS geprüft.** Einheitliches Gerät, vollständiger Reset, Initialfeldprüfung und Schritt-API; [Backendnachweis](docs/backend-results.json). Weitere Plattformen zurückgestellt, CUDA nicht angeboten.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E01, E02. **Bezug:** F07, F17, Q05–Q06.
 
@@ -292,12 +333,14 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Alle beteiligten Tensoren liegen auf dem angeforderten Gerät; kein Objekt wählt eigenständig ein anderes Backend.
-- [ ] Ein Lauf nach Reset entspricht innerhalb der festgelegten Toleranz einem frischen Lauf derselben Konfiguration.
-- [ ] Ein falsches Initialfeld wird verständlich zurückgewiesen; Step berechnet reproduzierbar genau einen Schritt.
-- [ ] CPU-Prüfung funktioniert; MPS und gegebenenfalls CUDA werden in T08 mit echter Hardware bestätigt.
+- Alle beteiligten Tensoren liegen auf dem angeforderten Gerät; kein Objekt wählt eigenständig ein anderes Backend.
+- Ein Lauf nach Reset entspricht innerhalb der festgelegten Toleranz einem frischen Lauf derselben Konfiguration.
+- Ein falsches Initialfeld wird verständlich zurückgewiesen; Step berechnet reproduzierbar genau einen Schritt.
+- CPU-Prüfung funktioniert; MPS und gegebenenfalls CUDA werden in T08 mit echter Hardware bestätigt.
 
 ### E04 – Konsistente additive Punkt- und Linienquellen
+
+**Aktueller Status (18.10.2026):** **Implementiert; Quellen-/Überlagerungs-/Rückwellenprüfungen vorhanden.** Unabhängige Hankel-Referenz und Teilprotokolle ergänzt: definierter Punktfall besteht, Linie verfehlt Fenster-/Randkriterien. Allgemeine Quellenfreigabe und Fehlerbilanz bleiben MAC-01; [Fortschritt](../WaveSimulator2D/docs/QUANTITATIVE_PROGRESS.md).
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E03. **Bezug:** F03, Q04; O01.
 
@@ -312,11 +355,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Quellen schreiben ankommende Felder nicht unbeabsichtigt als harte Randbedingung um.
-- [ ] Zwei kohärente Quellen zeigen die erwartete Phasenabhängigkeit und definierte additive Überlagerung.
-- [ ] Ein Auflösungs-/Zeitschrittwechsel erhält die vereinbarte Quellenbedeutung; bloßes Ersetzen von Zuweisung durch Addition gilt nicht als Nachweis.
+- Quellen schreiben ankommende Felder nicht unbeabsichtigt als harte Randbedingung um.
+- Zwei kohärente Quellen zeigen die erwartete Phasenabhängigkeit und definierte additive Überlagerung.
+- Ein Auflösungs-/Zeitschrittwechsel erhält die vereinbarte Quellenbedeutung; bloßes Ersetzen von Zuweisung durch Addition gilt nicht als Nachweis.
 
 ### E05 – Rasterisierung, Materialreihenfolge und Wände
+
+**Aktueller Status (18.10.2026):** **Implementiert und in den dokumentierten Fällen geprüft.** Halb-offenes Zellmittelpunktraster, Materialreihenfolge, frische Geometrie und Dirichlet-Wände. Beliebige Materialgrenzen erhalten keinen pauschalen Genauigkeitsnachweis; MAC-01.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E03. **Bezug:** F02, F04–F06, Q04–Q05.
 
@@ -332,11 +377,13 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Verschobene bzw. überlappende Objekte erzeugen die beabsichtigten Index- und Dämpfungsfelder.
-- [ ] Wände gelten unabhängig von darunterliegenden Materialien; Quellen in Wänden werden abgewiesen.
-- [ ] Der Doppelspalt wird aus drei Wandstücken gebildet. Der Nachweis gegen Durchtritt und Umwege an Wandenden wird in T03 geführt.
+- Verschobene bzw. überlappende Objekte erzeugen die beabsichtigten Index- und Dämpfungsfelder.
+- Wände gelten unabhängig von darunterliegenden Materialien; Quellen in Wänden werden abgewiesen.
+- Der Doppelspalt wird aus drei Wandstücken gebildet. Der Nachweis gegen Durchtritt und Umwege an Wandenden wird in T03 geführt.
 
 ### E06 – Auflösungsunabhängige Dämpfungsdefinition und Randzone
+
+**Aktueller Status (18.10.2026):** **Implementiert; v1-Dämpfungs-/Randreferenzen bestanden.** Zeitbezogene Materialdämpfung und getrennte Randzone; quantitative Fehlerbilanz im freizugebenden Bereich unter MAC-01.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E02, E05. **Bezug:** F04, F06, Q04.
 
@@ -351,13 +398,15 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] Qualitätswechsel erhalten beabsichtigte Dämpfung und räumliche Breite innerhalb der begründeten Toleranz.
-- [ ] Randzone und Materialdämpfung lassen sich getrennt konfigurieren; kein unbeabsichtigtes Überschreiben durch die Objektreihenfolge.
-- [ ] Restreflexion ist messbar dokumentiert. Oberfläche und Dokumentation bezeichnen das Verfahren als gedämpfte Randzone, ohne unbelegte PML-Zusage.
+- Qualitätswechsel erhalten beabsichtigte Dämpfung und räumliche Breite innerhalb der begründeten Toleranz.
+- Randzone und Materialdämpfung lassen sich getrennt konfigurieren; kein unbeabsichtigtes Überschreiben durch die Objektreihenfolge.
+- Restreflexion ist messbar dokumentiert. Oberfläche und Dokumentation bezeichnen das Verfahren als gedämpfte Randzone, ohne unbelegte PML-Zusage.
 
 ## 5. M0b – Physikalische Grundlage
 
 ### E07 – Vier ausführbare Referenzszenen und numerische Abnahme
+
+**Aktueller Status (18.10.2026):** **Referenzläufe implementiert; quantitative Freigabe offen (MAC-01).** Historische T01–T04-PASS-Werte gelten für v1-Demonstrationsgrenzen. [Grenzwertprüfung](../WaveSimulator2D/docs/TOLERANCE_REVIEW.md) dokumentiert unzureichend begründete Spalt-/Linsentoleranzen und offene Referenz-/Konvergenzunsicherheit.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E04–E06. **Bezug:** T01–T04, Q04; O02 und frühe Grundlage für O05.
 
@@ -373,17 +422,19 @@ Ein nicht bestandener physikalischer Nachweis wird nicht durch eine optisch plau
 
 **Abschlusskriterien:**
 
-- [ ] T01: Geschwindigkeit und Wellenlänge achsparallel/diagonal, Phasenabhängigkeit, Überlagerung und Rückwellenfall bestehen.
-- [ ] T02: Brechungswinkel, Restreflexion und Dämpfungsvergleich bestehen für die dokumentierten Bedingungen.
-- [ ] T03: Kein relevanter Durchtritt durch Wandbereiche; Symmetrie und charakteristische Minima passen zur begründeten Referenz.
-- [ ] T04: Fokussierung und Fokuslage passen zur Referenz; Rasterverfeinerung verändert das Resultat nicht über die festgelegte Toleranz hinaus.
-- [ ] Toleranzen wurden vor der Abnahme festgelegt. Abweichungen sind untersucht, nicht durch nachträgliches Aufweiten verdeckt.
+- T01: Geschwindigkeit und Wellenlänge achsparallel/diagonal, Phasenabhängigkeit, Überlagerung und Rückwellenfall bestehen.
+- T02: Brechungswinkel, Restreflexion und Dämpfungsvergleich bestehen für die dokumentierten Bedingungen.
+- T03: Kein relevanter Durchtritt durch Wandbereiche; Symmetrie und charakteristische Minima passen zur begründeten Referenz.
+- T04: Fokussierung und Fokuslage passen zur Referenz; Rasterverfeinerung verändert das Resultat nicht über die festgelegte Toleranz hinaus.
+- Toleranzen wurden vor der Abnahme festgelegt. Abweichungen sind untersucht, nicht durch nachträgliches Aufweiten verdeckt.
 
-Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtung, Quellenenden und Auswertung korrigiert. Eine neue Quellart oder ein anderes physikalisches Modell wäre eine gesonderte Umfangsentscheidung. Die umfangreiche Editorentwicklung wartet auf diesen Nachweis.
+Bei ungeklärten Abweichungen werden Skalierung, Rasterisierung, Beleuchtung, Quellenenden und Auswertung untersucht. Der Editor ist bereits implementiert; die quantitative Freigabe bleibt bis zum Nachweis unter MAC-01 offen. Eine neue Quellart oder ein anderes physikalisches Modell wäre eine gesonderte Umfangsentscheidung.
 
 ## 6. M1 – Durchgängiger Prototyp und frühe Auslieferbarkeit
 
 ### S01 – Anwendungsskelett und Feldansicht
+
+**Aktueller Status (18.10.2026):** **Implementiert und im Mac-Paket geprüft.** Englische Qt-Oberfläche, Feld-/Material-/Intensitätsansicht und Paketstart vorhanden; [nativer Ablauf](docs/native-results.json). Fremder sauberer Mac unter MAC-06 offen.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** B01, E01. **Bezug:** F09, F16, Q01–Q02.
 
@@ -398,11 +449,13 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Die Anwendung startet aus ihrem Paket und lässt sich kontrolliert schließen.
-- [ ] Ein bekanntes Feld erscheint mit korrekter Achsenorientierung und numerischer Farbskala.
-- [ ] Zoom und Fenstergröße ändern weder Projektgeometrie noch Simulationsgitter.
+- Die Anwendung startet aus ihrem Paket und lässt sich kontrolliert schließen.
+- Ein bekanntes Feld erscheint mit korrekter Achsenorientierung und numerischer Farbskala.
+- Zoom und Fenstergröße ändern weder Projektgeometrie noch Simulationsgitter.
 
 ### S02 – Projektmodell, Validierung und Szenenübersetzung
+
+**Aktueller Status (18.10.2026):** **Implementiert und geprüft.** Qt-unabhängiges Projektmodell, Validierung und Scene Compiler; Referenzgeometrie, Materialreihenfolge und Änderungen werden konsistent übersetzt.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** B02, E02; numerische Anbindung nach E04–E06. **Bezug:** F01–F06, Q05–Q06.
 
@@ -418,12 +471,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Projektmodelle sind ohne Qt-Anwendung und ohne GPU-Zustand verarbeitbar.
-- [ ] Geometrie bleibt bei Quellenwellenlängenänderung gleich; Materialreihenfolge und Wandvorrang entsprechen F04.
-- [ ] Ungültige Änderungen lassen die bisher gültige Konfiguration bestehen.
-- [ ] Die übersetzte Punktquellenszene reproduziert den entsprechenden Engine-Aufbau; vertauschte Achsen und veraltete Raster sind ausgeschlossen.
+- Projektmodelle sind ohne Qt-Anwendung und ohne GPU-Zustand verarbeitbar.
+- Geometrie bleibt bei Quellenwellenlängenänderung gleich; Materialreihenfolge und Wandvorrang entsprechen F04.
+- Ungültige Änderungen lassen die bisher gültige Konfiguration bestehen.
+- Die übersetzte Punktquellenszene reproduziert den entsprechenden Engine-Aufbau; vertauschte Achsen und veraltete Raster sind ausgeschlossen.
 
 ### S03 – Engine-Adapter, Worker und begrenzte Datenübergabe
+
+**Aktueller Status (18.10.2026):** **Implementiert; finale Reaktionszeitabnahme offen (MAC-02).** Ein Worker und Latest-only-Übergabe, begrenzte Befehls-/Schrittblöcke, Live-Anzeigesampling großer Felder und volles Pause-/Step-Raster. Dev8-/dev11-GUI-Nachläufe verfehlen 250-ms-Kriterium; Ereignis-/GC-Diagnose ergänzt.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S01/S02, E03–E06. **Bezug:** F07, F09, Q02–Q03, Q05.
 
@@ -439,12 +494,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Genau eine Engine-Instanz berechnet den aktiven Versuch; die GUI reagiert währenddessen auf Bedienung.
-- [ ] Pause und Abbruch können spätestens an der nächsten begrenzten Blockgrenze verarbeitet werden; die tatsächliche Latenz wird in B03 gemessen.
-- [ ] Langsame Darstellung erzeugt keine anwachsende Frame-Warteschlange und keine veränderlichen GUI-Snapshots.
-- [ ] Beim Schließen oder Projektwechsel bleiben kein laufender Worker und keine weiterhin verwendeten alten Ergebnisdaten zurück.
+- Genau eine Engine-Instanz berechnet den aktiven Versuch; die GUI reagiert währenddessen auf Bedienung.
+- Pause und Abbruch können spätestens an der nächsten begrenzten Blockgrenze verarbeitet werden; die tatsächliche Latenz wird in B03 gemessen.
+- Langsame Darstellung erzeugt keine anwachsende Frame-Warteschlange und keine veränderlichen GUI-Snapshots.
+- Beim Schließen oder Projektwechsel bleiben kein laufender Worker und keine weiterhin verwendeten alten Ergebnisdaten zurück.
 
 ### S04 – Laufsteuerung, Revisionen und Fehlerbehandlung
+
+**Aktueller Status (18.10.2026):** **Implementiert und im Kern-/Qt-/Paketablauf geprüft.** Run/Pause/Resume/Step/Reset, Generationen, Fehler ohne Autostart und Verwerfen alter Ergebnisse. Reaktionszeiten siehe MAC-02.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S03. **Bezug:** F07–F08, F17, Q05–Q06; erster Teil von T05.
 
@@ -460,13 +517,15 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Pause → Run ohne Änderung setzt denselben Lauf fort; Step startet keinen Dauerlauf.
-- [ ] Eine physikalische Änderung bleibt angehalten und sperrt Step. Erst manueller Run startet mit frischen Feldern und Messungen.
-- [ ] Reset entfernt Feldreste und aktuelle Messdaten; verspätete Frames können sie nicht zurückbringen.
-- [ ] Ein gezielt ausgelöster relevanter Laufzeitfehler erhält die Szene und verursacht nach Behebung keinen automatischen Neustart.
-- [ ] Die deterministische Zustands-/Revisionslogik ist mit wenigen risikobezogenen Kernprüfungen aus T05 abgesichert.
+- Pause → Run ohne Änderung setzt denselben Lauf fort; Step startet keinen Dauerlauf.
+- Eine physikalische Änderung bleibt angehalten und sperrt Step. Erst manueller Run startet mit frischen Feldern und Messungen.
+- Reset entfernt Feldreste und aktuelle Messdaten; verspätete Frames können sie nicht zurückbringen.
+- Ein gezielt ausgelöster relevanter Laufzeitfehler erhält die Szene und verursacht nach Behebung keinen automatischen Neustart.
+- Die deterministische Zustands-/Revisionslogik ist mit wenigen risikobezogenen Kernprüfungen aus T05 abgesichert.
 
 ### B03 – Prototypabnahme, erste native Pakete und konkrete Budgets
+
+**Aktueller Status (18.10.2026):** **Mac-Prototyp und lokale Budgets vorhanden; Gesamtabschluss offen.** Historische 512²-Prüfung bestanden, dev8-Balanced-Nachlauf wegen GUI-Unterbrechung fehlgeschlagen (MAC-02). Restaufwand/Mac-Systemmatrix unter MAC-04 offen; Windows/Linux und schwächere Hardware zurückgestellt.
 
 **Verantwortung:** Beide Repositories; Build-/Bediennachweise in WaveStudio. **Voraussetzungen:** E07, S04. **Bezug:** T07–T09, F17–F18, Q01–Q03; O03/O04/O07.
 
@@ -475,23 +534,25 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 - Auf M1/8 GB einen repräsentativen 512²-Lauf untersuchen: Simulationsschritte/s, Bildrate, Pause-Latenz, Speicher, CPU-/GPU-Last sowie Leerlauf und Pause. Simulationsfortschritt und Anzeigeleistung getrennt ausweisen.
 - CPU und MPS vergleichen; eine zweite Anzeige desselben Snapshots als frühen Belastungsversuch mitprüfen. Das ist noch keine Abnahme der fertigen zweiten Ansicht aus S11.
 - Sparsamen Standardbetrieb mit begrenztem Rechenaufwand und separatem Anzeigelimit umsetzen. Ein optionaler höherer Rechenmodus darf Gitter und Messdefinition nicht verändern.
-- Windows-/Linux-Hardware und Betriebssysteme erfassen. Mit PyInstaller als erstem Kandidaten native Pakete auf macOS, Windows und Linux bauen und ohne Entwicklungsumgebung starten.
+- Das vorhandene PyInstaller-Mac-Paket ohne Entwicklungsumgebung abnehmen. Windows-/Linux-Hardware, Betriebssysteme und native Erstpakete sind zurückgestellt.
 - Startzeit und Paketgröße erfassen. CPU-Lauf auf der schwächeren verfügbaren Testhardware prüfen; 256²/1024² nur ergänzen, wenn eine konkrete Grenze geklärt werden muss.
-- Auf Grundlage der Messungen verbindliche Leistungs-/Speicherbudgets, Blockdauer, Rechenbegrenzung und vorläufige Qualitätsregeln festlegen. M2–M4 danach in realistische Arbeitsschritte und Aufwandsspannen schätzen.
+- Die vorhandenen lokalen Leistungs-/Speicherbudgets, Blockdauer, Rechenbegrenzung und Qualitätsregeln anhand betroffener Nachprüfungen absichern. Den verbleibenden Mac-Aufwand unter MAC-04 schätzen; Windows-/Linux-Arbeit nach ihrer Wiederaufnahme separat planen.
 
-**Lieferobjekte:** Prototypbericht, drei frühe Anwendungspakete, Hardware-/Build-Matrix, Budgettabelle und aktualisierte Aufwandsschätzung.
+**Lieferobjekte:** Mac-Prototypbericht/-Paket, lokale Budgettabelle, Mac-Hardware-/Build-Matrix und aktualisierte Restaufwandsschätzung. Zwei weitere native Erstpakete und ihre Matrix folgen nach Wiederaufnahme von Windows/Linux.
 
 **Abschlusskriterien:**
 
-- [ ] Punktquelle, Feldansicht und Run/Pause/Reset funktionieren im Paket auf allen drei Zielsystemen, einschließlich CPU-Betrieb.
-- [ ] Die vorläufigen Ziele von etwa 30 Bildern/s bei 512² und unter 100 ms Pause-Latenz sind geprüft und durch begründete, ausdrücklich dokumentierte Abnahmebudgets ersetzt. Abweichungen und ihre Folgen bleiben sichtbar.
-- [ ] Speicher- und Rechenlast sind im Leerlauf, pausiert und unter Last begrenzt. Geteilter Apple-Silicon-Speicher ist nicht doppelt gezählt.
-- [ ] Mindestbetriebssysteme, Architekturumfang und Linux-Basis sind konkret benannt; CUDA ist nur bei verfügbarer Testhardware vorgesehen.
-- [ ] Das Release-Prinzip funktioniert mit einer gebauten Engine-Version ohne Nachbarquellordner. T09 mit Speichern/Export bleibt bis B05 offen.
+- Punktquelle, Feldansicht und Run/Pause/Reset funktionieren im Paket auf allen drei Zielsystemen, einschließlich CPU-Betrieb.
+- Die vorläufigen Ziele von etwa 30 Bildern/s bei 512² und unter 100 ms Pause-Latenz sind geprüft und durch begründete, ausdrücklich dokumentierte Abnahmebudgets ersetzt. Abweichungen und ihre Folgen bleiben sichtbar.
+- Speicher- und Rechenlast sind im Leerlauf, pausiert und unter Last begrenzt. Geteilter Apple-Silicon-Speicher ist nicht doppelt gezählt.
+- Mindestbetriebssysteme, Architekturumfang und Linux-Basis sind konkret benannt; CUDA ist nur bei verfügbarer Testhardware vorgesehen.
+- Das Release-Prinzip funktioniert mit einer gebauten Engine-Version ohne Nachbarquellordner. T09 mit Speichern/Export bleibt bis B05 offen.
 
 ## 7. M2 – Freier Szeneneditor und sichere Projektdateien
 
 ### S05 – Szeneneditor mit Eigenschaften und Undo/Redo
+
+**Aktueller Status (18.10.2026):** **Implementiert und lokal geprüft.** Alle Objektarten, Griffe, Materialreihenfolge, Copy/Delete und Undo/Redo vorhanden. Native Eigenschafts-Undo/Redo-Bestätigung erbracht; AX-Zeilen nach Add bleiben unter MAC-03 offen ([Nachprüfung](docs/MAC_ACCESSIBILITY_FOLLOWUP.md)).
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** B03, S02/S04. **Bezug:** F02–F04, F08, F16; T05.
 
@@ -507,12 +568,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Ein Doppelspalt kann aus einer Quelle und drei Wandstücken ohne Beispielvorlage aufgebaut werden.
-- [ ] Ein Material wird nach Verschieben, Undo und Redo beim nächsten manuellen Run im richtigen numerischen Raster dargestellt.
-- [ ] Objektliste, Eigenschaften und Zeichenfläche bleiben konsistent; Materialüberlappungen wirken wie angezeigt.
-- [ ] Bearbeiten und Undo/Redo im pausierten Zustand starten keine Berechnung. Die Regeln gelten später auch für Detektoren und Anzeigeänderungen entsprechend ihrer Änderungsklasse.
+- Ein Doppelspalt kann aus einer Quelle und drei Wandstücken ohne Beispielvorlage aufgebaut werden.
+- Ein Material wird nach Verschieben, Undo und Redo beim nächsten manuellen Run im richtigen numerischen Raster dargestellt.
+- Objektliste, Eigenschaften und Zeichenfläche bleiben konsistent; Materialüberlappungen wirken wie angezeigt.
+- Bearbeiten und Undo/Redo im pausierten Zustand starten keine Berechnung. Die Regeln gelten später auch für Detektoren und Anzeigeänderungen entsprechend ihrer Änderungsklasse.
 
 ### S06 – Versioniertes Projektformat, atomisches Speichern und Wiederherstellung
+
+**Aktueller Status (18.10.2026):** **Implementiert und geprüft.** Versioniertes validiertes JSON, atomisches Speichern, Referenz-Roundtrip und begrenzte Wiederherstellung einschließlich Besitz/Bereinigung; [Format und Grenzen](docs/DEVELOPMENT.md).
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S05, B02; Wiederherstellungsanteil O06 geklärt. **Bezug:** F01, F15, Q06; Dateiteil von T06.
 
@@ -528,15 +591,17 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Ein frei erstellter Aufbau wird mit allen Parametern und IDs ohne Verlust gespeichert und geladen.
-- [ ] Beschädigte Dateien, unbekannte Versionen oder ungültige Inhalte ersetzen das offene Projekt nicht.
-- [ ] Ein gezielt fehlgeschlagener Schreibvorgang lässt die letzte gültige Datei bestehen.
-- [ ] Ein Wiederherstellungsfall liefert den gesicherten Aufbau zurück; Anzahl/Größe der Sicherungen bleiben begrenzt.
-- [ ] Änderungen gespeicherter Anzeige- oder Detektoreinstellungen können das Projekt als ungespeichert markieren, ohne einen physikalischen Neustart zu verlangen.
+- Ein frei erstellter Aufbau wird mit allen Parametern und IDs ohne Verlust gespeichert und geladen.
+- Beschädigte Dateien, unbekannte Versionen oder ungültige Inhalte ersetzen das offene Projekt nicht.
+- Ein gezielt fehlgeschlagener Schreibvorgang lässt die letzte gültige Datei bestehen.
+- Ein Wiederherstellungsfall liefert den gesicherten Aufbau zurück; Anzahl/Größe der Sicherungen bleiben begrenzt.
+- Änderungen gespeicherter Anzeige- oder Detektoreinstellungen können das Projekt als ungespeichert markieren, ohne einen physikalischen Neustart zu verlangen.
 
 ## 8. M3 – Messung, Referenzen und vollständiger Doppelspalt
 
 ### E08 – Numerische Messung auf Basis der Simulationszeit
+
+**Aktueller Status (18.10.2026):** **Implementiert und geprüft.** Passive bilineare Messung des Feldquadrats je Simulationsschritt, endliche Fenster und begrenzte Akkumulatoren; unabhängig von Bildrate/Anzeigesampling.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E07, B02; Messanteil O06 geklärt. **Bezug:** F09–F11, Q03–Q05.
 
@@ -552,13 +617,15 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Derselbe Lauf liefert bei verschiedenen Bildraten und Frame-Auslassungen dieselben Messwerte innerhalb der Toleranz.
-- [ ] Messungen verwenden das unbeschnittene Feld; Helligkeit und Farbsättigung haben keinen Einfluss.
-- [ ] Ein Messfenster endet nach definierter Simulationszeit, auch wenn dessen Ende innerhalb eines Rechenblocks liegt.
-- [ ] Speicherbedarf bleibt begrenzt; vollständige Feldhistorien werden nicht gesammelt.
-- [ ] Numerische Messdaten sind nach Reset vollständig neu; die bestehende Referenzszenen-Auswertung bleibt konsistent.
+- Derselbe Lauf liefert bei verschiedenen Bildraten und Frame-Auslassungen dieselben Messwerte innerhalb der Toleranz.
+- Messungen verwenden das unbeschnittene Feld; Helligkeit und Farbsättigung haben keinen Einfluss.
+- Ein Messfenster endet nach definierter Simulationszeit, auch wenn dessen Ende innerhalb eines Rechenblocks liegt.
+- Speicherbedarf bleibt begrenzt; vollständige Feldhistorien werden nicht gesammelt.
+- Numerische Messdaten sind nach Reset vollständig neu; die bestehende Referenzszenen-Auswertung bleibt konsistent.
 
 ### S07 – Passive Detektoren, Intensitätsansicht und Messstatus
+
+**Aktueller Status (18.10.2026):** **Implementiert und im Qt-/Paket-/nativen Ablauf geprüft.** Eigene Detektorrevisionen, Bestätigung beim Übernehmen, getrennte Messzustände und Live-Intensität; andere Detektoren und Lauf bleiben erhalten.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** E08, S05/S04. **Bezug:** F09–F11, Q05–Q06; T06.
 
@@ -574,13 +641,15 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Ein verschobener Detektor beginnt erst nach bestätigter Übernahme neu; Werte der alten Position gelangen nicht in die neue Messung.
-- [ ] Feld, Lauf-ID, Simulationszeit, andere Detektoren und Referenzen bleiben dabei erhalten.
-- [ ] Ungültige Detektorpositionen lassen den gültigen Lauf und die bisherige Messung unverändert weiterlaufen.
-- [ ] Ein pausierter Lauf bleibt beim Detektorumbau pausiert; neue Messwerte entstehen erst bei ausdrücklich ausgelösten weiteren Schritten.
-- [ ] Änderung von Abtastung/Messfenster, Hinzufügen, Löschen und Undo/Redo verwenden dieselbe Revisionsregel.
+- Ein verschobener Detektor beginnt erst nach bestätigter Übernahme neu; Werte der alten Position gelangen nicht in die neue Messung.
+- Feld, Lauf-ID, Simulationszeit, andere Detektoren und Referenzen bleiben dabei erhalten.
+- Ungültige Detektorpositionen lassen den gültigen Lauf und die bisherige Messung unverändert weiterlaufen.
+- Ein pausierter Lauf bleibt beim Detektorumbau pausiert; neue Messwerte entstehen erst bei ausdrücklich ausgelösten weiteren Schritten.
+- Änderung von Abtastung/Messfenster, Hinzufügen, Löschen und Undo/Redo verwenden dieselbe Revisionsregel.
 
 ### S08 – Festgehaltene Referenzprofile und Vergleich
+
+**Aktueller Status (18.10.2026):** **Implementiert und geprüft.** Bis zu vier Referenzen mit Rohwerten/Ursprung, gemeinsame Ortsachse/Skalierung, persistente Auswahl und Projekt-Roundtrip.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S07, S06. **Bezug:** F12, F15, Q03/Q05; T06 und O06.
 
@@ -596,12 +665,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Ein Profil übersteht Reset, physikalische Änderung, neuen Run sowie Speichern und erneutes Öffnen.
-- [ ] Die Referenz bleibt dem Ursprungslauf zugeordnet; aktuelle Projektparameter überschreiben ihre Metadaten nicht.
-- [ ] Ein Vergleich unterschiedlicher Gitter verwendet dieselbe Ortsachse und gemeinsame Skalierung, ohne gespeicherte Originaldaten zu verändern.
-- [ ] Das Referenzlimit ist umgesetzt; eine Referenz benötigt keine weitere Engine-Instanz.
+- Ein Profil übersteht Reset, physikalische Änderung, neuen Run sowie Speichern und erneutes Öffnen.
+- Die Referenz bleibt dem Ursprungslauf zugeordnet; aktuelle Projektparameter überschreiben ihre Metadaten nicht.
+- Ein Vergleich unterschiedlicher Gitter verwendet dieselbe Ortsachse und gemeinsame Skalierung, ohne gespeicherte Originaldaten zu verändern.
+- Das Referenzlimit ist umgesetzt; eine Referenz benötigt keine weitere Engine-Instanz.
 
 ### S09 – PNG-/CSV-Export mit vollständiger Ergebniszuordnung
+
+**Aktueller Status (18.10.2026):** **Implementiert und im Mac-Paket geprüft.** PNG mit Metadaten, CSV mit unnormalisierten Werten und Ursprung; [native Artefakte](docs/mac-artifacts/), [Paketablauf](docs/native-results.json).
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S08. **Bezug:** F14, Q05–Q06; T06.
 
@@ -617,12 +688,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] PNG ist lesbar; CSV lässt sich mit einem unabhängigen Leser auswerten und entspricht dem dargestellten Rohprofil.
-- [ ] Szene, Lauf-ID, Engine-Version, Gitter, Zeitschritt, Laufdauer, Backend, Datentyp und Messdefinition sind zuordenbar.
-- [ ] Ein Referenzexport enthält seine Ursprungsmetadaten; gemeinsame Darstellungsnormierung verändert die Rohwerte nicht.
-- [ ] Fehlgeschlagener Export zerstört keine Projekt- oder Referenzdaten.
+- PNG ist lesbar; CSV lässt sich mit einem unabhängigen Leser auswerten und entspricht dem dargestellten Rohprofil.
+- Szene, Lauf-ID, Engine-Version, Gitter, Zeitschritt, Laufdauer, Backend, Datentyp und Messdefinition sind zuordenbar.
+- Ein Referenzexport enthält seine Ursprungsmetadaten; gemeinsame Darstellungsnormierung verändert die Rohwerte nicht.
+- Fehlgeschlagener Export zerstört keine Projekt- oder Referenzdaten.
 
 ### B04 – Vollständiger Doppelspalt-Ablauf ohne Code
+
+**Aktueller Status (18.10.2026):** **Lokaler Funktionsablauf nachgewiesen.** Echter Qt-/Worker-/Paketdurchgang einschließlich Messung, Referenz, Export und Wiederöffnung. Quantitative T03-Freigabe unter MAC-01, abschließende Release-Zuordnung unter MAC-05 offen.
 
 **Verantwortung:** Beide Repositories; Bedienabnahme in WaveStudio. **Voraussetzungen:** S09. **Bezug:** M3, T03/T05/T06.
 
@@ -638,14 +711,16 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Der zentrale Ablauf ist vom leeren Projekt bis zu Export und Wiederöffnung ohne Python-Code möglich.
-- [ ] Die Bedienregel bleibt in allen Varianten erhalten: Bearbeiten startet keinen Lauf; nur Run startet den geänderten Aufbau.
-- [ ] T03 bleibt physikalisch gültig; der GUI-Aufbau entspricht den numerischen Referenzparametern.
-- [ ] T05/T06 bestehen für den bisher implementierten Umfang. Noch fehlende M4-Funktionen sind ausdrücklich offen.
+- Der zentrale Ablauf ist vom leeren Projekt bis zu Export und Wiederöffnung ohne Python-Code möglich.
+- Die Bedienregel bleibt in allen Varianten erhalten: Bearbeiten startet keinen Lauf; nur Run startet den geänderten Aufbau.
+- T03 bleibt physikalisch gültig; der GUI-Aufbau entspricht den numerischen Referenzparametern.
+- T05/T06 bestehen für den bisher implementierten Umfang. Noch fehlende M4-Funktionen sind ausdrücklich offen.
 
 ## 9. M4 – Vollständiger Umfang und Auslieferung von Version 0.1
 
 ### S10 – Parametrisches Werkzeug für die bikonvexe Linse
+
+**Aktueller Status (18.10.2026):** **Implementiert; feste Preview-/Custom-Kontur historisch geprüft.** Symmetrischer Schnitt zweier Kreise mit Randdicke null, Apertur <2R. Quantitative Fokusfreigabe und Balanced/High Quality bleiben MAC-01; [Linsennachweis](docs/quality-lens-results.json).
 
 **Verantwortung:** WaveStudio; notwendige Rasterkorrekturen in WaveSimulator2D. **Voraussetzungen:** B04, E07, S05; O05 geklärt. **Bezug:** F05, T04.
 
@@ -660,11 +735,13 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Die parametrisierte Linse reproduziert den festen T04-Aufbau innerhalb derselben Toleranzen.
-- [ ] Eine feinere Diskretisierung verändert die numerische Näherung, nicht die gespeicherte Kontur.
-- [ ] Dickenregel und Grenzen sind verständlich beschrieben; Speichern, Laden und Undo/Redo erhalten sämtliche Parameter.
+- Die parametrisierte Linse reproduziert den festen T04-Aufbau innerhalb derselben Toleranzen.
+- Eine feinere Diskretisierung verändert die numerische Näherung, nicht die gespeicherte Kontur.
+- Dickenregel und Grenzen sind verständlich beschrieben; Speichern, Laden und Undo/Redo erhalten sämtliche Parameter.
 
 ### S11 – Zweite Ansicht sowie Abstands- und Winkelwerkzeuge
+
+**Aktueller Status (18.10.2026):** **Implementiert und lokal geprüft.** Zwei Ansichten desselben Laufs mit gemeinsamem Maßstab/Zentrum, Abstand/Winkel bei zwei Zoomstufen; [Mac-Abnahme](docs/MAC_ACCEPTANCE.md). Aktuelle Reaktionszeit unter MAC-02.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** B04, S07. **Bezug:** F09, F13, Q02–Q03; T05–T07.
 
@@ -679,11 +756,13 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Zoom und Verschieben halten die Ansichten synchron; beide zeigen denselben Lauf und zuordenbaren Zustand.
-- [ ] Ein bekannter Abstand und Winkel stimmen innerhalb der festgelegten Anzeigeauflösung; Zoom verändert die Werte nicht.
-- [ ] Zu-/Abschalten der Ansicht verändert weder Gitter noch Messergebnisse und bleibt innerhalb der Budgets aus B03.
+- Zoom und Verschieben halten die Ansichten synchron; beide zeigen denselben Lauf und zuordenbaren Zustand.
+- Ein bekannter Abstand und Winkel stimmen innerhalb der festgelegten Anzeigeauflösung; Zoom verändert die Werte nicht.
+- Zu-/Abschalten der Ansicht verändert weder Gitter noch Messergebnisse und bleibt innerhalb der Budgets aus B03.
 
 ### S12 – Finale Qualitätsstufen, Rechengeräte und Rechenmodi
+
+**Aktueller Status (18.10.2026):** **Implementiert; finale Qualitäts-/Leistungsfreigabe offen (MAC-01/02).** Wellenlängen-/Struktur-/Wegregeln, Expertenwerte, CPU/MPS/Auto und Rechenmodi vorhanden; Projektbudgets 512 MiB/4096 als Defaults, explizit konfigurierbar. Ressourcenfreigabe eines Rasters ist keine quantitative Physikfreigabe.
 
 **Verantwortung:** WaveStudio, numerische Grenzwerte aus WaveSimulator2D. **Voraussetzungen:** B03, S10, E08. **Bezug:** F06, F17–F18, Q02–Q04; T07/T08.
 
@@ -699,12 +778,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Qualitätswechsel erhalten Referenzlänge, Geometrie, Quellenparameter und beabsichtigte Dämpfung. Das Gitter wird während eines Laufs nicht geändert.
-- [ ] Rechenmoduswechsel verändert nur Rechen-/Anzeigebudget, nicht Gitter, Laufidentität oder Messdefinition.
-- [ ] CPU ist auf allen Plattformen nutzbar; jedes angebotene GPU-Backend hat T08 bestanden. CUDA bleibt bei fehlendem Hardwaretest außerhalb der zugesagten Unterstützung.
-- [ ] Die Referenzszenen tragen die gewählten Presets im dokumentierten Anwendungsbereich; außerhalb davon gibt es keine pauschale Genauigkeitszusage.
+- Qualitätswechsel erhalten Referenzlänge, Geometrie, Quellenparameter und beabsichtigte Dämpfung. Das Gitter wird während eines Laufs nicht geändert.
+- Rechenmoduswechsel verändert nur Rechen-/Anzeigebudget, nicht Gitter, Laufidentität oder Messdefinition.
+- CPU ist auf allen Plattformen nutzbar; jedes angebotene GPU-Backend hat T08 bestanden. CUDA bleibt bei fehlendem Hardwaretest außerhalb der zugesagten Unterstützung.
+- Die Referenzszenen tragen die gewählten Presets im dokumentierten Anwendungsbereich; außerhalb davon gibt es keine pauschale Genauigkeitszusage.
 
 ### S13 – Drei Beispiele, Bedienbarkeit und Dokumentation
+
+**Aktueller Status (18.10.2026):** **Beispiele, Hilfe und Bedienfunktionen implementiert; Abschlussabnahme offen.** Themes, skalierte Schrift und viele native Abläufe geprüft; MAC-03 für AX/Tastatur/menschliche Abnahme, MAC-05 für konsistente finale Nachweise und Dokumentation.
 
 **Verantwortung:** WaveStudio. **Voraussetzungen:** S10–S12, S09. **Bezug:** F01, F16, Q04; vollständige T05/T06.
 
@@ -720,12 +801,14 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] Alle Beispiele lassen sich öffnen, ändern, speichern und erneut simulieren; sie verwenden die abgenommenen Parameterbereiche.
-- [ ] T05/T06 bestehen mit allen Version-0.1-Funktionen, einschließlich ungültiger Eingabe und relevantem Laufzeitfehler.
-- [ ] Beide Farbschemata funktionieren mit skalierter Schrift; zentrale Bedienwege sind per Tastatur erreichbar.
-- [ ] Dokumentation und UI behaupten keine ungemessene Genauigkeit, absolute Leistung oder nicht unterstützte Backend-Funktion.
+- Alle Beispiele lassen sich öffnen, ändern, speichern und erneut simulieren; sie verwenden die abgenommenen Parameterbereiche.
+- T05/T06 bestehen mit allen Version-0.1-Funktionen, einschließlich ungültiger Eingabe und relevantem Laufzeitfehler.
+- Beide Farbschemata funktionieren mit skalierter Schrift; zentrale Bedienwege sind per Tastatur erreichbar.
+- Dokumentation und UI behaupten keine ungemessene Genauigkeit, absolute Leistung oder nicht unterstützte Backend-Funktion.
 
 ### E09 – Engine-Stabilisierung und separat versioniertes Release
+
+**Aktueller Status (18.10.2026):** **Teilweise erfüllt; stabiles Engine-Release offen (MAC-05).** Unveränderliche dev4-Wheels und Versionszuordnung existieren. Finale numerische Freigabe, Änderungsnotizen und Prüfung des tatsächlichen Release-Stands folgen nach MAC-01.
 
 **Verantwortung:** WaveSimulator2D. **Voraussetzungen:** E08, S12. **Bezug:** Q04–Q05; numerischer Teil der Freigabe.
 
@@ -740,33 +823,35 @@ Falls eine Szene scheitert, werden zuerst Skalierung, Rasterisierung, Beleuchtun
 
 **Abschlusskriterien:**
 
-- [ ] T01–T04 bestehen auf dem Release-Stand; T08 deckt jedes zugesagte Backend ab.
-- [ ] Wheel-Installation und CPU-Lauf funktionieren ohne Quellcheckout und ohne Visualisierungsabhängigkeiten, die für den Kern nicht benötigt werden.
-- [ ] Die ausgelieferte Version ist auslesbar und eindeutig einem Engine-Commit zugeordnet.
-- [ ] Benötigte Änderungen aus Studio sind enthalten; nach diesem Punkt erzeugt jede weitere Engine-Änderung ein neues Release-Artefakt und die passende Nachprüfung.
+- T01–T04 bestehen auf dem Release-Stand; T08 deckt jedes zugesagte Backend ab.
+- Wheel-Installation und CPU-Lauf funktionieren ohne Quellcheckout und ohne Visualisierungsabhängigkeiten, die für den Kern nicht benötigt werden.
+- Die ausgelieferte Version ist auslesbar und eindeutig einem Engine-Commit zugeordnet.
+- Benötigte Änderungen aus Studio sind enthalten; nach diesem Punkt erzeugt jede weitere Engine-Änderung ein neues Release-Artefakt und die passende Nachprüfung.
 
 ### B05 – Gemeinsame Release-Abnahme und Anwendungspakete
+
+**Aktueller Status (18.10.2026):** **Offen für eine abschließende Mac-Freigabe (MAC-04–06).** Dev13-Paketworkflow bestanden, aber Physik-/GUI-/AX-Restbefunde und saubere fremde Mac-/Auslieferungsprüfung bleiben offen. Windows-/Linux-Abnahme ausdrücklich zurückgestellt.
 
 **Verantwortung:** Beide Repositories; Veröffentlichung der Anwendung über WaveStudio. **Voraussetzungen:** E09, S13, B04; Auslieferungsteil O07 geklärt. **Bezug:** F01–F18, Q01–Q06, T01–T09.
 
 **Arbeitsschritte:**
 
 - Studio fest an die Engine-Version aus E09 binden. Abhängigkeiten, Build-Konfiguration, eingebundene Beispiele und erforderliche Lizenzhinweise dokumentieren.
-- Für die bestätigte Matrix native Anwendungspakete erstellen: macOS/ARM64 sowie die in B03 bestätigten Windows-/Linux-Architekturen. Build-Ausgaben dürfen nicht auf editierbare Nachbarquellen zeigen.
-- Je Betriebssystem auf möglichst sauberer Installation ohne separat installiertes Python und bei deaktivierter Netzwerkverbindung T09 durchführen.
+- Für die unter MAC-04 bestätigte Mac-Matrix das native Anwendungspaket erstellen. Windows-/Linux-Architekturen und Pakete folgen nach Wiederaufnahme. Build-Ausgaben dürfen nicht auf editierbare Nachbarquellen zeigen.
+- T09 auf möglichst sauberer Mac-Installation ohne separat installiertes Python und bei deaktivierter Netzwerkverbindung durchführen; Windows/Linux später nach demselben Grundsatz.
 - Ressourcen-/Backendnachweise gezielt aktualisieren, soweit finale Funktionen oder Paketierung ihre Gültigkeit verändern. Keine vollständige numerische Testmatrix pro Betriebssystem aufbauen.
 - Verteilungsmodell, Versionskennzeichnung, erforderliche Signierung und Aktualisierungsweg vor öffentlicher Veröffentlichung klären. Ein dokumentierter manueller Austausch des Anwendungspakets kann der erste Aktualisierungsweg sein; ein automatischer Updater ist kein zusätzlicher Pflichtumfang.
 - Release-Paar, Prüfergebnisse, bekannte Grenzen und Installationshinweise gemeinsam ablegen.
 
-**Lieferobjekte:** Drei abgenommene Anwendungspakete, feste Engine-Version, vollständige Abnahmeübersicht und Release-Notizen.
+**Lieferobjekte:** Abgenommenes Mac-Anwendungspaket, feste Engine-Version, Mac-Abnahmeübersicht und Release-Notizen; Windows-/Linux-Pakete und plattformübergreifende Gesamtübersicht bleiben zurückgestellt.
 
 **Abschlusskriterien:**
 
-- [ ] Start, Run/Pause, Speichern/Laden sowie PNG-/CSV-Export funktionieren je Zielbetriebssystem offline im ausgelieferten Paket.
-- [ ] Die Anwendung benötigt weder benachbarten Engine-Code noch eine Python-Installation des Nutzers.
-- [ ] Alle verpflichtenden F-/Q-Anforderungen sind mit Nachweisen verknüpft; T01–T09 sind im vereinbarten Umfang bestanden.
-- [ ] Keine offene Abweichung verhindert einen zentralen Bedienablauf, korrekte Ergebniszuordnung, Datenerhalt oder die zugesagte Plattformfunktion.
-- [ ] Versionspaar, Betriebssysteme, Hardware, Backendumfang, Budgets und Modellgrenzen sind dokumentiert. Öffentliche Verteilung erfolgt erst nach den dafür geklärten O07-Entscheidungen.
+- Start, Run/Pause, Speichern/Laden sowie PNG-/CSV-Export funktionieren je Zielbetriebssystem offline im ausgelieferten Paket.
+- Die Anwendung benötigt weder benachbarten Engine-Code noch eine Python-Installation des Nutzers.
+- Alle verpflichtenden F-/Q-Anforderungen sind mit Nachweisen verknüpft; T01–T09 sind im vereinbarten Umfang bestanden.
+- Keine offene Abweichung verhindert einen zentralen Bedienablauf, korrekte Ergebniszuordnung, Datenerhalt oder die zugesagte Plattformfunktion.
+- Versionspaar, Betriebssysteme, Hardware, Backendumfang, Budgets und Modellgrenzen sind dokumentiert. Öffentliche Verteilung erfolgt erst nach den dafür geklärten O07-Entscheidungen.
 
 ## 10. Begrenzte Prüfstrategie und Nachweise
 
@@ -800,22 +885,23 @@ Ein kurzer Bericht pro Meilenstein bzw. zusammengehöriger Prüfung genügt. Er 
 
 Ein Screenshot allein gilt nicht als physikalischer Nachweis. Für Leistungsberichte sind Simulationsschritte/s und Bildrate getrennte Größen. Eine Paketabnahme benennt das tatsächlich gestartete Artefakt, nicht nur den Quellstand.
 
-### 10.3 In B03 auszufüllende Budgettabelle
+### 10.3 Lokale Budgets und ihre Nachweise
 
-Die nachstehenden Felder sind ausdrücklich noch offen. Sie werden durch Messung und Produktentscheidung konkret, nicht durch angenommene Standardwerte.
+Die vorläufige 30-FPS-Erwartung aus dem PRD wurde für die lokale 512²-Referenz durch vorab festgelegte Budgets ersetzt. Kriterien und Messkontexte bleiben getrennt; die fehlgeschlagene dev8-Nachprüfung hebt diese Grenzen nicht auf.
 
-| Größe | Benötigte Festlegung in M1 | Späterer Nachweis |
+| Bereich | Vereinbarte Regel / aktueller Stand | Nachweis / offene Arbeit |
 | --- | --- | --- |
-| Pause-/Abbruchreaktion | Messmethode, zulässige Latenz, maximale Rechenblockdauer auf Referenzhardware | T05/T07 |
-| Darstellungsleistung | Zielbildrate für vereinbarte Referenzszene; Kosten einer zweiten Ansicht | T07 mit S11 |
-| Simulationsfortschritt | Akzeptabler Fortschritt für kompakte Beispiele auf M1 und schwächerer CPU | T07 |
-| Speicher | Obergrenze für repräsentative Szene, Feld-/Frame-/Mess-/Referenzpuffer und Startprüfung | T07 und F06 |
-| Leerlauf und Pause | Zulässige Last; keine numerischen Schritte und Neuzeichnung nur bei Bedarf | T07 |
-| Rechenmodi | Schritt-/Zeitbudget, Bildratenlimit und gegebenenfalls CPU-Parallelität | S12/T07 |
-| Qualitätsregeln | Validierter Bereich, benötigte Auflösung, Schrittweite und Warn-/Fehlergrenzen | E07/S12 |
-| Start und Paket | Gemessene Startzeit, Paketgröße, unterstützte Systembasis; erforderlicher Handlungsbedarf | T09 |
+| 512² CPU/MPS | ≥20 angezeigte Frames/s bei einer/zwei Ansichten; Pause <100 ms; RSS ≤1 GiB. | Historischer dev3-Lauf bestanden: 22–27 Frames/s, maximal 8,82/36,37 ms Pause, RSS ≤286 MiB; [Mac-Abnahme](docs/MAC_ACCEPTANCE.md), [Rohwerte](docs/resource-results.json). Kein pauschales Großrasterbudget. |
+| Sparsamer Betrieb | ≤240 Schritte/s, Anzeige ≤30/s; stationärer Leerlauf/Pause ≤0,10 CPU-Sekunden/s; pausiert keine Schritte/wiederholten Frames. | Historisch geprüft; Moduswechsel erhält Lauf/Raster/Messung. |
+| Große Balanced-Linse | MPS, 3780×2268; explizit 768 MiB/4096 Achsenbudget, 588,7 MiB geschätzte numerische Puffer. | Dev4-Ressourcenlauf bestanden; optische Abnahme offen. [Protokoll](docs/BALANCED_MAC_PLAN.md), [Bericht](docs/BALANCED_MAC_ACCEPTANCE.md). |
+| Große Raster: Interaktion | Pause und stationäre GUI-Lücke <250 ms; Run/Resume/Reset-Handler <250 ms; Vorbereitung <5 s, erstes Frame <10 s; Worker-Reset/Schließen <2 s. | Dev8-Pausen ≤99,39 ms, Reset 21,52 ms, Schließen 129,41 ms; GUI-Lücke **500,86 ms: nicht bestanden**. MAC-02. |
+| Große Raster: Speicher | Prozess-RSS <2 GiB und MPS-Treiber separat <2 GiB; überlappenden Unified Memory nicht addieren. | Dev8: 949,8 / 1117,1 MiB; nach Reset null lebende MPS-Tensoren. [Fehlgeschlagener Gesamtlauf](docs/performance/balanced-resource-dev8.json). |
+| Vergleichbare native FPS | Produktiver Qt-Takt, feste Ansichten/Aktivität und protokollierter Stromsparzustand; kein universelles 18–20-FPS-Ziel. | Dev8-Paket 15,45/16,25 Frames/s ohne/mit Scheduling-Hinweisen, beobachteter Vergleich 15,70/s. Alte 5–8 gegenüber 18–20 nicht vollständig erklärt; [Untersuchung](docs/PERFORMANCE_INVESTIGATION.md). |
+| Ressourcen-Zulassung | Defaults 512 MiB/4096 Zellen je Achse; explizite Projektbudgets, Ablehnung vor Allokation. Live-Anzeige großer Felder bis 1024/Achse, Pause/Step volles Raster; Numerik/Messung unverändert. | [Entwicklungsanleitung](docs/DEVELOPMENT.md), [native Budgetbedienung](docs/balanced-native-results.json). Zulassung ist keine Genauigkeitszusage. |
+| Qualitätsregeln | Mindestens 10/12/20 Zellen je kürzester Materialwellenlänge, 2/4/6 je erfasster Struktur; geschätzte homogene Phasendrift π/π/2/π/4. | Implementierte Prototypregeln; quantitative Fehler-/Phasenanforderung und feinere Linsenabnahme unter MAC-01 offen. |
+| Start / Paket / Systeme | Start und Paketgröße in Berichten erfassen; aktuelles Bundle etwa 1,08 GB Dateiinhalte laut Buildbericht. Nur M1/8 GiB, macOS 27.0.1 arm64 geprüft. | [Buildbericht](docs/build-results.json); Mac-Mindestbasis/sauberer Fremd-Mac unter MAC-04/06 offen; Windows/Linux und schwächere Hardware zurückgestellt. |
 
-Die Abnahme darf erst als bestanden gelten, wenn die jeweils benötigten Felder konkrete Werte bzw. überprüfbare Regeln enthalten. Eine größere Paketdatei ist kein eigenständiger Ablehnungsgrund, solange die vereinbarten Laufzeit- und Auslieferungsanforderungen erfüllt sind.
+Direkte systemweite GPU-Aktivität wurde gelesen; kalibrierte Energie-/Prozesszuordnung fehlt. Es ist kein zusätzlicher privilegierter Messzugriff eingeplant. Bei relevanten numerischen, Worker- oder Buildänderungen werden die betroffenen Nachweise aktualisiert; ein historischer Pass zertifiziert keinen geänderten Release-Stand.
 
 ## 11. Arbeitsablauf über zwei Repositories
 
@@ -834,7 +920,7 @@ python -m pip install -e ../WaveSimulator2D
 python -m pip install -e .
 ```
 
-Diese Befehle sind **Zielzustand nach Paketierung**, noch keine im aktuellen Ausgangsstand funktionierende Installationsanleitung. Release-Builds ersetzen die editierbare Engine-Installation durch das konkrete Wheel der festgelegten Version.
+Diese Editable-Integration ist eingerichtet; Python 3.12 und optionale Entwicklungsabhängigkeiten siehe [Entwicklungsanleitung](docs/DEVELOPMENT.md). Release-Builds verwenden das konkrete Wheel der festgelegten Engine-Version.
 
 ### 11.2 Veröffentlichung eines passenden Versionspaars
 
@@ -842,7 +928,7 @@ Diese Befehle sind **Zielzustand nach Paketierung**, noch keine im aktuellen Aus
 2. Eine eindeutige Engine-Version bauen und das Artefakt mit Commit und Prüfergebnis verbinden.
 3. In WaveStudio exakt diese Version eintragen; in einer sauberen Umgebung ohne editierbaren Engine-Pfad installieren.
 4. Betroffene Integration und finale T05/T06 prüfen, dann native Anwendungspakete bauen.
-5. T09 am tatsächlichen Paket auf jeder zugesagten Plattform ausführen und das Versionspaar dokumentieren.
+5. T09 am tatsächlichen Mac-Paket auf der in MAC-04 festgelegten Basis ausführen und das Versionspaar dokumentieren. Windows/Linux folgen erst nach Wiederaufnahme ihres zurückgestellten Umfangs.
 6. Bei einem Fehler das betroffene Repository korrigieren, betroffene Prüfungen wiederholen und erforderliche Artefakte neu versionieren. Ein bereits zugeordnetes Release-Artefakt nicht still durch anderen Inhalt ersetzen.
 
 Der Release-Nachweis enthält mindestens:
@@ -860,17 +946,17 @@ Ein Paketindex, eine bestimmte CI-Plattform oder ein automatischer Update-Dienst
 
 ## 12. Offene Entscheidungen und ihre Blocker
 
-Die IDs O01–O07 stammen aus dem PRD. Zuständigkeit bezeichnet den fachlichen Entscheidungsschwerpunkt; Produktumfang, Budget und öffentliche Verteilung werden mit dem Projektverantwortlichen festgelegt. Routineimplementierung innerhalb dieses Plans benötigt keine zusätzliche Umfangsentscheidung.
+Die IDs O01–O07 stammen aus dem PRD. Die Tabelle zeigt den aktuellen Entscheidungsstand. Routineimplementierung innerhalb des vereinbarten Umfangs benötigt keine zusätzliche Umfangsentscheidung; öffentliche Verteilung und noch fehlende Produktvorgaben bleiben zu klären.
 
-| ID | Entscheidung/benötigte Information | Bearbeitung und Nachweis | Muss geklärt sein vor | Folge bei offenem Punkt |
-| --- | --- | --- | --- | --- |
-| O01 | Skalierung, Quellenanregung, Stabilität, Materialmittelung, Wandbedingung, Dämpfungsumrechnung | Engine E02–E06; Modellvertrag und kleine Messungen | M0a/M0b-Abnahme | Keine physikalisch beschriftete Freigabe und kein größerer Editor-Ausbau |
-| O02 | Messgrößen, Referenzen, Parameterbereiche, Fehlertoleranzen | Engine E07; pro T01–T04 festgehaltene Referenzannahmen | Abnahme der jeweiligen Referenz | Messung kann untersucht, aber nicht als bestanden bezeichnet werden |
-| O03 | Windows-/Linux-Hardware, OS-Versionen, Distribution, Architekturen, NVIDIA-Testmöglichkeit | B03; reale native Erstbuilds und Hardwareliste | M1-Abschluss und endgültige Build-Matrix | Plattform-/CUDA-Unterstützung bleibt unbestätigt; Pflichtplattformen bleiben offen |
-| O04 | Last-/Speicherbudgets, Qualitätsauflösung, Blockdauer, Rechenbegrenzung | B03, danach Finalisierung S12 | Ende M1; finale Presets vor M4 | Kein belastbares Leistungsversprechen oder finales Qualitätsprofil |
-| O05 | Dickenregel und zulässige Parameter der bikonvexen Linse | Feste T04-Geometrie in E07; parametrischer Vertrag vor S10 | Umsetzung des Linsenwerkzeugs | Fester physikalischer Nachweis möglich, Werkzeug noch nicht freigabefähig |
-| O06 | Standard-Einlaufphase/Messfenster, Referenz-/Historienlimit, Wiederherstellungsintervall und -limit | S06 für Wiederherstellung; E08/S07/S08 für Messung und Referenzen | Jeweilige Persistenz-/Messabnahme | Betroffener Teil bleibt offen; andere unabhängige Arbeit kann weitergehen |
-| O07 | Aufwand nach M0/M1; Veröffentlichung, Verteilungsmodell, Signierung, Aktualisierungsweg | Schätzung B03; Auslieferungsvorgaben B05 | Planung M2–M4 bzw. öffentliche Veröffentlichung | Keine ungesicherte Terminzusage; lokale Entwicklungsarbeit bleibt möglich |
+| ID | Aktueller Entscheidungsstand | Restarbeit / Auswirkung |
+| --- | --- | --- |
+| O01 | Modellvertrag umgesetzt: c0=1, kalibrierter Neunpunkt-Stencil, additive Quellen, Zellmittelpunkte, Dirichlet-Wände und zeitbezogene Dämpfung. | Fehlerbilanz und quantitative Reichweite unter O02/MAC-01 weiter absichern; [Modell](../WaveSimulator2D/docs/MODEL.md). |
+| O02 | v1-Grenzen vorab eingefroren; Prüfung vom 18.10. bewertet sie als Demonstrationsgrenzen. | Quantitative Referenzen, neue begründete Toleranzen, Konvergenz und Messunsicherheit offen; MAC-01. Vorgeschlagene strengere Prozentwerte sind nicht aktiviert. |
+| O03 | Mac: M1/8 GiB, macOS 27.0.1 arm64, CPU/MPS geprüft. | Mac-Mindestbasis/fremde Testinstallation unter MAC-04/06; Windows-/Linux-Matrix und schwächere Hardware zurückgestellt; CUDA unbestätigt/nicht angeboten. |
+| O04 | Lokale 512²-/Großrasterbudgets und Presetregeln festgelegt, Ressourcenlimits konfigurierbar. | Dev8-GUI-Lücke überschreitet Grenze; MAC-02. Quantitative Preset-/Phasenfreigabe MAC-01. |
+| O05 | Festgelegt/implementiert: symmetrischer Schnitt zweier Kreise, Randdicke null, Apertur <2R. | Quantitative Fokusgenauigkeit ist separate MAC-01-Aufgabe. |
+| O06 | Implementiert: editierbare Einlauf-/Fensterdefaults 32/16 Simulationszeiteinheiten, vier Referenzen, eine Wiederherstellung bis 8 MiB alle 30 s bei Änderung. | Grenzen/Format in [DEVELOPMENT.md](docs/DEVELOPMENT.md); keine offene Grundsatzentscheidung. |
+| O07 | Lokale Entwicklung/Bundles vorhanden, keine zugesagte öffentliche Veröffentlichung und kein Termin. | Restaufwand, Verteilungsmodell, erforderliche Signierung/Notarisierung und Aktualisierungsweg klären; MAC-04–06. Manueller Austausch genügt als möglicher erster Updateweg. |
 
 ### 12.1 Technische Risiken und Reaktion
 
@@ -918,12 +1004,12 @@ Die Tabelle benennt die umsetzenden Pakete und die maßgeblichen Prüfungen. B05
 
 Ein Arbeitspaket ist abgeschlossen, wenn sein Lieferobjekt vorliegt, seine konkreten Kriterien erfüllt sind und die davon betroffenen Prüfungen bestanden wurden. Ein vorbereiteter Entwurf, ein gestarteter Prozess oder ein plausibles Bild genügt nicht.
 
-- [ ] Anforderungen und betreffende offene Entscheidungen sind für diesen Umfang geklärt.
-- [ ] Die Änderung liegt im zuständigen Repository; zugehörige Änderungen im anderen Repository sind eindeutig benannt.
-- [ ] Relevante Prüfungen aus T01–T09 sind durchgeführt und knapp dokumentiert. Nicht betroffene Prüfungen werden nicht ohne Anlass ausgeweitet.
-- [ ] Für Änderungen über beide Repositories ist die gemeinsam getestete Kombination festgehalten.
-- [ ] Schnittstellen-, Bedien- und Modellbeschreibung entsprechen dem tatsächlich implementierten Verhalten.
-- [ ] Verbleibende Abweichungen sind sichtbar; keine davon widerspricht dem beanspruchten Abschluss.
+- Anforderungen und betreffende offene Entscheidungen sind für diesen Umfang geklärt.
+- Die Änderung liegt im zuständigen Repository; zugehörige Änderungen im anderen Repository sind eindeutig benannt.
+- Relevante Prüfungen aus T01–T09 sind durchgeführt und knapp dokumentiert. Nicht betroffene Prüfungen werden nicht ohne Anlass ausgeweitet.
+- Für Änderungen über beide Repositories ist die gemeinsam getestete Kombination festgehalten.
+- Schnittstellen-, Bedien- und Modellbeschreibung entsprechen dem tatsächlich implementierten Verhalten.
+- Verbleibende Abweichungen sind sichtbar; keine davon widerspricht dem beanspruchten Abschluss.
 
 Ein kurzer Abschlussvermerk kann je Paket so geführt werden:
 
@@ -938,14 +1024,14 @@ Offene Abweichungen: <konkret oder keine>
 Nächste freigegebene Arbeit: <AP-ID>
 ```
 
-### 14.1 Unmittelbare erste Arbeitsschritte
+### 14.1 Nächste Arbeit am vorhandenen Mac-Stand
 
-1. **B01 fortsetzen:** Die angelegte Struktur und den erhaltenen Engine-Arbeitsstand als Ausgangspunkt verwenden; Python-Umgebung und Entwicklungsanleitung vervollständigen.
-2. **E01 und B02:** Engine installierbar machen und den kleinen gemeinsamen Vertrag festlegen; beide Aufgaben sind weitgehend unabhängig.
-3. **E02 → E03:** Skalierung/zulässige Parameter bestimmen, Gerätewahl und Reset korrigieren.
-4. **E04 sowie E05 → E06:** Quellen und Material-/Wand-/Dämpfungspfad umsetzen. S01 kann daneben den frühen Fenster-/Paketprototyp liefern.
-5. **E07:** Vier kleine physikalische Referenzen abnehmen. S02–S04 verbinden währenddessen die vorbereitete Engine mit dem Prototyp.
-6. **B03:** Auf realer Hardware messen, native Erstpakete auf drei Systemen starten und erst danach die belastbare Planung von M2–M4 abschließen.
+1. **MAC-01:** Versionierte quantitative Abnahme mit geeigneten Referenzen/Fehlerbilanz vorbereiten; die unklaren Spalt-/Linsenfälle und die T02-Winkelreferenz gezielt bearbeiten.
+2. **MAC-02:** Die verbleibende GUI-Unterbrechung mit der vorhandenen Diagnose eingrenzen und eine Korrektur gegen die unveränderten Budgets nachweisen.
+3. **MAC-03/04:** AX-/Tastatur-/menschliche Bedienabnahme und Mac-Auslieferungsumfang samt Restaufwand vorbereiten.
+4. **MAC-05/06:** Nach den erforderlichen Vorarbeiten finales Versionspaar, gemeinsame Nachweise und das tatsächliche Mac-Paket auf sauberer Installation abnehmen.
+
+Die ausführlichen Abschlusskriterien stehen in Abschnitt 3.4; der Fortschritt wird in [task.md](task.md) geführt. Windows und Linux bleiben bis zu einer ausdrücklichen Wiederaufnahme zurückgestellt.
 
 ### 14.2 Ausdrücklich außerhalb dieses Plans
 

@@ -1,0 +1,109 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "Apple M1 / 8 GiB",
+  "studio": "0.1.0.dev11",
+  "engine": "0.1.0.dev4",
+  "device": "mps",
+  "criteria": "docs/BALANCED_MAC_PLAN.md",
+  "measurements": {
+    "one_view_economical": {
+      "rss_peak_bytes": 1129447424,
+      "mps_current_bytes": 248686848,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.001554750022478,
+      "displayed_frames_per_second": 24.896129274245123,
+      "steps_per_second": 24.896129274245123,
+      "process_cpu_seconds_per_second": 0.6789312431634429,
+      "gui_heartbeat_max_gap_ms": 122.5115000270307
+    },
+    "paused": {
+      "rss_peak_bytes": 1129447424,
+      "mps_current_bytes": 248681728,
+      "mps_driver_bytes": 1171390464,
+      "wall_seconds": 1.0005914999637753,
+      "displayed_frames_per_second": 0.0,
+      "steps_per_second": 0.0,
+      "process_cpu_seconds_per_second": 0.08454998868475577,
+      "gui_heartbeat_max_gap_ms": 27.197292016353458
+    },
+    "two_views_economical": {
+      "rss_peak_bytes": 1129447424,
+      "mps_current_bytes": 248725248,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.012244791956618,
+      "displayed_frames_per_second": 25.368936265327036,
+      "steps_per_second": 25.368936265327036,
+      "process_cpu_seconds_per_second": 0.5552996471347252,
+      "gui_heartbeat_max_gap_ms": 36.30999999586493
+    },
+    "two_views_performance": {
+      "rss_peak_bytes": 1129447424,
+      "mps_current_bytes": 248686848,
+      "mps_driver_bytes": 1171406848,
+      "wall_seconds": 10.001553000009153,
+      "displayed_frames_per_second": 25.096102575247095,
+      "steps_per_second": 25.096102575247095,
+      "process_cpu_seconds_per_second": 0.5559699578650346,
+      "gui_heartbeat_max_gap_ms": 29.13612499833107
+    }
+  },
+  "pause_samples_ms": [
+    44.62083399994299,
+    83.2388749695383,
+    45.27374997269362,
+    76.9718749797903,
+    41.50133300572634,
+    64.97333297738805
+  ],
+  "note": "Process RSS and MPS allocations overlap on unified memory; do not add them. Resource/interaction acceptance only; no new focus certification.",
+  "system_swap_before": "vm.swapusage: total = 6144.00M  used = 5624.94M  free = 519.06M  (encrypted)",
+  "baseline": {
+    "rss_peak_bytes": 333709312,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 393216
+  },
+  "grid": [
+    3780,
+    2268
+  ],
+  "dx": 0.021164021164021163,
+  "estimated_buffer_bytes": 617258880,
+  "buffer_limit_mib": 768,
+  "max_axis_cells": 4096,
+  "preparation_seconds": 0.5496371670160443,
+  "resource_json_roundtrip": true,
+  "run_handler_ms": 0.4194590146653354,
+  "first_frame_seconds": 1.0516298749716952,
+  "live_display_shape": [
+    614,
+    1024
+  ],
+  "live_preview_marked": true,
+  "paused_display_shape": [
+    2268,
+    3780
+  ],
+  "paused_full_detail": true,
+  "paused_steps_stable": true,
+  "exact_step": true,
+  "resume_handler_ms": 0.48095802776515484,
+  "run_grid_measurements_preserved": true,
+  "paused_scene_screenshot": "/Users/sebastian/Documents/VSCode/WaveStudioApp/WaveStudio/docs/performance/dev11-resource-trace/balanced-two-views.png",
+  "reset_handler_ms": 17.122458026278764,
+  "reset_release_ms": 44.82666600961238,
+  "after_reset": {
+    "rss_peak_bytes": 1129447424,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 72482816
+  },
+  "reset_stopped": true,
+  "active_shutdown_ms": 138.4562909952365,
+  "worker_stopped": true,
+  "system_swap_after": "vm.swapusage: total = 6144.00M  used = 5688.12M  free = 455.88M  (encrypted)",
+  "passed": true,
+  "terminal_memory": {
+    "rss_peak_bytes": 1129447424,
+    "mps_current_bytes": 0,
+    "mps_driver_bytes": 72482816
+  }
+}

@@ -94,7 +94,7 @@ class MainWindow(PrototypeWindow):
         panel=QWidget();side=QVBoxLayout(panel);side.setContentsMargins(12,12,12,12)
         row=QHBoxLayout();self.add_combo=QComboBox();self.add_combo.addItems(['Point source','Line source','Material rectangle','Polygon','Wall','Biconvex lens','Point detector','Detector line']);row.addWidget(self.add_combo)
         add_button=QPushButton('+');add_button.clicked.connect(lambda:self.add_object(self.add_combo.currentText()));row.addWidget(add_button);side.addLayout(row)
-        self.tree=QTreeWidget();self.tree.setMinimumHeight(170);self.tree.setHeaderLabels(['Scene (top material last)']);self.tree.itemSelectionChanged.connect(self._selected);side.addWidget(self.tree,1)
+        self.tree=self._make_scene_tree();side.addWidget(self.tree,1)
         buttons=QHBoxLayout()
         for label,slot in [('Edit',self.edit_selected),('Copy',self.duplicate_selected),('Delete',self.delete_selected)]:
             b=QPushButton(label);b.clicked.connect(slot);buttons.addWidget(b)
@@ -191,6 +191,21 @@ class MainWindow(PrototypeWindow):
         self.display_settings_button.setText('Display ▾' if expanded else 'Display ▸')
         self.display_settings_panel.setVisible(expanded and self.display_settings_button.isEnabled())
 
+    def _make_scene_tree(self):
+        tree=QTreeWidget();tree.setMinimumHeight(170)
+        tree.setObjectName('sceneOutline')
+        tree.setHeaderLabels(['Scene (top material last)'])
+        tree.itemSelectionChanged.connect(self._selected)
+        return tree
+
+    @staticmethod
+    def _name_scene_tree(tree):
+        # Naming can create the native accessibility interface. Do this after
+        # rows and inherited styling are ready, so Cocoa sees a complete model.
+        if tree.accessibleName()!='Scene objects':tree.setAccessibleName('Scene objects')
+        description='Select a source, material, wall, lens or detector to edit its properties.'
+        if tree.accessibleDescription()!=description:tree.setAccessibleDescription(description)
+
     def _apply_theme(self,theme):
         super()._apply_theme(theme)
         if hasattr(self,'second'):
@@ -267,7 +282,11 @@ class MainWindow(PrototypeWindow):
             widget.blockSignals(True);widget.setCurrentText(value);widget.blockSignals(False)
         self._sync_display_controls()
         if candidate.display.secondary_visible and not before.display.secondary_visible:self.splitter.setSizes([500,500])
-        self._apply_theme(candidate.display.theme)
+        # Re-polishing every widget for a physical/measurement edit invalidates
+        # the native macOS outline accessibility objects. Style only changes
+        # when its actual inputs change; scene rows and focus remain intact.
+        if (before.display.theme,before.display.text_scale)!=(candidate.display.theme,candidate.display.text_scale):
+            self._apply_theme(candidate.display.theme)
         if kind=='display':self._draw();self._plot_profiles()
         else:self._rebuild_scene()
         self._views_changed();self._refresh_controls();return True
@@ -310,6 +329,7 @@ class MainWindow(PrototypeWindow):
                 if old>=0:self.tree.takeTopLevelItem(old)
                 self.tree.insertTopLevelItem(i,item)
             item.setText(0,obj.name);item.setSelected(obj.id==self.selected)
+        self._name_scene_tree(self.tree)
         self.tree.blockSignals(False)
         current=self.detector_combo.currentData();self.detector_combo.blockSignals(True);self.detector_combo.clear()
         for d in self.project.detectors:self.detector_combo.addItem(d.name,d.id)
